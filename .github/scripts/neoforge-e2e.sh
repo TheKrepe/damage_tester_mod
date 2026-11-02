@@ -7,7 +7,7 @@ SRV=neoforge/runs/server
 mkdir -p "$SRV/world/datapacks"
 cp -r .github/test-datapack "$SRV/world/datapacks/dt_test"
 echo "eula=true" > "$SRV/eula.txt"
-printf 'online-mode=false\nspawn-protection=0\n' > "$SRV/server.properties"
+printf 'online-mode=false\nspawn-protection=0\nwhite-list=false\nenforce-whitelist=false\n' > "$SRV/server.properties"
 
 ./gradlew :neoforge:runServer --console=plain > server.log 2>&1 &
 for i in $(seq 1 120); do grep -q 'Done (' server.log && break; sleep 5; done
