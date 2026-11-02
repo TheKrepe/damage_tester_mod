@@ -47,11 +47,6 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             context.waitTicks(2);
             java.nio.file.Path before = context.takeScreenshot("place_before");
             context.getInput().pressKey(options -> options.keyUse);
-            for (int t = 1; t <= 12; t++) {
-                context.waitTick();
-                java.nio.file.Path shot = context.takeScreenshot("place_visual_" + t);
-                System.out.println("[DamageTesterTest] tick " + t + " visual change vs before: " + diff(before, shot));
-            }
             int placedAfter = -1;
             for (int t = 1; t <= 40; t++) {
                 context.waitTick();
@@ -64,12 +59,14 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
                     return false;
                 });
                 if (present) {
+                    System.out.println("[DamageTesterTest] visual change vs before: "
+                            + diff(before, context.takeScreenshot("place_visible")));
                     placedAfter = t;
                     break;
                 }
             }
             System.out.println("[DamageTesterTest] tester visible on the client " + placedAfter + " tick(s) after right click");
-            if (placedAfter < 0) {
+            if (placedAfter < 0 || placedAfter > 2) {
                 throw new AssertionError("Placed tester took too long to appear: " + placedAfter + " ticks");
             }
             context.takeScreenshot("place_done");
