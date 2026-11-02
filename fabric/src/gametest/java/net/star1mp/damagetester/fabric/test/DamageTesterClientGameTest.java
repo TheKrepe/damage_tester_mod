@@ -51,13 +51,13 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             context.waitTicks(20);
             context.takeScreenshot("damage_tester_idle");
 
-            // --- several hits of different damage types, one tick apart
-            hit(sp, ids[0], (level, player) -> level.damageSources().playerAttack(player), 7.0F);
-            context.waitTick();
-            hit(sp, ids[0], (level, player) -> level.damageSources().magic(), 4.0F);
-            context.waitTick();
+            // --- several hits of different damage types. Vanilla ignores weaker hits during the
+            // half-second hurt cooldown, so space them out like real attacks would be.
             hit(sp, ids[1], (level, player) -> level.damageSources().playerAttack(player), 9.0F);
-            context.waitTick();
+            hit(sp, ids[0], (level, player) -> level.damageSources().playerAttack(player), 7.0F);
+            context.waitTicks(11);
+            hit(sp, ids[0], (level, player) -> level.damageSources().magic(), 4.0F);
+            context.waitTicks(11);
             hit(sp, ids[0], (level, player) -> level.damageSources().onFire(), 2.5F);
             context.waitTicks(3);
             context.takeScreenshot("damage_tester_hit");

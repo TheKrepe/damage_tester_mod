@@ -5,7 +5,7 @@ set -u
 TASK="$1"; RUNDIR="$2"
 mkdir -p "$RUNDIR"
 echo "eula=true" > "$RUNDIR/eula.txt"
-printf 'online-mode=false\nlevel-type=minecraft\\:flat\n' > "$RUNDIR/server.properties"
+printf 'online-mode=false\n' > "$RUNDIR/server.properties"
 LOG=boot-$(echo "$TASK" | tr ':' '_').log
 ./gradlew "$TASK" --console=plain > "$LOG" 2>&1 &
 PID=$!
