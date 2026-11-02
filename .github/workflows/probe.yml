@@ -1,0 +1,48 @@
+name: API probe (dev helper)
+on:
+  workflow_dispatch:
+  push:
+    branches: [ probe-trigger ]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - name: Versions + javap dump
+        run: |
+          set -x
+          mkdir -p out
+          curl -s https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -oE "<version>26\.3[^<]*" | tail -20 > out/neoforge_versions.txt || true
+          curl -s https://maven.fabricmc.net/net/fabricmc/fabric-loader/maven-metadata.xml | grep -oE "<version>[^<]*" | tail -5 > out/fabric_loader_versions.txt || true
+          curl -s https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | grep -oE "<version>[^<]*26\.3[^<]*" | tail -5 > out/fabric_api_versions.txt || true
+          curl -s https://maven.fabricmc.net/net/fabricmc/fabric-loom/maven-metadata.xml | grep -oE "<version>[^<]*" | tail -15 > out/fabric_loom_versions.txt || true
+          curl -s https://maven.architectury.dev/dev/architectury/architectury-loom/maven-metadata.xml | grep -oE "<version>[^<]*" | tail -10 > out/arch_loom_versions.txt || true
+          curl -s https://maven.architectury.dev/architectury-plugin/architectury-plugin.gradle.plugin/maven-metadata.xml | grep -oE "<version>[^<]*" | tail -5 > out/arch_plugin_versions.txt || true
+          curl -s https://plugins.gradle.org/m2/net/neoforged/moddev/net.neoforged.moddev.gradle.plugin/maven-metadata.xml | grep -oE "<version>[^<]*" | tail -10 > out/moddev_versions.txt || true
+          curl -s https://services.gradle.org/versions/current > out/gradle_current.json || true
+          MAN=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json)
+          URL=$(echo "$MAN" | python3 -c "import json,sys;d=json.load(sys.stdin);print([v['url'] for v in d['versions'] if v['id']=='26.3'][0])")
+          curl -s "$URL" > out/version_26.3.json
+          CJ=$(python3 -c "import json;print(json.load(open('out/version_26.3.json'))['downloads']['client']['url'])")
+          curl -s -o client.jar "$CJ"
+          unzip -l client.jar | awk '{print $4}' | grep '\.class$' | grep -v '\$' | sed 's/\.class$//' | tr / . > allclasses.txt
+          wc -l allclasses.txt
+          cp allclasses.txt out/allclasses.txt
+          PKGS="net.minecraft.world.entity. net.minecraft.client.renderer.entity. net.minecraft.client.model. net.minecraft.client.particle. net.minecraft.client.renderer.state. net.minecraft.client.renderer.SubmitNodeCollector net.minecraft.client.renderer.RenderType net.minecraft.client.renderer.rendertype. net.minecraft.client.gui.Font net.minecraft.world.damagesource. net.minecraft.world.item.Item net.minecraft.world.item.ItemStack net.minecraft.world.item.context. net.minecraft.core.particles. net.minecraft.network.protocol.common.custom. net.minecraft.network.syncher. net.minecraft.world.level.storage.ValueInput net.minecraft.world.level.storage.ValueOutput net.minecraft.core.dispenser. net.minecraft.world.BossEvent net.minecraft.server.level.ServerBossEvent net.minecraft.client.renderer.LightTexture net.minecraft.client.Camera net.minecraft.client.renderer.feature. net.minecraft.client.renderer.entity.state. net.minecraft.util.ARGB net.minecraft.world.level.block.TargetBlock net.minecraft.world.item.equipment."
+          : > sel.txt
+          for p in $PKGS; do grep -F "$p" allclasses.txt >> sel.txt || true; done
+          sort -u sel.txt -o sel.txt
+          grep -vE "net\.minecraft\.world\.entity\.(animal|monster|npc|boss|vehicle|ai\.behavior|ai\.sensing|ai\.memory|ai\.village|ai\.gossip|raid|schedule)" sel.txt > sel2.txt
+          wc -l sel2.txt
+          xargs -a sel2.txt javap -p -cp client.jar > out/javap_selected.txt 2>&1 || true
+          ls -la out
+      - name: Publish to ci-probe branch
+        run: |
+          cd out
+          git init -q -b ci-probe
+          git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm probe
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-probe
