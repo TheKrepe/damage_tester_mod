@@ -41,6 +41,10 @@ jobs:
           gzip -9 out/javap_all.txt
           for c in $(cat ${{ github.workspace }}/probe_c.txt 2>/dev/null); do echo "=== $c"; javap -p -c -cp client.jar "$c"; done > out/javap_code.txt 2>&1 || true
           gzip -9 out/javap_code.txt
+          mkdir -p out/vanilla
+          for f in data/minecraft/recipe/armor_stand.json data/minecraft/advancement/recipes/decorations/armor_stand.json assets/minecraft/items/armor_stand.json assets/minecraft/models/item/armor_stand.json assets/minecraft/textures/block/hay_block_side.png assets/minecraft/textures/block/hay_block_top.png assets/minecraft/textures/block/oak_planks.png assets/minecraft/textures/block/spruce_planks.png assets/minecraft/textures/block/target_side.png assets/minecraft/textures/block/target_top.png assets/minecraft/textures/block/white_wool.png assets/minecraft/textures/entity/armorstand/armorstand.png assets/minecraft/textures/item/armor_stand.png assets/minecraft/textures/block/oak_log.png assets/minecraft/textures/block/stripped_oak_log.png assets/minecraft/textures/block/spruce_log.png assets/minecraft/textures/block/smooth_stone.png assets/minecraft/textures/item/wheat.png assets/minecraft/textures/block/hay_block_side.png assets/minecraft/textures/entity/player/wide/steve.png assets/minecraft/textures/block/brown_wool.png assets/minecraft/textures/block/light_gray_wool.png assets/minecraft/lang/en_us.json; do unzip -o -j -q client.jar "$f" -d out/vanilla/ || echo "missing $f"; done
+          unzip -l client.jar | grep -E "assets/minecraft/textures/entity/(armorstand|player)" > out/vanilla/list_entity_tex.txt || true
+          python3 -c "import json;d=json.load(open('out/vanilla/en_us.json'));print(json.dumps({k:v for k,v in d.items() if 'armor_stand' in k or 'death.attack' in k},indent=1))" > out/vanilla/en_us_subset.json; rm out/vanilla/en_us.json
           ls -la out
       - name: Publish to ci-probe branch
         run: |
