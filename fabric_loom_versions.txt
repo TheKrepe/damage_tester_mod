@@ -1,0 +1,15 @@
+<version>1.18-SNAPSHOT
+<version>1.18.2
+<version>1.18.3
+<version>1.18.4
+<version>1.19.0-alpha.1
+<version>1.19.0-alpha.2
+<version>1.19.0-alpha.3
+<version>1.19.0-alpha.4
+<version>1.19.0-alpha.5
+<version>1.19.0-alpha.6
+<version>1.19.0-alpha.7
+<version>1.19.1
+<version>1.19-SNAPSHOT
+<version>1.19.2
+<version>1.19.3
