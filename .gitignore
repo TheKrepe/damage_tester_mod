@@ -8,3 +8,5 @@ run/
 *.iml
 .vscode/
 .DS_Store
+runs/
+*/runs/

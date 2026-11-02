@@ -1,0 +1,5 @@
+{
+  "item.damage_tester.damage_tester": "Damage Tester",
+  "entity.damage_tester.damage_tester": "Damage Tester",
+  "message.damage_tester.stats": "Hit: %1$s  |  DPS: %2$s  |  Total: %3$s (%4$s hits)"
+}

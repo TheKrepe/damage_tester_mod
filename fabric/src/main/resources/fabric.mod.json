@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contributors": [],
+  "license": "${license}",
+  "icon": "assets/damage_tester/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.star1mp.damagetester.fabric.DamageTesterFabric"
+    ],
+    "client": [
+      "net.star1mp.damagetester.fabric.DamageTesterFabricClient"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": ">=26.3 <26.4",
+    "java": ">=${java_version}"
+  }
+}

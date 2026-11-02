@@ -1,0 +1,167 @@
+package net.star1mp.damagetester.client;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.ArmorModelSet;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.Mth;
+import net.star1mp.damagetester.DamageTester;
+import net.star1mp.damagetester.config.DamageTesterConfig;
+import net.star1mp.damagetester.entity.DamageTesterEntity;
+
+public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntity, DamageTesterRenderState, DamageTesterModel> {
+    public static final Identifier TEXTURE = DamageTester.id("textures/entity/damage_tester.png");
+    private static final DecimalFormat FORMAT = new DecimalFormat("0.#", DecimalFormatSymbols.getInstance(Locale.ROOT));
+    /** Horizontal offsets (in blocks) cycled through so consecutive numbers do not overlap. */
+    private static final float[] SLOT_OFFSETS = {0.0F, -0.32F, 0.32F, -0.16F, 0.16F, -0.42F, 0.42F};
+    /** Height of the top of the base plate in blocks, the pivot for the wobble. */
+    private static final float PIVOT_Y = 2.0F / 16.0F;
+
+    private final Model<DamageTesterRenderState> baseModel;
+    private final Font font;
+
+    public DamageTesterRenderer(EntityRendererProvider.Context context) {
+        super(context, new DamageTesterModel(DamageTesterModel.createBodyLayer().bakeRoot()), 0.45F);
+        this.baseModel = new Model<>(DamageTesterModel.createBaseLayer().bakeRoot(), RenderTypes::entityCutout) {
+        };
+        this.font = context.getFont();
+
+        ArmorModelSet<DamageTesterArmorModel> armorModels = HumanoidModel
+                .createArmorMeshSet(new CubeDeformation(0.5F), new CubeDeformation(1.0F))
+                .map(mesh -> new DamageTesterArmorModel(LayerDefinition.create(mesh, 64, 32).bakeRoot()));
+        this.addLayer(new HumanoidArmorLayer<>(this, armorModels, context.getEquipmentRenderer()));
+        this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
+    }
+
+    @Override
+    public DamageTesterRenderState createRenderState() {
+        return new DamageTesterRenderState();
+    }
+
+    @Override
+    public Identifier getTextureLocation(DamageTesterRenderState state) {
+        return TEXTURE;
+    }
+
+    @Override
+    public void extractRenderState(DamageTesterEntity entity, DamageTesterRenderState state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        HumanoidMobRenderer.extractHumanoidRenderState(entity, state, partialTick, this.itemModelResolver);
+        state.hasRedOverlay = false;
+        state.wobble = entity.getWobble(partialTick);
+        state.sway = entity.getSway(partialTick);
+
+        state.numbers.clear();
+        boolean hearts = DamageTesterConfig.get().damageInHearts;
+        for (DamageTesterEntity.FloatingNumber number : entity.getFloatingNumbers()) {
+            float age = entity.tickCount - number.spawnTick() + partialTick;
+            if (age < 0.0F || age > DamageTesterEntity.NUMBER_LIFETIME) {
+                continue;
+            }
+            float value = hearts ? number.amount() / 2.0F : number.amount();
+            String text = FORMAT.format(value) + (hearts ? "❤" : "");
+            if (number.critical()) {
+                text = "✦" + text;
+            }
+            state.numbers.add(new DamageTesterRenderState.NumberRenderData(text, number.color(), age, number.slot(), number.critical()));
+        }
+    }
+
+    @Override
+    protected void setupRotations(DamageTesterRenderState state, PoseStack poseStack, float bodyRot, float scale) {
+        super.setupRotations(state, poseStack, bodyRot, scale);
+        // Lean around the top of the base plate. Model space here is still "Y up".
+        if (state.wobble != 0.0F || state.sway != 0.0F) {
+            poseStack.translate(0.0F, PIVOT_Y, 0.0F);
+            poseStack.rotate(Axis.XP.rotation(state.wobble));
+            poseStack.rotate(Axis.ZP.rotation(state.sway));
+            poseStack.translate(0.0F, -PIVOT_Y, 0.0F);
+        }
+    }
+
+    @Override
+    public void submit(DamageTesterRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        super.submit(state, poseStack, collector, camera);
+        try {
+            this.submitBase(state, poseStack, collector);
+        } catch (RuntimeException e) {
+            DamageTester.LOG.debug("Failed to draw damage tester base", e);
+        }
+        try {
+            this.submitNumbers(state, poseStack, collector, camera);
+        } catch (RuntimeException e) {
+            DamageTester.LOG.debug("Failed to draw damage numbers", e);
+        }
+    }
+
+    /** The plank base does not wobble, so it is drawn outside of the tilted model. */
+    private void submitBase(DamageTesterRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+        poseStack.pushPose();
+        poseStack.rotate(Axis.YP.rotationDegrees(180.0F - state.bodyRot));
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        poseStack.translate(0.0F, -1.501F, 0.0F);
+        collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(TEXTURE),
+                state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
+        poseStack.popPose();
+    }
+
+    private void submitNumbers(DamageTesterRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.numbers.isEmpty()) {
+            return;
+        }
+        float lifetime = DamageTesterEntity.NUMBER_LIFETIME;
+        for (DamageTesterRenderState.NumberRenderData number : state.numbers) {
+            float progress = Mth.clamp(number.age() / lifetime, 0.0F, 1.0F);
+            float rise = easeOutCubic(Math.min(1.0F, number.age() / 18.0F));
+            float pop = easeOutBack(Math.min(1.0F, number.age() / 6.0F));
+            float fade = progress > 0.75F ? 1.0F - (progress - 0.75F) / 0.25F : 1.0F;
+            int alpha = Mth.clamp((int) (fade * 255.0F), 8, 255);
+            float sideways = SLOT_OFFSETS[Math.floorMod(number.slot(), SLOT_OFFSETS.length)];
+            float scale = 0.028F * pop * (number.critical() ? 1.35F : 1.0F);
+
+            poseStack.pushPose();
+            poseStack.translate(0.0F, state.boundingBoxHeight * 0.75F + rise * 0.65F, 0.0F);
+            poseStack.rotate(camera.orientation);
+            poseStack.translate(sideways * (0.4F + rise * 0.6F), 0.0F, 0.0F);
+            poseStack.scale(scale, -scale, scale);
+
+            FormattedCharSequence text = Component.literal(number.text()).getVisualOrderText();
+            float x = -this.font.width(text) / 2.0F;
+            int color = ARGB.color(alpha, number.critical() ? DamageColors.CRITICAL : number.color());
+            collector.submitText(poseStack, x, 0.0F, text, true, Font.DisplayMode.NORMAL,
+                    LightCoordsUtil.FULL_BRIGHT, color, 0, 0);
+            poseStack.popPose();
+        }
+    }
+
+    private static float easeOutCubic(float t) {
+        float p = 1.0F - t;
+        return 1.0F - p * p * p;
+    }
+
+    private static float easeOutBack(float t) {
+        float p = t - 1.0F;
+        return 1.0F + 2.70158F * p * p * p + 1.70158F * p * p;
+    }
+}

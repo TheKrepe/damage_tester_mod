@@ -1,0 +1,5 @@
+{
+  "item.damage_tester.damage_tester": "Тестер урона",
+  "entity.damage_tester.damage_tester": "Тестер урона",
+  "message.damage_tester.stats": "Удар: %1$s  |  DPS: %2$s  |  Всего: %3$s (ударов: %4$s)"
+}

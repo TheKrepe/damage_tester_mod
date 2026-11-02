@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "minecraft:hay_block",
+    "S": "minecraft:stick",
+    "A": "minecraft:armor_stand"
+  },
+  "pattern": [
+    "SHS",
+    " A "
+  ],
+  "result": {
+    "id": "damage_tester:damage_tester"
+  }
+}
