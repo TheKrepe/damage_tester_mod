@@ -63,13 +63,16 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             context.takeScreenshot("damage_tester_hit");
 
             // --- a real melee critical hit from the player (exercises the Player mixin)
+            sp.getServer().runOnServer(server -> sp.getConnection().getServerPlayer()
+                    .setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_SWORD)));
+            context.waitTicks(40); // let the attack cooldown fill up after switching items
             sp.getServer().runOnServer(server -> {
                 ServerPlayer player = sp.getConnection().getServerPlayer();
                 Entity tester = sp.getConnection().getServerLevel().getEntity(ids[0]);
-                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_SWORD));
                 tester.setInvulnerableTime(0);
                 player.fallDistance = 1.5;
                 player.setOnGround(false);
+                player.setSprinting(false);
                 player.attack(tester);
             });
             context.waitTicks(4);

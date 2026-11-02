@@ -15,7 +15,7 @@ for i in $(seq 1 180); do
   if ! kill -0 $PID 2>/dev/null; then break; fi
   sleep 5
 done
-pkill -f "net.minecraft.server.Main|DedicatedServer|neoforge.*server|fabric.*server" 2>/dev/null || true
+pkill -f "java.*(fabric|neoforge|minecraft)" 2>/dev/null || true
 kill $PID 2>/dev/null || true
 sleep 5
 grep -nE "Mixin apply|FAILED during APPLY|was not applied|Exception|ERROR|damage_tester" "$LOG" | head -60

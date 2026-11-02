@@ -65,6 +65,12 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     }
 
     @Override
+    protected boolean shouldShowName(DamageTesterEntity entity, double distanceToCameraSq) {
+        // Only show a name tag for testers that were actually named (like armor stands).
+        return entity.hasCustomName() && super.shouldShowName(entity, distanceToCameraSq);
+    }
+
+    @Override
     public void extractRenderState(DamageTesterEntity entity, DamageTesterRenderState state, float partialTick) {
         super.extractRenderState(entity, state, partialTick);
         HumanoidMobRenderer.extractHumanoidRenderState(entity, state, partialTick, this.itemModelResolver);
@@ -131,6 +137,9 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             return;
         }
         float lifetime = DamageTesterEntity.NUMBER_LIFETIME;
+        // Keep numbers readable from further away (like a name tag would be).
+        float distance = (float) Math.sqrt(state.distanceToCameraSq);
+        float distanceScale = Mth.clamp(distance / 6.0F, 1.0F, 3.0F);
         for (DamageTesterRenderState.NumberRenderData number : state.numbers) {
             float progress = Mth.clamp(number.age() / lifetime, 0.0F, 1.0F);
             float rise = easeOutCubic(Math.min(1.0F, number.age() / 18.0F));
@@ -138,12 +147,13 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             float fade = progress > 0.75F ? 1.0F - (progress - 0.75F) / 0.25F : 1.0F;
             int alpha = Mth.clamp((int) (fade * 255.0F), 8, 255);
             float sideways = SLOT_OFFSETS[Math.floorMod(number.slot(), SLOT_OFFSETS.length)];
-            float scale = 0.028F * pop * (number.critical() ? 1.35F : 1.0F);
+            float scale = 0.026F * distanceScale * pop * (number.critical() ? 1.3F : 1.0F);
 
             poseStack.pushPose();
-            poseStack.translate(0.0F, state.boundingBoxHeight * 0.75F + rise * 0.65F, 0.0F);
+            // Start just above the head and float upwards.
+            poseStack.translate(0.0F, state.boundingBoxHeight + 0.15F + rise * 0.7F, 0.0F);
             poseStack.rotate(camera.orientation);
-            poseStack.translate(sideways * (0.4F + rise * 0.6F), 0.0F, 0.0F);
+            poseStack.translate(sideways * (0.5F + rise * 0.7F) * distanceScale, 0.0F, 0.0F);
             poseStack.scale(scale, -scale, scale);
 
             FormattedCharSequence text = Component.literal(number.text()).getVisualOrderText();
