@@ -1,0 +1,100 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :build-logic:extractPluginRequests UP-TO-DATE
+> Task :build-logic:generatePluginAdapters UP-TO-DATE
+> Task :build-logic:compileJava UP-TO-DATE
+> Task :build-logic:compileGroovy NO-SOURCE
+> Task :build-logic:compileGroovyPlugins UP-TO-DATE
+> Task :build-logic:pluginDescriptors UP-TO-DATE
+> Task :build-logic:processResources UP-TO-DATE
+> Task :build-logic:classes UP-TO-DATE
+> Task :build-logic:jar UP-TO-DATE
+
+> Configure project :common
+Creating Minecraft artifacts without recompilation.
+
+> Configure project :fabric
+Fabric Loom: 1.19.3
+
+> Configure project :neoforge
+Creating Minecraft artifacts without recompilation.
+
+> Task :common:createMinecraftArtifacts UP-TO-DATE
+> Task :common:compileJava UP-TO-DATE
+> Task :neoforge:createMinecraftArtifacts UP-TO-DATE
+> Task :neoforge:compileJava UP-TO-DATE
+> Task :neoforge:processResources UP-TO-DATE
+> Task :neoforge:classes UP-TO-DATE
+> Task :neoforge:downloadAssets UP-TO-DATE
+> Task :neoforge:prepareServerRun
+
+> Task :neoforge:runServer
+2026-11-02T14:00:54.843590383Z main WARN Advanced terminal features are not available in this environment
+[14:00:55] [main/INFO] [ne.ne.fm.st.Entrypoint/]: JVM Uptime at startup: 241ms
+[14:00:55] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Starting FancyModLoader version 12.0.12 (DEDICATED_SERVER in DEV)
+[14:00:55] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Game directory: /home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/runs/server
+[14:00:55] [main/INFO] [ne.ne.fm.lo.EarlyServiceDiscovery/]: Found 2 early service jars (out of 98) in 38ms
+[14:00:55] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Early Services:
+[14:00:55] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/loader/12.0.12/f097a25d6289aa0b289e7cdb6de83a5c8c72f77e/loader-12.0.12.jar
+[14:00:55] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged.fancymodloader/earlydisplay/12.0.12/8437387fd35033b1ea0d3fac7cc28ced4efdc6b/earlydisplay-12.0.12.jar
+[14:00:55] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: Not loading early display in headless mode.
+[14:00:55] [main/INFO] [ne.ne.fm.lo.mo.lo.GameLocator/]: Detected a joined NeoForge and Minecraft configuration. Applying filtering...
+[14:00:55] [main/INFO] [ne.ne.fm.lo.mo.lo.InDevFolderLocator/CORE]: Got mod coordinates damage_tester%%/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/classes/java/main:damage_tester%%/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/resources/main from env
+[14:00:55] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[14:00:55] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Damage Tester 1.0.0 (damage_tester)
+		Minecraft 26.3 (minecraft)
+		NeoForge 26.3.0.101 (neoforge)
+[14:00:56] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.17.4+mixin.0.8.7/5f66cc9f59b8efaa942155a3d5a30599bf6640dd/sponge-mixin-0.17.4+mixin.0.8.7.jar Service=FML Env=SERVER
+[14:00:56] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Loading FML Plugins:
+[14:00:56] [main/INFO] [ne.ne.fm.lo.FMLLoader/]:  - /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.101/4a3ab22c7fd96c499babbfcc85ac13efcb530f2e/neoforge-26.3.0.101-universal.jar > net.neoforged.neoforge-coremods-26.3.0.101.jar
+[14:00:56] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Building game content classloader:
+ - damage_tester (composite(folder(/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/classes/java/main), folder(/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/resources/main)))
+ - minecraft (composite(filtered(jar(/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/moddev/artifacts/minecraft-patched-26.3.0.101.jar)), filtered(jar(/home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/moddev/artifacts/minecraft-patched-26.3.0.101.jar))))
+ - mixinextras.neoforge (jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.101/4a3ab22c7fd96c499babbfcc85ac13efcb530f2e/neoforge-26.3.0.101-universal.jar > mixinextras-neoforge-0.5.5.jar))
+ - neoforge (composite(filtered(jar(/home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/neoforge/26.3.0.101/4a3ab22c7fd96c499babbfcc85ac13efcb530f2e/neoforge-26.3.0.101-universal.jar))))
+ - net.neoforged.fml.generated (empty(VirtualJar/net.neoforged.fml.generated))
+[14:00:56] [main/INFO] [ne.ne.fm.lo.FMLLoader/]: Built game content classloader in 66ms
+[14:00:58] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, set, time] and [time, set, timemarker] with inputs: [0, 0s, 0d, 0t]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, set, timemarker] and [time, set, time] with inputs: [012]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, of, clock, set, time] and [time, of, clock, set, timemarker] with inputs: [0, 0s, 0d, 0t]
+[14:01:07] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [time, of, clock, set, timemarker] and [time, of, clock, set, time] with inputs: [012]
+[14:01:07] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 26.3.0.101, for MC 26.3
+[14:01:08] [modloading-worker-0/INFO] [ne.ne.ne.co.VersionChecker/]: No mods enabled for version check
+[14:01:08] [main/INFO] [mojang/MinecraftServicesDiscoveryService]: Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[14:01:08] [main/INFO] [minecraft/MinecraftServer]: Found new data pack file/dt_test, loading it automatically
+[14:01:10] [Worker-Main-1/INFO] [minecraft/Main]: No existing world data, creating new world
+[14:01:12] [Worker-Main-1/INFO] [minecraft/AdvancementTree]: Loaded 1867 advancements
+[14:01:12] [main/INFO] [ne.ne.ne.co.cr.RecipePriorityManager/]: Loaded 0 recipe priority overrides
+[14:01:15] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 26.3
+[14:01:15] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[14:01:15] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[14:01:15] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[14:01:15] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[14:01:15] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[14:01:15] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[14:01:15] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[14:01:15] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[14:01:15] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[14:01:16] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Selecting global world spawn...
+[14:01:22] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Loading 0 persistent chunks...
+[14:01:22] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Preparing spawn area: 100%
+[14:01:22] [Server thread/INFO] [minecraft/LoggingLevelLoadListener]: Time elapsed: 6084 ms
+[14:01:22] [Server thread/INFO] [minecraft/DedicatedServer]: Done (6.547s)! For help, type "help"
+[14:01:22] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[14:01:22] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[14:01:22] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[14:01:22] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[14:02:22] [Server thread/INFO] [minecraft/MinecraftServer]: Server empty for 60 seconds, pausing
+[14:02:24] [Server thread/INFO] [minecraft/PlayerList]: Dev[/[::1]:47004] logged in with entity id 16 at (487.5, 75.0, -330.5)
+[14:02:24] [Server thread/INFO] [minecraft/MinecraftServer]: System chat: Dev joined the game
+[14:02:40] [Server thread/WARN] [minecraft/MinecraftServer]: Can't keep up! Is the server overloaded? Running 2001ms or 40 ticks behind
