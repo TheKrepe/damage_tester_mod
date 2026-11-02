@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "damage_tester:block/damage_counter" },
+    "facing=east": { "model": "damage_tester:block/damage_counter", "y": 90 },
+    "facing=south": { "model": "damage_tester:block/damage_counter", "y": 180 },
+    "facing=west": { "model": "damage_tester:block/damage_counter", "y": 270 }
+  }
+}

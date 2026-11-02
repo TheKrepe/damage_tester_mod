@@ -1,5 +1,22 @@
 {
   "item.damage_tester.damage_tester": "Damage Tester",
   "entity.damage_tester.damage_tester": "Damage Tester",
-  "message.damage_tester.stats": "Hit: %1$s  |  DPS: %2$s  |  Total: %3$s (%4$s hits)"
+  "item.damage_tester.small_damage_tester": "Small Damage Tester",
+  "entity.damage_tester.small_damage_tester": "Small Damage Tester",
+  "item.damage_tester.hanging_damage_tester": "Hanging Damage Tester",
+  "entity.damage_tester.hanging_damage_tester": "Hanging Damage Tester",
+  "item.damage_tester.moving_damage_tester": "Moving Damage Tester",
+  "entity.damage_tester.moving_damage_tester": "Moving Damage Tester",
+  "block.damage_tester.damage_counter": "Damage Counter",
+  "message.damage_tester.stats": "Hit: %1$s  |  DPS: %2$s  |  Total: %3$s (%4$s hits)",
+  "message.damage_tester.move_mode.0": "Movement: circle",
+  "message.damage_tester.move_mode.1": "Movement: back and forth",
+  "message.damage_tester.move_mode.2": "Movement: stopped",
+  "counter.damage_tester.no_tester": "No tester nearby",
+  "counter.damage_tester.waiting": "Waiting for hits...",
+  "counter.damage_tester.last": "Hit: %s",
+  "counter.damage_tester.dps": "DPS: %s",
+  "counter.damage_tester.total": "Total: %s",
+  "counter.damage_tester.hits": "Hits: %s",
+  "counter.damage_tester.max": "Best: %s"
 }

@@ -7,6 +7,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.star1mp.damagetester.DamageTester;
 import net.star1mp.damagetester.ModContent;
+import net.star1mp.damagetester.client.DamageCounterRenderer;
 import net.star1mp.damagetester.client.DamageTesterClient;
 import net.star1mp.damagetester.client.DamageTesterRenderer;
 import net.star1mp.damagetester.network.DamageNumberPayload;
@@ -19,7 +20,8 @@ public class DamageTesterNeoForgeClient {
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModContent.DAMAGE_TESTER.get(), DamageTesterRenderer::new);
+        ModContent.TESTER_TYPES.values().forEach(type -> event.registerEntityRenderer(type.get(), DamageTesterRenderer::new));
+        event.registerBlockEntityRenderer(ModContent.DAMAGE_COUNTER_BLOCK_ENTITY.get(), DamageCounterRenderer::new);
     }
 
     private static void onRegisterClientPayloads(RegisterClientPayloadHandlersEvent event) {

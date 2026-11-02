@@ -1,0 +1,8 @@
+{
+  "values": [
+    "damage_tester:damage_tester",
+    "damage_tester:small_damage_tester",
+    "damage_tester:hanging_damage_tester",
+    "damage_tester:moving_damage_tester"
+  ]
+}

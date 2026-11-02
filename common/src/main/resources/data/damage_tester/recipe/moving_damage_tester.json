@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "damage_tester:damage_tester",
+    "minecraft:minecart"
+  ],
+  "result": {
+    "id": "damage_tester:moving_damage_tester"
+  }
+}

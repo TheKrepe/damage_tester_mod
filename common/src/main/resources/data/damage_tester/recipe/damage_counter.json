@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "minecraft:glass_pane",
+    "P": "#minecraft:planks",
+    "R": "minecraft:redstone",
+    "T": "minecraft:target"
+  },
+  "pattern": [
+    "PGP",
+    "PTP",
+    "PRP"
+  ],
+  "result": {
+    "id": "damage_tester:damage_counter"
+  }
+}

@@ -29,6 +29,7 @@ import net.minecraft.util.Mth;
 import net.star1mp.damagetester.DamageTester;
 import net.star1mp.damagetester.config.DamageTesterConfig;
 import net.star1mp.damagetester.entity.DamageTesterEntity;
+import net.star1mp.damagetester.entity.TesterVariant;
 
 public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntity, DamageTesterRenderState, DamageTesterModel> {
     public static final Identifier TEXTURE = DamageTester.id("textures/entity/damage_tester.png");
@@ -38,18 +39,29 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     /** Height of the top of the base plate in blocks, the pivot for the wobble. */
     private static final float PIVOT_Y = 2.0F / 16.0F;
 
+    public static final Identifier TEXTURE_STRAW = DamageTester.id("textures/entity/damage_tester_straw.png");
+    /** Default texture with the cloth cut out; the cloth is drawn by {@link ClothColorLayer} in a dye color. */
+    public static final Identifier TEXTURE_NO_CLOTH = DamageTester.id("textures/entity/damage_tester_no_cloth.png");
+
     private final Model<DamageTesterRenderState> baseModel;
     private final Font font;
 
     public DamageTesterRenderer(EntityRendererProvider.Context context) {
         super(context, new DamageTesterModel(DamageTesterModel.createBodyLayer().bakeRoot()), 0.0F); // no shadow
         this.baseModel = new Model<>(DamageTesterModel.createBaseLayer().bakeRoot(), RenderTypes::entityCutout) {
+            private final net.minecraft.client.model.geom.ModelPart wheels = this.root().getChild("wheels");
+
+            @Override
+            public void setupAnim(DamageTesterRenderState state) {
+                this.wheels.visible = state.variant == TesterVariant.MOVING;
+            }
         };
         this.font = context.getFont();
 
         ArmorModelSet<DamageTesterArmorModel> armorModels = HumanoidModel
                 .createArmorMeshSet(new CubeDeformation(0.5F), new CubeDeformation(1.0F))
                 .map(mesh -> new DamageTesterArmorModel(LayerDefinition.create(mesh, 64, 32).bakeRoot()));
+        this.addLayer(new ClothColorLayer(this));
         this.addLayer(new HumanoidArmorLayer<>(this, armorModels, context.getEquipmentRenderer()));
         this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
     }
@@ -61,7 +73,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
 
     @Override
     public Identifier getTextureLocation(DamageTesterRenderState state) {
-        return TEXTURE;
+        return state.texture;
     }
 
     @Override
@@ -77,6 +89,8 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         state.hasRedOverlay = false;
         state.wobble = entity.getWobble(partialTick);
         state.sway = entity.getSway(partialTick);
+        state.variant = entity.getVariant();
+        TesterSkins.apply(entity, state);
 
         state.numbers.clear();
         boolean hearts = DamageTesterConfig.get().damageInHearts;
@@ -97,12 +111,29 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     @Override
     protected void setupRotations(DamageTesterRenderState state, PoseStack poseStack, float bodyRot, float scale) {
         super.setupRotations(state, poseStack, bodyRot, scale);
-        // Lean around the top of the base plate. Model space here is still "Y up".
+        float pivot = PIVOT_Y;
+        if (state.variant == TesterVariant.HANGING) {
+            // No legs: lift the hips to the bottom of the hitbox and swing from the rope's top end.
+            poseStack.translate(0.0F, -0.75F, 0.0F);
+            pivot = 2.0F + TesterVariant.ROPE_LENGTH;
+        } else if (state.variant == TesterVariant.SMALL) {
+            pivot = PIVOT_Y * SMALL_SCALE;
+        }
+        // Lean around the pivot. Model space here is still "Y up".
         if (state.wobble != 0.0F || state.sway != 0.0F) {
-            poseStack.translate(0.0F, PIVOT_Y, 0.0F);
+            poseStack.translate(0.0F, pivot, 0.0F);
             poseStack.rotate(Axis.XP.rotation(state.wobble));
             poseStack.rotate(Axis.ZP.rotation(state.sway));
-            poseStack.translate(0.0F, -PIVOT_Y, 0.0F);
+            poseStack.translate(0.0F, -pivot, 0.0F);
+        }
+    }
+
+    public static final float SMALL_SCALE = 0.5F;
+
+    @Override
+    protected void scale(DamageTesterRenderState state, PoseStack poseStack) {
+        if (state.variant == TesterVariant.SMALL) {
+            poseStack.scale(SMALL_SCALE, SMALL_SCALE, SMALL_SCALE);
         }
     }
 
@@ -123,11 +154,15 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
 
     /** The plank base does not wobble, so it is drawn outside of the tilted model. */
     private void submitBase(DamageTesterRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+        if (state.variant == TesterVariant.HANGING) {
+            return;
+        }
         poseStack.pushPose();
         poseStack.rotate(Axis.YP.rotationDegrees(180.0F - state.bodyRot));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
+        this.scale(state, poseStack);
         poseStack.translate(0.0F, -1.501F, 0.0F);
-        collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(TEXTURE),
+        collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(state.texture),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
         poseStack.popPose();
     }

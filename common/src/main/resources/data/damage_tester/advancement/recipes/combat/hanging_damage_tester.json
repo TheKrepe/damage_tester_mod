@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "damage_tester:hanging_damage_tester"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_item_0": {
+      "conditions": {
+        "items": [
+          {
+            "items": "damage_tester:damage_tester"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_item_0"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "damage_tester:hanging_damage_tester"
+    ]
+  }
+}

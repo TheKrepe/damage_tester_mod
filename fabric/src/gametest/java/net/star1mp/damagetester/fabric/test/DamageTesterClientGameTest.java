@@ -168,6 +168,111 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             });
             context.waitTicks(10);
             context.takeScreenshot("damage_tester_dismantled");
+
+            // ================= skins
+            sp.getServer().runCommand("kill @e[type=#damage_tester:testers]");
+            context.waitTicks(5);
+            int[] skinIds = sp.getServer().computeOnServer(server -> {
+                ServerPlayer player = sp.getConnection().getServerPlayer();
+                ServerLevel level = sp.getConnection().getServerLevel();
+                BlockPos base = player.blockPosition();
+                String[] skins = {"", "straw", "planks:minecraft:oak_planks", "planks:minecraft:cherry_planks", "dye:red", "jeb"};
+                int[] out = new int[skins.length];
+                for (int i = 0; i < skins.length; i++) {
+                    DamageTesterEntity t = place(level, base.getX() + 5 - i * 2, base.getZ() + 6);
+                    if (skins[i].equals("jeb")) {
+                        t.setCustomName(net.minecraft.network.chat.Component.literal("jeb_"));
+                    } else {
+                        t.setSkin(skins[i]);
+                    }
+                    out[i] = t.getId();
+                }
+                // the real interaction path: right click with a hay block
+                DamageTesterEntity first = (DamageTesterEntity) level.getEntity(out[0]);
+                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BLUE_DYE));
+                first.interact(player, net.minecraft.world.InteractionHand.MAIN_HAND, new Vec3(0, 1, 0));
+                if (!first.getSkin().equals("dye:blue")) {
+                    throw new AssertionError("Dye did not change the skin: " + first.getSkin());
+                }
+                return out;
+            });
+            context.waitTicks(20);
+            context.takeScreenshot("skins");
+
+            // ================= variants, damage counter and redstone
+            sp.getServer().runCommand("kill @e[type=#damage_tester:testers]");
+            context.waitTicks(5);
+            Object[] scene = sp.getServer().computeOnServer(server -> {
+                ServerPlayer player = sp.getConnection().getServerPlayer();
+                ServerLevel level = sp.getConnection().getServerLevel();
+                BlockPos base = player.blockPosition();
+                // small
+                int gx = base.getX() + 3, gz = base.getZ() + 5;
+                int gy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, gx, gz);
+                DamageTesterEntity small = DamageTesterEntity.spawnFromItem(net.star1mp.damagetester.entity.TesterVariant.SMALL, level,
+                        ItemStack.EMPTY, null, new Vec3(gx + 0.5, gy, gz + 0.5), 180.0F);
+                // hanging under a block 4 high
+                int hx = base.getX(), hz = base.getZ() + 5;
+                int hy = level.getHeight(Heightmap.Types.MOTION_BLOCKING, hx, hz) + 3;
+                level.setBlock(new BlockPos(hx, hy, hz), net.minecraft.world.level.block.Blocks.OAK_PLANKS.defaultBlockState(), 3);
+                DamageTesterEntity hanging = DamageTesterEntity.spawnFromItem(net.star1mp.damagetester.entity.TesterVariant.HANGING, level,
+                        ItemStack.EMPTY, null, new Vec3(hx + 0.5, hy - 1.5, hz + 0.5), 180.0F);
+                // standing tester on a target block (redstone)
+                int tx = base.getX() - 3, tz = base.getZ() + 5;
+                int ty = level.getHeight(Heightmap.Types.MOTION_BLOCKING, tx, tz) - 1;
+                BlockPos targetPos = new BlockPos(tx, ty, tz);
+                level.setBlock(targetPos, net.minecraft.world.level.block.Blocks.TARGET.defaultBlockState(), 3);
+                DamageTesterEntity onTarget = DamageTesterEntity.spawnFromItem(level, ItemStack.EMPTY, null, new Vec3(tx + 0.5, ty + 1, tz + 0.5), 180.0F);
+                // moving tester further away
+                int mx = base.getX() + 1, mz = base.getZ() + 10;
+                int my = level.getHeight(Heightmap.Types.MOTION_BLOCKING, mx, mz);
+                DamageTesterEntity moving = DamageTesterEntity.spawnFromItem(net.star1mp.damagetester.entity.TesterVariant.MOVING, level,
+                        ItemStack.EMPTY, null, new Vec3(mx + 0.5, my, mz + 0.5), 180.0F);
+                // damage counter next to the small tester, facing the player
+                BlockPos counterPos = new BlockPos(base.getX() + 2, gy, base.getZ() + 3);
+                level.setBlock(counterPos, ModContent.DAMAGE_COUNTER.get().defaultBlockState()
+                        .setValue(net.star1mp.damagetester.block.DamageCounterBlock.FACING, net.minecraft.core.Direction.NORTH), 3);
+                return new Object[]{small.getId(), hanging.getId(), onTarget.getId(), moving.getId(), targetPos, counterPos, moving.position()};
+            });
+            int smallId = (int) scene[0], hangingId = (int) scene[1], targetTesterId = (int) scene[2], movingId = (int) scene[3];
+            BlockPos targetPos = (BlockPos) scene[4];
+            BlockPos counterPos = (BlockPos) scene[5];
+            Vec3 movingStart = (Vec3) scene[6];
+            context.waitTicks(10);
+            hit(sp, smallId, (level, player) -> level.damageSources().playerAttack(player), 6.0F);
+            hit(sp, hangingId, (level, player) -> level.damageSources().playerAttack(player), 8.0F);
+            hit(sp, targetTesterId, (level, player) -> level.damageSources().playerAttack(player), 9.0F);
+            context.waitTicks(3);
+            int power = sp.getServer().computeOnServer(server -> sp.getConnection().getServerLevel().getBlockState(targetPos)
+                    .getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWER));
+            System.out.println("[DamageTesterTest] target block power after a 9 damage hit: " + power);
+            if (power != 9) {
+                throw new AssertionError("Target block power should be 9 but was " + power);
+            }
+            context.waitTicks(25);
+            context.takeScreenshot("variants");
+            sp.getServer().runOnServer(server -> {
+                ServerLevel level = sp.getConnection().getServerLevel();
+                Entity moving = level.getEntity(movingId);
+                double moved = moving.position().distanceTo(movingStart);
+                System.out.println("[DamageTesterTest] moving tester moved " + moved + " blocks");
+                if (moved < 1.0) {
+                    throw new AssertionError("Moving tester did not move");
+                }
+                if (level.getEntity(hangingId) == null || level.getEntity(hangingId).isRemoved()) {
+                    throw new AssertionError("Hanging tester fell off");
+                }
+                if (!(level.getBlockEntity(counterPos) instanceof net.star1mp.damagetester.block.DamageCounterBlockEntity counter)
+                        || !counter.hasTester() || !counter.getStats().hasData()) {
+                    throw new AssertionError("Damage counter did not pick up the small tester's stats");
+                }
+                if (level.getBlockState(targetPos).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.POWER) != 0) {
+                    throw new AssertionError("Target block did not reset");
+                }
+            });
+            context.getInput().lookAt(0.0F, 30.0F);
+            context.waitTicks(5);
+            context.takeScreenshot("variants_counter");
         }
     }
 

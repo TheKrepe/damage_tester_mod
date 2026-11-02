@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   server-boot:
@@ -69,3 +69,11 @@ jobs:
             fabric/build/run/clientGameTest/logs/latest.log
             clientgametest.log
           if-no-files-found: ignore
+      - name: Publish screenshots to the ci-screens branch (for review)
+        if: always()
+        run: |
+          mkdir -p pub && cp -r fabric/build/run/clientGameTest/screenshots pub/ 2>/dev/null || true
+          cd pub && git init -q -b ci-screens
+          git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "screens ${{ github.sha }}" || exit 0
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-screens

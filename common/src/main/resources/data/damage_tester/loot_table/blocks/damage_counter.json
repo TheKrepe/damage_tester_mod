@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "damage_tester:damage_counter"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "damage_tester:blocks/damage_counter"
+}

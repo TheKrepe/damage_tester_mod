@@ -23,7 +23,7 @@ public class DamageTesterNeoForge {
     }
 
     private static void onAttributes(EntityAttributeCreationEvent event) {
-        event.put(ModContent.DAMAGE_TESTER.get(), DamageTesterEntity.createAttributes().build());
+        ModContent.TESTER_TYPES.values().forEach(type -> event.put(type.get(), DamageTesterEntity.createAttributes().build()));
     }
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
@@ -37,7 +37,9 @@ public class DamageTesterNeoForge {
 
     private static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey().equals(ModContent.COMBAT_TAB)) {
-            event.accept(ModContent.DAMAGE_TESTER_ITEM.get());
+            for (var item : ModContent.creativeTabItems()) {
+                event.accept(item);
+            }
         }
     }
 }

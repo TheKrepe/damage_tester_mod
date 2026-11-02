@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "minecraft:hay_block",
+    "S": "minecraft:stick",
+    "W": "#minecraft:wooden_slabs"
+  },
+  "pattern": [
+    "H",
+    "S",
+    "W"
+  ],
+  "result": {
+    "id": "damage_tester:small_damage_tester"
+  }
+}

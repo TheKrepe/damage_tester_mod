@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "damage_tester:block/damage_counter_front",
+    "side": "damage_tester:block/damage_counter_side",
+    "top": "damage_tester:block/damage_counter_top"
+  }
+}

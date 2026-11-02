@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "damage_tester:block/damage_counter"
+  }
+}

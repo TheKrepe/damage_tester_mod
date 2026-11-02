@@ -1,5 +1,22 @@
 {
   "item.damage_tester.damage_tester": "Тестер урона",
   "entity.damage_tester.damage_tester": "Тестер урона",
-  "message.damage_tester.stats": "Удар: %1$s  |  DPS: %2$s  |  Всего: %3$s (ударов: %4$s)"
+  "item.damage_tester.small_damage_tester": "Маленький тестер урона",
+  "entity.damage_tester.small_damage_tester": "Маленький тестер урона",
+  "item.damage_tester.hanging_damage_tester": "Подвесной тестер урона",
+  "entity.damage_tester.hanging_damage_tester": "Подвесной тестер урона",
+  "item.damage_tester.moving_damage_tester": "Движущийся тестер урона",
+  "entity.damage_tester.moving_damage_tester": "Движущийся тестер урона",
+  "block.damage_tester.damage_counter": "Счётчик урона",
+  "message.damage_tester.stats": "Удар: %1$s  |  DPS: %2$s  |  Всего: %3$s (ударов: %4$s)",
+  "message.damage_tester.move_mode.0": "Движение: по кругу",
+  "message.damage_tester.move_mode.1": "Движение: вперёд-назад",
+  "message.damage_tester.move_mode.2": "Движение: стоп",
+  "counter.damage_tester.no_tester": "Нет манекена рядом",
+  "counter.damage_tester.waiting": "Ждёт ударов...",
+  "counter.damage_tester.last": "Удар: %s",
+  "counter.damage_tester.dps": "DPS: %s",
+  "counter.damage_tester.total": "Всего: %s",
+  "counter.damage_tester.hits": "Ударов: %s",
+  "counter.damage_tester.max": "Макс.: %s"
 }

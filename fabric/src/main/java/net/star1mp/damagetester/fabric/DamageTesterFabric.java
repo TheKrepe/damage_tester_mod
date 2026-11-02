@@ -14,9 +14,13 @@ public class DamageTesterFabric implements ModInitializer {
     public void onInitialize() {
         DamageTester.init();
         PayloadTypeRegistry.clientboundPlay().register(DamageNumberPayload.TYPE, DamageNumberPayload.STREAM_CODEC);
-        FabricDefaultAttributeRegistry.register(ModContent.DAMAGE_TESTER.get(), DamageTesterEntity.createAttributes());
+        ModContent.TESTER_TYPES.values().forEach(type -> FabricDefaultAttributeRegistry.register(type.get(), DamageTesterEntity.createAttributes()));
         ModContent.registerDispenserBehavior();
         CreativeModeTabEvents.modifyOutputEvent(ModContent.COMBAT_TAB)
-                .register(output -> output.accept(ModContent.DAMAGE_TESTER_ITEM.get()));
+                .register(output -> {
+                    for (var item : ModContent.creativeTabItems()) {
+                        output.accept(item);
+                    }
+                });
     }
 }
