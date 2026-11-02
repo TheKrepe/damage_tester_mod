@@ -189,7 +189,7 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
                 }
                 // the real interaction path: right click with a hay block
                 DamageTesterEntity first = (DamageTesterEntity) level.getEntity(out[0]);
-                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BLUE_DYE));
+                player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.BLUE)));
                 first.interact(player, net.minecraft.world.InteractionHand.MAIN_HAND, new Vec3(0, 1, 0));
                 if (!first.getSkin().equals("dye:blue")) {
                     throw new AssertionError("Dye did not change the skin: " + first.getSkin());
