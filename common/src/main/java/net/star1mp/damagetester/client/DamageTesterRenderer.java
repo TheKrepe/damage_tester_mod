@@ -42,7 +42,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     private final Font font;
 
     public DamageTesterRenderer(EntityRendererProvider.Context context) {
-        super(context, new DamageTesterModel(DamageTesterModel.createBodyLayer().bakeRoot()), 0.45F);
+        super(context, new DamageTesterModel(DamageTesterModel.createBodyLayer().bakeRoot()), 0.0F); // no shadow
         this.baseModel = new Model<>(DamageTesterModel.createBaseLayer().bakeRoot(), RenderTypes::entityCutout) {
         };
         this.font = context.getFont();

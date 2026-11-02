@@ -7,7 +7,6 @@
   "authors": [
     "${mod_author}"
   ],
-  "contributors": [],
   "license": "${license}",
   "icon": "assets/damage_tester/icon.png",
   "environment": "*",

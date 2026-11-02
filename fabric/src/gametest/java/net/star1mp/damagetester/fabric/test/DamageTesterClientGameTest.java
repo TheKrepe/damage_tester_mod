@@ -32,6 +32,48 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             sp.getServer().runCommand("weather clear");
             sp.getConnection().waitForChunksRender();
 
+            // --- place one with a real right click, like a player would, and measure how long it takes to show up
+            sp.getServer().runCommand("item replace entity @a hotbar.0 with damage_tester:damage_tester 4");
+            context.runOnClient(client -> client.player.getInventory().setSelectedSlot(0));
+            BlockPos target = sp.getServer().computeOnServer(server -> {
+                ServerPlayer player = sp.getConnection().getServerPlayer();
+                BlockPos feet = player.blockPosition();
+                int z = feet.getZ() - 3;
+                int y = sp.getConnection().getServerLevel().getHeight(Heightmap.Types.MOTION_BLOCKING, feet.getX(), z) - 1;
+                return new BlockPos(feet.getX(), y, z);
+            });
+            context.waitTicks(5);
+            context.getInput().lookAt(target);
+            context.waitTicks(2);
+            context.getInput().pressKey(options -> options.keyUse);
+            int placedAfter = -1;
+            for (int t = 1; t <= 40; t++) {
+                context.waitTick();
+                boolean present = context.computeOnClient(client -> {
+                    for (Entity e : client.level.entitiesForRendering()) {
+                        if (e instanceof DamageTesterEntity) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+                if (t <= 3) {
+                    context.takeScreenshot("place_tick_" + t);
+                }
+                if (present) {
+                    placedAfter = t;
+                    break;
+                }
+            }
+            System.out.println("[DamageTesterTest] tester visible on the client " + placedAfter + " tick(s) after right click");
+            if (placedAfter < 0 || placedAfter > 3) {
+                throw new AssertionError("Placed tester took too long to appear: " + placedAfter + " ticks");
+            }
+            context.takeScreenshot("place_done");
+            sp.getServer().runCommand("kill @e[type=damage_tester:damage_tester]");
+            context.waitTicks(5);
+            context.getInput().lookAt(0.0F, 14.0F);
+
             // --- place two testers 3 blocks in front of the player (player looks south, +Z)
             int[] ids = sp.getServer().computeOnServer(server -> {
                 ServerPlayer player = sp.getConnection().getServerPlayer();
