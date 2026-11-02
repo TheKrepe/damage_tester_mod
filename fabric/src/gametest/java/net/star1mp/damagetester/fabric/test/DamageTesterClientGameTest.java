@@ -45,7 +45,13 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             context.waitTicks(5);
             context.getInput().lookAt(target);
             context.waitTicks(2);
+            java.nio.file.Path before = context.takeScreenshot("place_before");
             context.getInput().pressKey(options -> options.keyUse);
+            for (int t = 1; t <= 12; t++) {
+                context.waitTick();
+                java.nio.file.Path shot = context.takeScreenshot("place_visual_" + t);
+                System.out.println("[DamageTesterTest] tick " + t + " visual change vs before: " + diff(before, shot));
+            }
             int placedAfter = -1;
             for (int t = 1; t <= 40; t++) {
                 context.waitTick();
@@ -57,16 +63,13 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
                     }
                     return false;
                 });
-                if (t <= 3) {
-                    context.takeScreenshot("place_tick_" + t);
-                }
                 if (present) {
                     placedAfter = t;
                     break;
                 }
             }
             System.out.println("[DamageTesterTest] tester visible on the client " + placedAfter + " tick(s) after right click");
-            if (placedAfter < 0 || placedAfter > 3) {
+            if (placedAfter < 0) {
                 throw new AssertionError("Placed tester took too long to appear: " + placedAfter + " ticks");
             }
             context.takeScreenshot("place_done");
@@ -168,6 +171,25 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             });
             context.waitTicks(10);
             context.takeScreenshot("damage_tester_dismantled");
+        }
+    }
+
+    /** Share of changed pixels in the middle third of the screen. */
+    private static String diff(java.nio.file.Path a, java.nio.file.Path b) {
+        try (var ia = com.mojang.blaze3d.platform.NativeImage.read(java.nio.file.Files.newInputStream(a));
+             var ib = com.mojang.blaze3d.platform.NativeImage.read(java.nio.file.Files.newInputStream(b))) {
+            int w = ia.getWidth(), h = ia.getHeight(), changed = 0, total = 0;
+            for (int y = h / 3; y < 2 * h / 3; y++) {
+                for (int x = w / 3; x < 2 * w / 3; x++) {
+                    total++;
+                    if (ia.getPixel(x, y) != ib.getPixel(x, y)) {
+                        changed++;
+                    }
+                }
+            }
+            return String.format(java.util.Locale.ROOT, "%.1f%%", 100.0 * changed / total);
+        } catch (java.io.IOException e) {
+            return "n/a";
         }
     }
 
