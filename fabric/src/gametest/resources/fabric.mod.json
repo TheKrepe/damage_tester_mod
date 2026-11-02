@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "damage_tester_gametest",
+  "version": "1.0.0",
+  "name": "Damage Tester (client game test)",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "net.star1mp.damagetester.fabric.test.DamageTesterClientGameTest"
+    ]
+  },
+  "depends": {
+    "damage_tester": "*"
+  }
+}

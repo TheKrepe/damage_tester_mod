@@ -1,0 +1,48 @@
+name: Runtime tests
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  server-boot:
+    strategy:
+      fail-fast: false
+      matrix:
+        loader: [ fabric, neoforge ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Boot ${{ matrix.loader }} dedicated server
+        run: .github/scripts/boot-server.sh :${{ matrix.loader }}:runServer ${{ matrix.loader }}/runs/server
+
+  fabric-client-gametest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install virtual display + Mesa
+        run: sudo apt-get update && sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers
+      - name: Run client game test
+        run: xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain 2>&1 | tee clientgametest.log; exit ${PIPESTATUS[0]}
+      - name: Publish screenshots to ci-screens branch
+        if: always()
+        run: |
+          mkdir -p pub
+          cp -r fabric/build/run/clientGameTest/screenshots pub/ 2>/dev/null || true
+          cp fabric/build/run/clientGameTest/logs/latest.log pub/latest.log 2>/dev/null || true
+          tail -300 clientgametest.log > pub/gradle-tail.log 2>/dev/null || true
+          cd pub
+          git init -q -b ci-screens
+          git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "screens ${{ github.sha }}" || exit 0
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-screens
