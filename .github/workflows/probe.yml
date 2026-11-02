@@ -9,6 +9,7 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '25' }
       - name: Versions + javap dump
@@ -31,13 +32,15 @@ jobs:
           unzip -l client.jar | awk '{print $4}' | grep '\.class$' | grep -v '\$' | sed 's/\.class$//' | tr / . > allclasses.txt
           wc -l allclasses.txt
           cp allclasses.txt out/allclasses.txt
-          PKGS="net.minecraft.world.entity. net.minecraft.client.renderer.entity. net.minecraft.client.model. net.minecraft.client.particle. net.minecraft.client.renderer.state. net.minecraft.client.renderer.SubmitNodeCollector net.minecraft.client.renderer.RenderType net.minecraft.client.renderer.rendertype. net.minecraft.client.gui.Font net.minecraft.world.damagesource. net.minecraft.world.item.Item net.minecraft.world.item.ItemStack net.minecraft.world.item.context. net.minecraft.core.particles. net.minecraft.network.protocol.common.custom. net.minecraft.network.syncher. net.minecraft.world.level.storage.ValueInput net.minecraft.world.level.storage.ValueOutput net.minecraft.core.dispenser. net.minecraft.world.BossEvent net.minecraft.server.level.ServerBossEvent net.minecraft.client.renderer.LightTexture net.minecraft.client.Camera net.minecraft.client.renderer.feature. net.minecraft.client.renderer.entity.state. net.minecraft.util.ARGB net.minecraft.world.level.block.TargetBlock net.minecraft.world.item.equipment."
-          : > sel.txt
-          for p in $PKGS; do grep -F "$p" allclasses.txt >> sel.txt || true; done
-          sort -u sel.txt -o sel.txt
-          grep -vE "net\.minecraft\.world\.entity\.(animal|monster|npc|boss|vehicle|ai\.behavior|ai\.sensing|ai\.memory|ai\.village|ai\.gossip|raid|schedule)" sel.txt > sel2.txt
-          wc -l sel2.txt
-          xargs -a sel2.txt javap -p -cp client.jar > out/javap_selected.txt 2>&1 || true
+          curl -s https://maven.neoforged.net/releases/net/neoforged/neoform/maven-metadata.xml | grep -oE "<version>26\.3[^<]*" | tail -10 > out/neoform_versions.txt || true
+          grep -E '^(net\.minecraft|com\.mojang)\.' allclasses.txt > sel.txt
+          # also inner classes
+          unzip -l client.jar | awk '{print $4}' | grep '\.class$' | grep -E '^(net/minecraft|com/mojang)/' | sed 's/\.class$//' | tr / . > selall.txt
+          split -l 1500 selall.txt part_
+          for f in part_*; do xargs -a $f javap -p -cp client.jar >> out/javap_all.txt 2>&1 || true; done
+          gzip -9 out/javap_all.txt
+          for c in $(cat ${{ github.workspace }}/probe_c.txt 2>/dev/null); do echo "=== $c"; javap -p -c -cp client.jar "$c"; done > out/javap_code.txt 2>&1 || true
+          gzip -9 out/javap_code.txt
           ls -la out
       - name: Publish to ci-probe branch
         run: |
