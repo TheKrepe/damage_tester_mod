@@ -1,16 +1,3 @@
-net.minecraft.world.entity.decoration.ArmorStand
-net.minecraft.client.renderer.entity.ArmorStandRenderer
-net.minecraft.client.model.ArmorStandModel
-net.minecraft.client.model.ArmorStandArmorModel
+net.minecraft.world.entity.player.Player
 net.minecraft.client.renderer.entity.LivingEntityRenderer
 net.minecraft.client.renderer.entity.EntityRenderer
-net.minecraft.world.item.ArmorStandItem
-net.minecraft.world.entity.LivingEntity
-net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer
-net.minecraft.client.renderer.entity.layers.CustomHeadLayer
-net.minecraft.client.particle.ItemPickupParticle
-net.minecraft.client.renderer.feature.NameTagFeatureRenderer
-net.minecraft.client.model.geom.ModelLayers
-net.minecraft.client.renderer.entity.DisplayRenderer
-net.minecraft.client.renderer.entity.DisplayRenderer$TextDisplayRenderer
-net.minecraft.client.renderer.feature.TextFeatureRenderer
