@@ -23,7 +23,7 @@ jobs:
       - name: Boot ${{ matrix.loader }} dedicated server
         run: .github/scripts/boot-server.sh :${{ matrix.loader }}:runServer ${{ matrix.loader }}/runs/server
 
-  neoforge-client-boot:
+  neoforge-client:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,11 +34,13 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers imagemagick
       - name: Boot NeoForge client to the title screen
         run: xvfb-run -a -s "-screen 0 1280x720x24" .github/scripts/boot-client.sh :neoforge:runClient neoforge/runs/client neoforge-title.png
+      - name: NeoForge client joins a dedicated server and sees damage numbers
+        run: xvfb-run -a -s "-screen 0 1280x720x24" .github/scripts/neoforge-e2e.sh
       - name: Publish screenshot
         if: always()
         run: |
-          mkdir -p pub && cp neoforge-title.png pub/ 2>/dev/null || true
-          cp client-boot.log pub/ 2>/dev/null || true
+          mkdir -p pub && cp neoforge-*.png pub/ 2>/dev/null || true
+          cp client-boot.log server.log client.log pub/ 2>/dev/null || true
           cd pub && git init -q -b ci-screens-neoforge
           git config user.email ci@example.com; git config user.name ci
           git add -A; git commit -qm "neoforge ${{ github.sha }}" || exit 0
