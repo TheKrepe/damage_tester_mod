@@ -89,7 +89,7 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
             poseStack.rotate(Axis.YP.rotationDegrees(-state.facing.toYRot()));
             // Just in front of the screen face (the block's south side after rotation).
             poseStack.translate(0.0F, 0.0F, 0.5F + 0.002F);
-            float scale = 1.0F / 110.0F;
+            float scale = 1.0F / 100.0F;
             poseStack.scale(scale, -scale, scale);
             int lineHeight = this.font.lineHeight + 1;
             float top = -(state.lines.size() * lineHeight) / 2.0F;
