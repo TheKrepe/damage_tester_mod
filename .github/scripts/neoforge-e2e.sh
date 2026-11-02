@@ -14,6 +14,8 @@ for i in $(seq 1 120); do grep -q 'Done (' server.log && break; sleep 5; done
 grep -q 'Done (' server.log || { echo "::error::server did not start"; tail -80 server.log; exit 1; }
 # op everyone so the datapack can run as them is not needed; functions run as server.
 
+mkdir -p neoforge/runs/client
+printf 'onboardAccessibility:false\nskipMultiplayerWarning:true\njoinedFirstServer:true\ntutorialStep:none\n' > neoforge/runs/client/options.txt
 ./gradlew :neoforge:runJoinTest --console=plain > client.log 2>&1 &
 JOINED=0
 for i in $(seq 1 90); do
@@ -28,6 +30,7 @@ import -display "$DISPLAY" -window root neoforge-ingame-2.png 2>/dev/null || tru
 
 STATUS=0
 [ $JOINED -eq 1 ] || { echo "::error::client never joined"; STATUS=1; }
+if grep -q "Failed to load function" server.log; then echo "::error::test datapack broken"; STATUS=1; fi
 if grep -qE "lost connection|Disconnecting|disconnected" server.log; then echo "::error::client got disconnected"; STATUS=1; fi
 if grep -qE "Minecraft has crashed|Crash Report" client.log server.log; then echo "::error::crash"; STATUS=1; fi
 echo "---- server log (filtered)"; grep -nE "joined|left|lost connection|damage_tester|ERROR|Exception|dt_test" server.log | head -40
