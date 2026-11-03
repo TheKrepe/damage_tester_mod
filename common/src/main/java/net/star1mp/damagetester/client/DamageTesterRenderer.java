@@ -39,6 +39,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     /** Height of the top of the base plate in blocks, the pivot for the wobble. */
     private static final float PIVOT_Y = 2.0F / 16.0F;
 
+    public static final Identifier TEXTURE_JACK = DamageTester.id("textures/entity/damage_tester_jack.png");
     public static final Identifier TEXTURE_STRAW = DamageTester.id("textures/entity/damage_tester_straw.png");
     /** Default texture with the cloth cut out; the cloth is drawn by {@link ClothColorLayer} in a dye color. */
     public static final Identifier TEXTURE_NO_CLOTH = DamageTester.id("textures/entity/damage_tester_no_cloth.png");
@@ -62,6 +63,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
                 .createArmorMeshSet(new CubeDeformation(0.5F), new CubeDeformation(1.0F))
                 .map(mesh -> new DamageTesterArmorModel(LayerDefinition.create(mesh, 64, 32).bakeRoot()));
         this.addLayer(new ClothColorLayer(this));
+        this.addLayer(new GlowLayer(this));
         this.addLayer(new HumanoidArmorLayer<>(this, armorModels, context.getEquipmentRenderer()));
         this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
     }

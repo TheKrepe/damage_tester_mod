@@ -37,6 +37,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public net.minecraft.world.item.CreativeModeTab.Builder creativeTabBuilder() {
+        return net.minecraft.world.item.CreativeModeTab.builder();
+    }
+
+    @Override
     public void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload) {
         PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
     }

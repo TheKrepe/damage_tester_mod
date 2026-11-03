@@ -176,7 +176,7 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
                 ServerPlayer player = sp.getConnection().getServerPlayer();
                 ServerLevel level = sp.getConnection().getServerLevel();
                 BlockPos base = player.blockPosition();
-                String[] skins = {"", "straw", "planks:minecraft:oak_planks", "planks:minecraft:cherry_planks", "dye:red", "jeb"};
+                String[] skins = {"", "straw", "planks:minecraft:oak_planks", "jack_o_lantern", "dye:red", "jeb"};
                 int[] out = new int[skins.length];
                 for (int i = 0; i < skins.length; i++) {
                     DamageTesterEntity t = place(level, base.getX() + 5 - i * 2, base.getZ() + 6);
@@ -198,6 +198,14 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             });
             context.waitTicks(20);
             context.takeScreenshot("skins");
+            sp.getServer().runCommand("time set 18000");
+            context.waitTicks(10);
+            context.takeScreenshot("skins_night");
+            sp.getServer().runCommand("time set 6000");
+            context.getInput().lookAt(0.0F, 0.0F);
+            context.waitTicks(5);
+            context.takeScreenshot("skins_closeup_arms");
+            context.getInput().lookAt(0.0F, 14.0F);
 
             // ================= variants, damage counter and redstone
             sp.getServer().runCommand("kill @e[type=#damage_tester:testers]");

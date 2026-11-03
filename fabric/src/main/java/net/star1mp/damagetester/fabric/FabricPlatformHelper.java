@@ -31,6 +31,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public net.minecraft.world.item.CreativeModeTab.Builder creativeTabBuilder() {
+        return net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab.builder();
+    }
+
+    @Override
     public void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload) {
         for (ServerPlayer player : PlayerLookup.tracking(entity)) {
             ServerPlayNetworking.send(player, payload);

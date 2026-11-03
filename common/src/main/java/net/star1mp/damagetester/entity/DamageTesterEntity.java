@@ -78,6 +78,7 @@ public class DamageTesterEntity extends LivingEntity {
     private static final EntityDataAccessor<String> DATA_SKIN = SynchedEntityData.defineId(DamageTesterEntity.class, EntityDataSerializers.STRING);
 
     public static final String SKIN_STRAW = "straw";
+    public static final String SKIN_JACK = "jack_o_lantern";
     public static final String SKIN_PLANKS_PREFIX = "planks:";
     public static final String SKIN_DYE_PREFIX = "dye:";
 
@@ -207,6 +208,9 @@ public class DamageTesterEntity extends LivingEntity {
     private static String skinFor(ItemStack stack) {
         if (stack.is(Items.HAY_BLOCK)) {
             return SKIN_STRAW;
+        }
+        if (stack.is(Items.JACK_O_LANTERN)) {
+            return SKIN_JACK;
         }
         if (stack.is(ItemTags.PLANKS)) {
             return SKIN_PLANKS_PREFIX + BuiltInRegistries.ITEM.getKey(stack.getItem());
@@ -559,7 +563,8 @@ public class DamageTesterEntity extends LivingEntity {
             if (!this.level().isClientSide()) {
                 this.setSkin(skin);
                 SoundEvent sound = skin.startsWith(SKIN_DYE_PREFIX) ? SoundEvents.DYE_USE
-                        : skin.equals(SKIN_STRAW) ? SoundEvents.GRASS_PLACE : SoundEvents.WOOD_PLACE;
+                        : skin.equals(SKIN_STRAW) ? SoundEvents.GRASS_PLACE
+                        : skin.equals(SKIN_JACK) ? SoundEvents.PUMPKIN_CARVE : SoundEvents.WOOD_PLACE;
                 this.playSound(sound, 1.0F, 1.0F);
                 if (!player.isCreative()) {
                     held.shrink(1);

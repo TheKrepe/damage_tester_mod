@@ -25,6 +25,7 @@ public final class TesterSkins {
     public static void apply(DamageTesterEntity entity, DamageTesterRenderState state) {
         state.texture = DamageTesterRenderer.TEXTURE;
         state.clothColor = 0;
+        state.glowTexture = null;
         String skin = entity.getSkin();
 
         // Name tag easter egg, works like jeb_ sheep.
@@ -35,6 +36,9 @@ public final class TesterSkins {
         }
         if (skin.equals(DamageTesterEntity.SKIN_STRAW)) {
             state.texture = DamageTesterRenderer.TEXTURE_STRAW;
+        } else if (skin.equals(DamageTesterEntity.SKIN_JACK)) {
+            state.texture = DamageTesterRenderer.TEXTURE_JACK;
+            state.glowTexture = GlowLayer.JACK_GLOW;
         } else if (skin.startsWith(DamageTesterEntity.SKIN_PLANKS_PREFIX)) {
             state.texture = plankTexture(skin.substring(DamageTesterEntity.SKIN_PLANKS_PREFIX.length()));
         } else if (skin.startsWith(DamageTesterEntity.SKIN_DYE_PREFIX)) {

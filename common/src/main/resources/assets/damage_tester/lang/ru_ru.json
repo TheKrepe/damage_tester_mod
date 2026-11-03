@@ -18,5 +18,6 @@
   "counter.damage_tester.dps": "DPS: %s",
   "counter.damage_tester.total": "Всего: %s",
   "counter.damage_tester.hits": "Ударов: %s",
-  "counter.damage_tester.max": "Макс.: %s"
+  "counter.damage_tester.max": "Макс.: %s",
+  "itemGroup.damage_tester": "Тестер урона"
 }

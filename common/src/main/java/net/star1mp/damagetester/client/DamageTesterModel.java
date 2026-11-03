@@ -75,6 +75,11 @@ public class DamageTesterModel extends HumanoidModel<DamageTesterRenderState> {
      * the scarecrow arms and a bit of extra head lag.
      */
     static void applyPose(HumanoidModel<DamageTesterRenderState> model, DamageTesterRenderState state) {
+        // Arms stick straight out. The shoulders are moved 1px outwards and 1px down compared to a
+        // player so the arm boxes start exactly at the edge and top of the torso instead of
+        // overlapping it (that overlap made the textures flicker through each other).
+        model.rightArm.setPos(-6.0F, 3.0F, 0.0F);
+        model.leftArm.setPos(6.0F, 3.0F, 0.0F);
         model.rightArm.zRot = (float) (Math.PI / 2.0);
         model.leftArm.zRot = (float) (-Math.PI / 2.0);
         // arms flop a little when hit

@@ -17,6 +17,8 @@ public class DamageTesterRenderState extends HumanoidRenderState {
     public Identifier texture = DamageTesterRenderer.TEXTURE;
     /** ARGB color of the cloth overlay, or 0 when the cloth is part of the main texture. */
     public int clothColor;
+    /** Optional emissive texture drawn full-bright on top (e.g. the jack o'lantern's glowing face). */
+    public Identifier glowTexture;
 
     public record NumberRenderData(String text, int color, float age, int slot, boolean critical) {
     }

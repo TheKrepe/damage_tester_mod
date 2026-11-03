@@ -1,5 +1,9 @@
 package net.star1mp.damagetester.neoforge;
 
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -36,10 +40,24 @@ public class DamageTesterNeoForge {
     }
 
     private static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+        // Vanilla tabs: testers in Combat and next to the armor stand, the counter next to the target block.
         if (event.getTabKey().equals(ModContent.COMBAT_TAB)) {
-            for (var item : ModContent.creativeTabItems()) {
+            for (Item item : ModContent.testerItems()) {
                 event.accept(item);
             }
+        } else if (event.getTabKey().equals(ModContent.FUNCTIONAL_TAB)) {
+            insertAfter(event, Items.ARMOR_STAND, ModContent.testerItems());
+        } else if (event.getTabKey().equals(ModContent.REDSTONE_TAB)) {
+            insertAfter(event, Items.TARGET, ModContent.DAMAGE_COUNTER_ITEM.get());
+        }
+    }
+
+    private static void insertAfter(BuildCreativeModeTabContentsEvent event, Item anchor, Item... items) {
+        ItemStack previous = new ItemStack(anchor);
+        for (Item item : items) {
+            ItemStack stack = new ItemStack(item);
+            event.insertAfter(previous, stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            previous = stack;
         }
     }
 }

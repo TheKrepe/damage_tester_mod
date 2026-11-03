@@ -37,8 +37,13 @@ import net.star1mp.damagetester.platform.Services;
 /** All registered content of the mod. */
 public final class ModContent {
     /** Vanilla's creative tab keys are private, so we build the key ourselves. */
-    public static final ResourceKey<CreativeModeTab> COMBAT_TAB =
-            ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.withDefaultNamespace("combat"));
+    public static final ResourceKey<CreativeModeTab> COMBAT_TAB = vanillaTab("combat");
+    public static final ResourceKey<CreativeModeTab> FUNCTIONAL_TAB = vanillaTab("functional_blocks");
+    public static final ResourceKey<CreativeModeTab> REDSTONE_TAB = vanillaTab("redstone_blocks");
+
+    private static ResourceKey<CreativeModeTab> vanillaTab(String name) {
+        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.withDefaultNamespace(name));
+    }
 
     public static final Map<TesterVariant, Supplier<EntityType<DamageTesterEntity>>> TESTER_TYPES = new EnumMap<>(TesterVariant.class);
     public static final Map<TesterVariant, Supplier<Item>> TESTER_ITEMS = new EnumMap<>(TesterVariant.class);
@@ -86,6 +91,29 @@ public final class ModContent {
     public static final Supplier<BlockEntityType<DamageCounterBlockEntity>> DAMAGE_COUNTER_BLOCK_ENTITY = Services.PLATFORM.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, DAMAGE_COUNTER_NAME,
             () -> new BlockEntityType<>(DamageCounterBlockEntity::new, Set.of(DAMAGE_COUNTER.get())));
+
+    /** The mod's own creative tab with everything in it. */
+    public static final Supplier<CreativeModeTab> CREATIVE_TAB = Services.PLATFORM.register(
+            BuiltInRegistries.CREATIVE_MODE_TAB, DamageTester.MOD_ID,
+            () -> Services.PLATFORM.creativeTabBuilder()
+                    .title(net.minecraft.network.chat.Component.translatable("itemGroup.damage_tester"))
+                    .icon(() -> new ItemStack(DAMAGE_TESTER_ITEM.get()))
+                    .displayItems((parameters, output) -> {
+                        for (Item item : creativeTabItems()) {
+                            output.accept(item);
+                        }
+                    })
+                    .build());
+
+    /** The four testers, in creative-tab order. */
+    public static Item[] testerItems() {
+        return new Item[]{
+                TESTER_ITEMS.get(TesterVariant.STANDARD).get(),
+                TESTER_ITEMS.get(TesterVariant.SMALL).get(),
+                TESTER_ITEMS.get(TesterVariant.HANGING).get(),
+                TESTER_ITEMS.get(TesterVariant.MOVING).get()
+        };
+    }
 
     private ModContent() {
     }

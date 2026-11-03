@@ -18,5 +18,6 @@
   "counter.damage_tester.dps": "DPS: %s",
   "counter.damage_tester.total": "Total: %s",
   "counter.damage_tester.hits": "Hits: %s",
-  "counter.damage_tester.max": "Best: %s"
+  "counter.damage_tester.max": "Best: %s",
+  "itemGroup.damage_tester": "Damage Tester"
 }
