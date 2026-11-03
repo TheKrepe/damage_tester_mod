@@ -37,8 +37,17 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public net.minecraft.world.item.CreativeModeTab.Builder creativeTabBuilder() {
-        return net.minecraft.world.item.CreativeModeTab.builder();
+    public net.minecraft.world.item.CreativeModeTab createCreativeTab(net.minecraft.network.chat.Component title,
+            Supplier<net.minecraft.world.item.ItemStack> icon, Supplier<net.minecraft.world.item.Item[]> items) {
+        return net.minecraft.world.item.CreativeModeTab.builder()
+                .title(title)
+                .icon(icon)
+                .displayItems((parameters, output) -> {
+                    for (net.minecraft.world.item.Item item : items.get()) {
+                        output.accept(item);
+                    }
+                })
+                .build();
     }
 
     @Override

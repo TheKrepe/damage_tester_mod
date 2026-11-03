@@ -95,15 +95,10 @@ public final class ModContent {
     /** The mod's own creative tab with everything in it. */
     public static final Supplier<CreativeModeTab> CREATIVE_TAB = Services.PLATFORM.register(
             BuiltInRegistries.CREATIVE_MODE_TAB, DamageTester.MOD_ID,
-            () -> Services.PLATFORM.creativeTabBuilder()
-                    .title(net.minecraft.network.chat.Component.translatable("itemGroup.damage_tester"))
-                    .icon(() -> new ItemStack(DAMAGE_TESTER_ITEM.get()))
-                    .displayItems((parameters, output) -> {
-                        for (Item item : creativeTabItems()) {
-                            output.accept(item);
-                        }
-                    })
-                    .build());
+            () -> Services.PLATFORM.createCreativeTab(
+                    net.minecraft.network.chat.Component.translatable("itemGroup.damage_tester"),
+                    () -> new ItemStack(DAMAGE_TESTER_ITEM.get()),
+                    ModContent::creativeTabItems));
 
     /** The four testers, in creative-tab order. */
     public static Item[] testerItems() {

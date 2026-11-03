@@ -22,8 +22,12 @@ public interface IPlatformHelper {
      */
     <T> Supplier<T> register(Registry<? super T> registry, String name, Supplier<T> factory);
 
-    /** A creative tab builder that works with the loader's tab pages. */
-    net.minecraft.world.item.CreativeModeTab.Builder creativeTabBuilder();
+    /**
+     * Builds a creative tab with the loader's own builder (vanilla's {@code CreativeModeTab.Output}
+     * is only accessible in the loader modules).
+     */
+    net.minecraft.world.item.CreativeModeTab createCreativeTab(net.minecraft.network.chat.Component title,
+            Supplier<net.minecraft.world.item.ItemStack> icon, Supplier<net.minecraft.world.item.Item[]> items);
 
     /** Sends a clientbound payload to every player that currently tracks {@code entity}. */
     void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload);
