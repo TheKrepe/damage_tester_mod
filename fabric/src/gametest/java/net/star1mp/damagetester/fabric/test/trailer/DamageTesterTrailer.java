@@ -487,7 +487,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.cmd(String.format(Locale.ROOT, "summon minecraft:mannequin %.3f %.3f %.3f %s", p.x, p.y, p.z, nbt));
         int id = this.srvGet(level -> {
             for (Entity e : level.getAllEntities()) {
-                if (e.getTags().contains(tag)) {
+                if (e.entityTags().contains(tag)) {
                     return e.getId();
                 }
             }
@@ -989,7 +989,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             int t = this.tester(-7.5, 40.5, SOUTH, "");
             this.at(30, () -> {
                 this.srv(level -> {
-                    LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.COMMAND);
+                    LightningBolt bolt = net.minecraft.world.entity.EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.COMMAND);
                     Vec3 p = this.entity(level, t).position();
                     bolt.snapTo(p.x, p.y, p.z);
                     bolt.setVisualOnly(true);
