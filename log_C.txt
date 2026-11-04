@@ -1,0 +1,29 @@
+[11:52:04] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=32, y=80, z=32} score 40.24545402760555
+[11:52:20] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=516, y=80, z=-288} score 146.63262749255702
+[11:52:32] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=0, y=80, z=900} score 99.04527951643307
+[11:52:39] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-836, y=80, z=-64} score 73.50558719058156
+[11:52:42] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-32, y=80, z=-612} score 61.31952152842787
+[11:52:45] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1092, y=80, z=1092} score 102.47111942501871
+[11:52:45] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 32 105 32
+[11:54:36] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[11:54:36] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 157122 ms
+[11:54:46] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d01_fire.mp4 at 1920x1080
+[trailer] d01_fire: 120 frames (120 written) in 48.2 s (0.40 s/frame)
+[11:55:31] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d02_magic.mp4 at 1920x1080
+[trailer] d02_magic: 120 frames (120 written) in 38.0 s (0.32 s/frame)
+[11:56:08] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d03_explosion.mp4 at 1920x1080
+[trailer] d03_explosion: 135 frames (135 written) in 42.2 s (0.31 s/frame)
+[11:56:51] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d04_lightning.mp4 at 1920x1080
+[trailer] d04_lightning: 105 frames (105 written) in 35.1 s (0.33 s/frame)
+[11:57:27] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d05_wither.mp4 at 1920x1080
+[trailer] d05_wither: 135 frames (135 written) in 51.2 s (0.38 s/frame)
+[11:58:18] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d06_freeze.mp4 at 1920x1080
+[trailer] d06_freeze: 135 frames (135 written) in 46.3 s (0.34 s/frame)
+[11:59:04] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d07_trident.mp4 at 1920x1080
+[trailer] d07_trident: 105 frames (105 written) in 36.2 s (0.34 s/frame)
+[11:59:41] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording d08_wind.mp4 at 1920x1080
+[trailer] d08_wind: 90 frames (90 written) in 39.1 s (0.43 s/frame)
+[12:00:20] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording f01_arena_crane.mp4 at 1920x1080
+[trailer] f01_arena_crane: 330 frames (330 written) in 112.1 s (0.34 s/frame)
+[12:02:13] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording f02_row_dolly.mp4 at 1920x1080
+[trailer] f02_row_dolly: 240 frames (240 written) in 94.0 s (0.39 s/frame)
