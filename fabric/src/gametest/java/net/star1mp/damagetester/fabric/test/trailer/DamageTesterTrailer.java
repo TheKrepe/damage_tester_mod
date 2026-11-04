@@ -108,7 +108,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.out = Path.of(System.getenv().getOrDefault("DT_TRAILER_OUT", "trailer")).toAbsolutePath();
         this.events = new Cine.EventLog(this.out.resolve("events.csv"));
         context.waitTicks(40);
-        Cine.VERTICAL = System.getenv("DT_TRAILER").startsWith("K");
+        Cine.VERTICAL = System.getenv("DT_TRAILER").toUpperCase(Locale.ROOT).startsWith("K");
         if (Cine.VERTICAL) {
             context.getInput().resizeWindow(1080, 1920);
         } else {
@@ -606,6 +606,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             e.setYHeadRot(yaw);
             e.setYBodyRot(yaw);
             e.setItemSlot(EquipmentSlot.MAINHAND, mainHand);
+            e.setInvulnerable(true); // no red hurt flash from bumps and falls
             if (name != null) {
                 e.setCustomName(Component.literal(name));
                 e.setCustomNameVisible(true);
@@ -1594,6 +1595,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.at(12, () -> {
                 this.srv(level -> {
                     if (this.entity(level, ari) instanceof LivingEntity a && this.entity(level, kai) instanceof LivingEntity k) {
+                        a.setInvulnerable(false);
                         a.hurtServer(level, level.damageSources().mobAttack(k), 0.5F);
                         a.setHealth(a.getMaxHealth());
                     }
