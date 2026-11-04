@@ -88,6 +88,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     private final Map<Integer, List<Runnable>> actions = new HashMap<>();
     /** First tester each actor strikes in the current shot: actors face it before recording starts. */
     private final Map<Integer, Integer> firstTarget = new LinkedHashMap<>();
+    /** Wanted yaw per actor, written by the server thread and applied to the client mannequin every frame. */
+    private static final Map<Integer, Float> FACING = new java.util.concurrent.ConcurrentHashMap<>();
     private final List<IntConsumer> everyTick = new ArrayList<>();
     private int actorCounter;
 
@@ -255,6 +257,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.actions.clear();
         this.everyTick.clear();
         this.firstTarget.clear();
+        FACING.clear();
         this.cleanup();
         this.cmd("time set " + s.time);
         this.cmd("weather " + s.weather);
@@ -283,6 +286,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             if (s.cam != null) {
                 this.ctx.runOnClient(mc -> Cine.placeCamera(mc, s.cam.at(0, 0, mc, 0)));
             }
+            this.ctx.runOnClient(mc -> alignBodies(mc, true));
             this.ctx.waitTick();
         }
         this.ctx.runOnClient(mc -> {
@@ -312,7 +316,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     if (s.cam != null) {
                         Cine.placeCamera(mc, s.cam.at(u, t, mc, partial));
                     }
-                    alignBodies(mc);
+                    alignBodies(mc, false);
                     Cine.renderFrame(mc, partial, rec, index);
                 });
                 frame++;
@@ -535,7 +539,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         double dx = target.x - a.getX();
         double dz = target.z - a.getZ();
         float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0F;
-        System.out.printf(Locale.ROOT, "[trailer] face %d -> %.1f (was %.1f)%n", a.getId(), yaw, a.getYRot());
+        FACING.put(a.getId(), yaw);
         a.setYRot(yaw);
         a.setYHeadRot(yaw);
         a.setYBodyRot(yaw);
@@ -553,17 +557,28 @@ public class DamageTesterTrailer implements FabricClientGameTest {
      * Mannequins have no AI, so on the client their body only drifts after the head. Keep the body
      * turned with the head so actors always look and stand towards what they hit.
      */
-    private static void alignBodies(net.minecraft.client.Minecraft mc) {
+    private static void alignBodies(net.minecraft.client.Minecraft mc, boolean snap) {
         if (mc.level == null) {
             return;
         }
         for (Entity e : mc.level.entitiesForRendering()) {
             if (e instanceof net.minecraft.world.entity.decoration.Mannequin m) {
-                // the entity rotation is synced reliably; head rotation is not for mannequins
-                m.yBodyRot = m.getYRot();
-                m.yBodyRotO = m.yRotO;
-                m.yHeadRot = m.getYRot();
-                m.yHeadRotO = m.yRotO;
+                Float want = FACING.get(m.getId());
+                float yaw;
+                if (want == null) {
+                    yaw = m.getYRot();
+                } else {
+                    float cur = m.yBodyRot;
+                    float diff = net.minecraft.util.Mth.wrapDegrees(want - cur);
+                    yaw = snap || Math.abs(diff) < 0.5F ? cur + diff : cur + diff * 0.3F;
+                }
+                // mannequins do not get their rotation synced to the client, so turn them here
+                m.setYRot(yaw);
+                m.yRotO = yaw;
+                m.yBodyRot = yaw;
+                m.yBodyRotO = yaw;
+                m.yHeadRot = yaw;
+                m.yHeadRotO = yaw;
             }
         }
     }
