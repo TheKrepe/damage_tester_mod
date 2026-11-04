@@ -90,6 +90,10 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     private final Map<Integer, Integer> firstTarget = new LinkedHashMap<>();
     /** Wanted yaw per actor, written by the server thread and applied to the client mannequin every frame. */
     private static final Map<Integer, Float> FACING = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Entity an actor keeps its eyes on (head follows it every frame, the body catches up). */
+    private static final Map<Integer, Integer> LOOK = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Set<Integer> WALKING = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    private static int frameCounter;
     /** Entities whose screen position is logged every frame (for speech bubbles in the edit). */
     private final Map<String, Integer> speakers = new LinkedHashMap<>();
     private final List<IntConsumer> everyTick = new ArrayList<>();
@@ -266,6 +270,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.firstTarget.clear();
         this.speakers.clear();
         FACING.clear();
+        LOOK.clear();
+        WALKING.clear();
         this.cleanup();
         this.cmd("time set " + s.time);
         this.cmd("weather " + s.weather);
@@ -384,7 +390,12 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             }
             double u = (double) (i - from) / Math.max(1, to - from);
             this.moveActor(actorId, Cine.lerp(u, a, b));
+            if (i == to) {
+                WALKING.remove(actorId);
+            }
             if (i == from) {
+                WALKING.add(actorId);
+                LOOK.remove(actorId);
                 FACING.put(actorId, yaw);
                 this.srv(level -> {
                     if (this.entity(level, actorId) instanceof LivingEntity le) {
@@ -395,8 +406,13 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
     }
 
+    private void look(int t, int actorId, int targetId) {
+        this.at(t, () -> LOOK.put(actorId, targetId));
+    }
+
     private void turn(int t, int actorId, float yaw) {
         this.at(t, () -> {
+            LOOK.remove(actorId);
             FACING.put(actorId, yaw);
             this.srv(level -> {
                 Entity e = this.entity(level, actorId);
@@ -640,25 +656,73 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         if (mc.level == null) {
             return;
         }
+        frameCounter++;
         for (Entity e : mc.level.entitiesForRendering()) {
-            if (e instanceof net.minecraft.world.entity.decoration.Mannequin m) {
-                Float want = FACING.get(m.getId());
-                float yaw;
-                if (want == null) {
-                    yaw = m.getYRot();
-                } else {
-                    float cur = m.yBodyRot;
-                    float diff = net.minecraft.util.Mth.wrapDegrees(want - cur);
-                    yaw = snap || Math.abs(diff) < 0.5F ? cur + diff : cur + diff * 0.3F;
-                }
-                // mannequins do not get their rotation synced to the client, so turn them here
-                m.setYRot(yaw);
-                m.yRotO = yaw;
-                m.yBodyRot = yaw;
-                m.yBodyRotO = yaw;
-                m.yHeadRot = yaw;
-                m.yHeadRotO = yaw;
+            if (!(e instanceof net.minecraft.world.entity.decoration.Mannequin m)) {
+                continue;
             }
+            int id = m.getId();
+            float body = m.yBodyRot;
+            float head = m.yHeadRot;
+            float pitch = m.getXRot();
+            Float facing = FACING.get(id);
+            Integer lookId = LOOK.get(id);
+            Entity target = lookId == null ? null : mc.level.getEntity(lookId);
+            boolean walking = WALKING.contains(id);
+            float wantHead;
+            float wantPitch = 0.0F;
+            if (target != null) {
+                double ex = m.getX();
+                double ey = m.getY() + m.getBbHeight() * 0.88;
+                double ez = m.getZ();
+                double tx = target.getX();
+                double ty = target.getY() + target.getBbHeight() * 0.8;
+                double tz = target.getZ();
+                double dx = tx - ex;
+                double dz = tz - ez;
+                wantHead = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0F;
+                wantPitch = (float) -Math.toDegrees(Math.atan2(ty - ey, Math.sqrt(dx * dx + dz * dz)));
+                wantPitch = net.minecraft.util.Mth.clamp(wantPitch, -40.0F, 45.0F);
+            } else if (facing != null) {
+                wantHead = facing;
+            } else {
+                wantHead = body;
+            }
+            if (!walking) {
+                // small idle head movement so nobody looks frozen
+                wantHead += 5.0F * (float) Math.sin(frameCounter * 0.045 + id * 1.7);
+                wantPitch += 3.0F * (float) Math.sin(frameCounter * 0.06 + id * 2.3);
+            }
+            float wantBody = walking && facing != null ? facing : body;
+            if (snap) {
+                head = wantHead;
+                body = walking && facing != null ? facing : wantHead;
+                pitch = wantPitch;
+            } else {
+                head += net.minecraft.util.Mth.wrapDegrees(wantHead - head) * 0.35F;
+                pitch += (wantPitch - pitch) * 0.3F;
+                if (walking && facing != null) {
+                    body += net.minecraft.util.Mth.wrapDegrees(wantBody - body) * 0.35F;
+                } else {
+                    float d = net.minecraft.util.Mth.wrapDegrees(head - body);
+                    if (Math.abs(d) > 18.0F) {
+                        body += (d - Math.signum(d) * 18.0F) * 0.22F;
+                    }
+                }
+            }
+            // keep the head within what a neck can do
+            float rel = net.minecraft.util.Mth.wrapDegrees(head - body);
+            if (Math.abs(rel) > 70.0F) {
+                body = head - Math.signum(rel) * 70.0F;
+            }
+            m.setYRot(body);
+            m.yRotO = body;
+            m.yBodyRot = body;
+            m.yBodyRotO = body;
+            m.yHeadRot = head;
+            m.yHeadRotO = head;
+            m.setXRot(pitch);
+            m.xRotO = pitch;
         }
     }
 
@@ -681,6 +745,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 }
                 if (target != null) {
                     this.face(a, target.position());
+                    LOOK.put(a.getId(), target.getId());
                 }
             }
         });
@@ -689,6 +754,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     /** Actor swings at tick t and the hit lands 2 ticks later. */
     private void strike(int t, int actorId, int testerId, float amount, boolean crit) {
         this.firstTarget.putIfAbsent(actorId, testerId);
+        this.at(Math.max(1, t - 8), () -> LOOK.put(actorId, testerId));
         this.at(Math.max(1, t - 6), () -> this.srv(level -> {
             if (this.entity(level, actorId) instanceof LivingEntity a && this.entity(level, testerId) != null) {
                 this.face(a, this.entity(level, testerId).position());
@@ -1476,7 +1542,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.shot("k1a_warmup", "K1", 110).time(morning).fov(72).cam(Cine.dolly(
                 w.v(tx + 2.0, 1.45, tz + 4.6), w.v(tx + 1.5, 1.5, tz + 3.7), w.v(tx + 0.1, 1.15, tz + 1.0), w.v(tx + 0.1, 1.25, tz + 1.1))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int kai = this.actor(null, "kai", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor(null, "steve", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
             this.speakers.put("kai", kai);
             for (int k = 0; k < 4; k++) {
                 this.pose(8 + k * 12, kai, net.minecraft.world.entity.Pose.CROUCHING);
@@ -1490,7 +1556,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.shot("k1b_swing", "K1", 56).time(morning).fov(70).fps(1.6).cam(Cine.dolly(
                 w.v(tx - 1.9, 0.55, tz + 2.9), w.v(tx - 1.6, 0.6, tz + 2.6), w.v(tx + 0.1, 1.3, tz + 0.9), w.v(tx, 1.25, tz + 0.6))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int kai = this.actor(null, "kai", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor(null, "steve", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
             Vec3 a = w.v(tx, 0, tz + 1.55);
             this.every(i -> {
                 if (i >= 8 && i <= 26) {
@@ -1508,30 +1574,33 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.shot("k1c_stare", "K1", 60).time(morning).fov(70).cam(Cine.dolly(
                 w.v(tx + 0.6, 1.62, tz + 3.7), w.v(tx + 0.5, 1.62, tz + 3.4), w.v(tx, 1.55, tz + 1.5), w.v(tx, 1.55, tz + 1.5))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int kai = this.actor(null, "kai", tx, tz + 1.2, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor(null, "steve", tx, tz + 1.2, NORTH, new ItemStack(Items.WOODEN_SWORD));
             this.speakers.put("kai", kai);
-            this.turn(18, kai, SOUTH);
-            this.say(22, "kai", "dots");
+            this.look(0, kai, t);
+            this.turn(26, kai, SOUTH);
+            this.say(30, "kai", "dots");
             int unused = t;
         });
         this.shot("k1d_zuri", "K1", 120).time(morning).fov(72).cam(Cine.dolly(
                 w.v(tx + 0.4, 1.9, tz + 7.6), w.v(tx + 0.4, 1.8, tz + 7.0), w.v(tx + 0.4, 1.0, tz + 1.0), w.v(tx + 0.4, 1.0, tz + 1.0))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int kai = this.actor(null, "kai", tx - 1.1, tz + 1.4, NORTH + 30, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor(null, "steve", tx - 1.1, tz + 1.4, NORTH + 30, new ItemStack(Items.WOODEN_SWORD));
             int zuri = this.actor(null, "zuri", tx + 4.5, tz + 2.2, west, new ItemStack(Items.MACE));
             this.speakers.put("kai", kai);
             this.speakers.put("zuri", zuri);
             this.walk(6, 34, zuri, w.v(tx + 4.5, 0, tz + 2.2), w.v(tx + 1.0, 0, tz + 1.9));
-            this.turn(35, zuri, NORTH + 25);
+            this.look(4, kai, zuri);
+            this.look(35, zuri, t);
             this.maceJump(42, zuri, t, 47.0F, 18, 2.6);
-            this.turn(66, kai, east + 45);
+            this.look(66, zuri, kai);
             this.say(70, "kai", "what");
+            this.look(80, kai, t);
             this.walk(84, 116, zuri, w.v(tx + 0.8, 0, tz + 1.2), w.v(tx + 5.5, 0, tz + 2.6));
         });
         this.shot("k1e_lag", "K1", 90).time(morning).fov(70).cam(Cine.dolly(
                 w.v(tx - 1.1 + 0.4, 1.62, tz + 3.9), w.v(tx - 1.1 + 0.3, 1.62, tz + 3.4), w.v(tx - 1.1, 1.55, tz + 1.4), w.v(tx - 1.1, 1.55, tz + 1.4))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int kai = this.actor(null, "kai", tx - 1.1, tz + 1.4, SOUTH, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor(null, "steve", tx - 1.1, tz + 1.4, SOUTH, new ItemStack(Items.WOODEN_SWORD));
             this.speakers.put("kai", kai);
             this.say(14, "kai", "lag");
             this.turn(60, kai, SOUTH - 40);
@@ -1558,7 +1627,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 ts[k] = this.tester(rowX[k], rz, SOUTH, "");
             }
             int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
-            int kai = this.actor(null, "kai", -8.0, rz - 1.4, east, new ItemStack(Items.IRON_SWORD));
+            int kai = this.actor(null, "steve", -8.0, rz - 1.4, east, new ItemStack(Items.IRON_SWORD));
             this.speakers.put("ari", ari);
             this.walk(4, 16, kai, w.v(-8.0, 0, rz - 1.4), w.v(-6.5, 0, rz - 1.4));
             this.strike(20, kai, ts[0], 7, false);
@@ -1567,19 +1636,24 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.walk(56, 68, kai, w.v(-3.5, 0, rz - 1.4), w.v(-0.5, 0, rz - 1.4));
             this.strike(72, kai, ts[2], 12, true);
             this.walk(84, 100, kai, w.v(-0.5, 0, rz - 1.4), w.v(ariX - 0.2, 0, rz - 1.4));
-            this.turn(102, kai, NORTH);
+            this.look(102, kai, ari);
+            this.look(104, ari, kai);
             this.say(112, "ari", "sweat");
+            this.turn(130, ari, SOUTH);
         });
         this.shot("k2c_close", "K2", 70).time(day).fov(68).cam(Cine.dolly(
                 w.v(ariX + 2.2, 1.6, rz - 3.0), w.v(ariX + 1.9, 1.6, rz - 2.7), w.v(ariX - 0.1, 1.5, rz - 0.5), w.v(ariX - 0.1, 1.5, rz - 0.5))).setup(() -> {
             int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
-            int kai = this.actor(null, "kai", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
+            int kai = this.actor(null, "steve", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
             this.tester(-0.5, rz, SOUTH, "");
             this.tester(5.5, rz, SOUTH, "");
             this.speakers.put("ari", ari);
             this.speakers.put("kai", kai);
+            this.look(0, kai, ari);
             this.say(8, "kai", "hmm");
+            this.look(26, ari, kai);
             this.say(36, "ari", "dots");
+            this.turn(58, ari, SOUTH);
         });
         this.shot("k2d_ouch", "K2", 100).time(day).fov(72).cam(Cine.dolly(
                 w.v(ariX + 0.5, 2.0, rz - 7.0), w.v(ariX + 1.5, 2.0, rz - 6.6), w.v(ariX + 0.5, 1.1, rz), w.v(ariX + 2.5, 1.1, rz))).setup(() -> {
@@ -1587,9 +1661,11 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 this.tester(x, rz, SOUTH, "");
             }
             int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
-            int kai = this.actor(null, "kai", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
+            int kai = this.actor(null, "steve", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
             this.speakers.put("ari", ari);
             this.speakers.put("kai", kai);
+            this.look(0, kai, ari);
+            this.look(14, ari, kai);
             this.at(10, () -> this.swing(kai));
             this.at(12, () -> {
                 this.srv(level -> {
@@ -1640,6 +1716,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.strike(10, hero, t, 1, false);
             this.say(26, "hero", "one_more_tired");
             this.strike(48, hero, t, 0.5F, false);
+            this.turn(70, hero, NORTH);
             this.pose(72, hero, net.minecraft.world.entity.Pose.SWIMMING);
             this.at(72, () -> this.event("faceplant", ""));
             this.say(98, "tester", "again");
