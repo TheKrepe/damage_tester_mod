@@ -1,0 +1,15 @@
+[11:42:20] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=32, y=80, z=32} score 47.309496379073636
+[11:42:28] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=516, y=80, z=-288} score 146.63262749255702
+[11:42:35] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=0, y=80, z=900} score 99.04527951643307
+[11:42:39] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-836, y=80, z=-64} score 73.50558719058156
+[11:42:40] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-32, y=80, z=-612} score 61.31952152842787
+[11:42:42] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1092, y=80, z=1092} score 102.47111942501871
+[11:42:42] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 32 105 32
+[11:43:48] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[11:43:48] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 92158 ms
+[11:43:53] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording s06_armor_cine.mp4 at 1920x1080
+[trailer] s06_armor_cine: 195 frames (195 written) in 41.7 s (0.21 s/frame)
+[11:44:35] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording f07_bags.mp4 at 1920x1080
+[trailer] f07_bags: 255 frames (255 written) in 47.7 s (0.19 s/frame)
+[11:45:23] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording c04_jeb.mp4 at 1920x1080
+[trailer] c04_jeb: 165 frames (165 written) in 41.0 s (0.25 s/frame)
