@@ -50,7 +50,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
         context.waitTicks(40);
         context.getInput().resizeWindow(1920, 1080);
         context.runOnClient(client -> {
-            client.options.renderDistance().set(12);
+            client.options.renderDistance().set(8);
             client.options.bobView().set(false);
         });
         try (TestSingleplayerContext sp = context.worldBuilder()
@@ -60,7 +60,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             command(context, sp, "weather clear");
             command(context, sp, "gamerule advance_time false");
             command(context, sp, "gamerule advance_weather false");
-            sp.getConnection().waitForChunksRender();
+            sp.getConnection().waitForChunksRender(4000);
 
             List<Integer> row = sp.getServer().computeOnServer(server -> this.buildYard(sp.getConnection().getServerLevel(),
                     sp.getConnection().getServerPlayer()));
@@ -69,7 +69,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
                 command(context, sp, "place feature minecraft:" + (t[0] % 2 == 0 ? "oak" : "birch") + " " + (bx + t[0]) + " " + by + " " + (bz + t[1]));
             }
             context.waitTicks(20);
-            sp.getConnection().waitForChunksRender();
+            sp.getConnection().waitForChunksRender(4000);
 
             // ---------------------------------------------------------------- hero shot
             spectator(context, sp, bx + 0.5, by + 4.2, bz - 1.5, 0.0F, 22.0F);
@@ -339,7 +339,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
         command(context, sp, String.format(java.util.Locale.ROOT, "tp @a %.2f %.2f %.2f %.1f %.1f", x, y, z, yaw, pitch));
         context.waitTicks(5);
         context.getInput().lookAt(yaw, pitch);
-        sp.getConnection().waitForChunksRender();
+        sp.getConnection().waitForChunksRender(4000);
         this.cleanHud(context, true);
     }
 
