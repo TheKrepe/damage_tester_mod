@@ -1,0 +1,15 @@
+[18:59:36] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=32, y=80, z=32} score 42.14648102117164
+[18:59:54] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=516, y=80, z=-288} score 146.63262749255702
+[19:00:08] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=0, y=80, z=900} score 99.04527951643307
+[19:00:15] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-836, y=80, z=-64} score 73.50558719058156
+[19:00:18] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-32, y=80, z=-612} score 61.31952152842787
+[19:00:22] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1092, y=80, z=1092} score 102.47111942501871
+[19:00:22] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 32 105 32
+[19:01:58] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[19:01:58] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 145766 ms
+[19:02:06] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3a_morning.mp4 at 1080x1920
+[trailer] k3a_morning: 135 frames (135 written) in 47.7 s (0.35 s/frame)
+[19:02:53] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3b_timelapse.mp4 at 1080x1920
+[trailer] k3b_timelapse: 330 frames (330 written) in 104.1 s (0.32 s/frame)
+[19:04:37] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3c_night.mp4 at 1080x1920
+[trailer] k3c_night: 210 frames (210 written) in 71.0 s (0.34 s/frame)

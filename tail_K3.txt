@@ -1,0 +1,300 @@
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:oak" at 2, 105, 16
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:fancy_oak" at 10, 105, 10
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:oak" at -8, 105, 26
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:birch" at 50, 105, 14
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:birch" at 62, 105, 20
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:fancy_oak" at 76, 105, 28
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:birch" at 84, 105, 46
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:fancy_oak" at -20, 104, 44
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Failed to place feature
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:oak" at 86, 101, 72
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Failed to place feature
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:oak" at -18, 104, 84
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Failed to place feature
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:fancy_oak" at 38, 94, 94
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Failed to place feature
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:oak" at 24, 105, 6
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:fancy_oak" at 72, 105, 48
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:birch" at 14, 105, 50
+[19:00:32] [Server thread/INFO] (Minecraft) System chat: Placed "minecraft:birch" at 48, 105, 52
+[19:00:35] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Command Buffer, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[19:00:35] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Instanced, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[19:01:27] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 122330ms or 2446 ticks behind
+[19:01:58] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[19:01:58] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 145766 ms
+[19:01:58] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 1500 tick(s)
+[19:01:58] [Server thread/INFO] (Minecraft) System chat: Set the weather to clear
+[19:01:58] [Server thread/INFO] (Minecraft) System chat: Summoned new Mannequin
+[19:02:06] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Command Buffer, capacity limit of 512 reached during a single frame. New capacity will be 1024.
+[19:02:06] [Render thread/INFO] (Minecraft) Resizing Terrain UBO, capacity limit of 1 reached during a single frame. New capacity will be 2.
+[19:02:06] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Instanced, capacity limit of 256 reached during a single frame. New capacity will be 512.
+[19:02:06] [Render thread/INFO] (Minecraft) Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[19:02:06] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3a_morning.mp4 at 1080x1920
+[19:02:07] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Command Buffer, capacity limit of 1024 reached during a single frame. New capacity will be 2048.
+[19:02:07] [Render thread/INFO] (Minecraft) Resizing Chunk Sections Instanced, capacity limit of 512 reached during a single frame. New capacity will be 1024.
+[trailer] k3a_morning: 135 frames (135 written) in 47.7 s (0.35 s/frame)
+[19:02:46] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2000 tick(s)
+[19:02:46] [Server thread/INFO] (Minecraft) System chat: Set the weather to clear
+[19:02:46] [Server thread/INFO] (Minecraft) System chat: Summoned new Mannequin
+[19:02:48] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 66509ms or 1330 ticks behind
+[19:02:53] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2075 tick(s)
+[19:02:53] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2150 tick(s)
+[19:02:53] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3b_timelapse.mp4 at 1080x1920
+[19:02:53] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2225 tick(s)
+[19:02:54] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2300 tick(s)
+[19:02:54] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2375 tick(s)
+[19:02:55] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2450 tick(s)
+[19:02:55] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2525 tick(s)
+[19:02:55] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2600 tick(s)
+[19:02:56] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2675 tick(s)
+[19:02:56] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2750 tick(s)
+[19:02:56] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2825 tick(s)
+[19:02:57] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2900 tick(s)
+[19:02:57] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 2975 tick(s)
+[19:02:58] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3050 tick(s)
+[19:02:58] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3125 tick(s)
+[19:02:59] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3200 tick(s)
+[19:02:59] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3275 tick(s)
+[19:03:00] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3350 tick(s)
+[19:03:00] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3425 tick(s)
+[19:03:00] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3500 tick(s)
+[19:03:01] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3575 tick(s)
+[19:03:01] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3650 tick(s)
+[19:03:02] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3725 tick(s)
+[19:03:02] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3800 tick(s)
+[19:03:02] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3875 tick(s)
+[19:03:03] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 3950 tick(s)
+[19:03:03] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4025 tick(s)
+[19:03:04] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4100 tick(s)
+[19:03:04] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4175 tick(s)
+[19:03:05] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4250 tick(s)
+[19:03:05] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4325 tick(s)
+[19:03:06] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4400 tick(s)
+[19:03:06] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4475 tick(s)
+[19:03:06] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4550 tick(s)
+[19:03:07] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4625 tick(s)
+[19:03:07] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4700 tick(s)
+[19:03:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4775 tick(s)
+[19:03:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4850 tick(s)
+[19:03:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 4925 tick(s)
+[19:03:09] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5000 tick(s)
+[19:03:09] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5075 tick(s)
+[19:03:10] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5150 tick(s)
+[19:03:10] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5225 tick(s)
+[19:03:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5300 tick(s)
+[19:03:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5375 tick(s)
+[19:03:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5450 tick(s)
+[19:03:12] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5525 tick(s)
+[19:03:12] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5600 tick(s)
+[19:03:13] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5675 tick(s)
+[19:03:13] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5750 tick(s)
+[19:03:14] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5825 tick(s)
+[19:03:14] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5900 tick(s)
+[19:03:14] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 5975 tick(s)
+[19:03:15] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6050 tick(s)
+[19:03:15] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6125 tick(s)
+[19:03:16] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6200 tick(s)
+[19:03:16] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6275 tick(s)
+[19:03:17] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6350 tick(s)
+[19:03:17] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6425 tick(s)
+[19:03:18] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6500 tick(s)
+[19:03:18] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6575 tick(s)
+[19:03:19] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6650 tick(s)
+[19:03:19] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6725 tick(s)
+[19:03:19] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6800 tick(s)
+[19:03:20] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6875 tick(s)
+[19:03:20] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 6950 tick(s)
+[19:03:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7025 tick(s)
+[19:03:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7100 tick(s)
+[19:03:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7175 tick(s)
+[19:03:22] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7250 tick(s)
+[19:03:22] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7325 tick(s)
+[19:03:23] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7400 tick(s)
+[19:03:23] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7475 tick(s)
+[19:03:24] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7550 tick(s)
+[19:03:24] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7625 tick(s)
+[19:03:25] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7700 tick(s)
+[19:03:25] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7775 tick(s)
+[19:03:25] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7850 tick(s)
+[19:03:26] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 7925 tick(s)
+[19:03:26] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8000 tick(s)
+[19:03:27] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8075 tick(s)
+[19:03:27] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8150 tick(s)
+[19:03:27] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8225 tick(s)
+[19:03:28] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8300 tick(s)
+[19:03:28] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8375 tick(s)
+[19:03:29] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8450 tick(s)
+[19:03:29] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8525 tick(s)
+[19:03:30] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8600 tick(s)
+[19:03:30] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8675 tick(s)
+[19:03:31] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8750 tick(s)
+[19:03:31] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8825 tick(s)
+[19:03:31] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8900 tick(s)
+[19:03:32] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 8975 tick(s)
+[19:03:32] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9050 tick(s)
+[19:03:33] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9125 tick(s)
+[19:03:33] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9200 tick(s)
+[19:03:33] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9275 tick(s)
+[19:03:34] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9350 tick(s)
+[19:03:34] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9425 tick(s)
+[19:03:35] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9500 tick(s)
+[19:03:35] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9575 tick(s)
+[19:03:36] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9650 tick(s)
+[19:03:36] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9725 tick(s)
+[19:03:37] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9800 tick(s)
+[19:03:37] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9875 tick(s)
+[19:03:37] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 9950 tick(s)
+[19:03:38] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10025 tick(s)
+[19:03:38] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10100 tick(s)
+[19:03:39] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10175 tick(s)
+[19:03:39] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10250 tick(s)
+[19:03:39] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10325 tick(s)
+[19:03:40] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10400 tick(s)
+[19:03:40] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10475 tick(s)
+[19:03:41] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10550 tick(s)
+[19:03:41] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10625 tick(s)
+[19:03:42] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10700 tick(s)
+[19:03:42] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10775 tick(s)
+[19:03:43] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10850 tick(s)
+[19:03:43] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 10925 tick(s)
+[19:03:44] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11000 tick(s)
+[19:03:44] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11075 tick(s)
+[19:03:45] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11150 tick(s)
+[19:03:45] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11225 tick(s)
+[19:03:46] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11300 tick(s)
+[19:03:46] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11375 tick(s)
+[19:03:47] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11450 tick(s)
+[19:03:47] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11525 tick(s)
+[19:03:47] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11600 tick(s)
+[19:03:48] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11675 tick(s)
+[19:03:48] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11750 tick(s)
+[19:03:49] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11825 tick(s)
+[19:03:49] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11900 tick(s)
+[19:03:50] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 11975 tick(s)
+[19:03:50] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12050 tick(s)
+[19:03:50] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12125 tick(s)
+[19:03:51] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12200 tick(s)
+[19:03:51] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12275 tick(s)
+[19:03:52] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12350 tick(s)
+[19:03:52] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12425 tick(s)
+[19:03:53] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12500 tick(s)
+[19:03:53] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12575 tick(s)
+[19:03:54] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12650 tick(s)
+[19:03:54] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12725 tick(s)
+[19:03:55] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12800 tick(s)
+[19:03:55] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12875 tick(s)
+[19:03:56] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 12950 tick(s)
+[19:03:56] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13025 tick(s)
+[19:03:57] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13100 tick(s)
+[19:03:57] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13175 tick(s)
+[19:03:58] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13250 tick(s)
+[19:03:58] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13325 tick(s)
+[19:03:59] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13400 tick(s)
+[19:03:59] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13475 tick(s)
+[19:03:59] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13550 tick(s)
+[19:04:00] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13625 tick(s)
+[19:04:00] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13700 tick(s)
+[19:04:01] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13775 tick(s)
+[19:04:01] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13850 tick(s)
+[19:04:02] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 13925 tick(s)
+[19:04:02] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14000 tick(s)
+[19:04:03] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14075 tick(s)
+[19:04:03] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14150 tick(s)
+[19:04:04] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14225 tick(s)
+[19:04:04] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14300 tick(s)
+[19:04:04] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14375 tick(s)
+[19:04:05] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14450 tick(s)
+[19:04:05] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14525 tick(s)
+[19:04:06] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14600 tick(s)
+[19:04:06] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14675 tick(s)
+[19:04:07] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14750 tick(s)
+[19:04:07] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14825 tick(s)
+[19:04:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14900 tick(s)
+[19:04:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 14975 tick(s)
+[19:04:08] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15050 tick(s)
+[19:04:09] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15125 tick(s)
+[19:04:09] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15200 tick(s)
+[19:04:10] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15275 tick(s)
+[19:04:10] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15350 tick(s)
+[19:04:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15425 tick(s)
+[19:04:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15500 tick(s)
+[19:04:11] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15575 tick(s)
+[19:04:12] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15650 tick(s)
+[19:04:12] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15725 tick(s)
+[19:04:13] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15800 tick(s)
+[19:04:13] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15875 tick(s)
+[19:04:14] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 15950 tick(s)
+[19:04:14] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16025 tick(s)
+[19:04:15] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16100 tick(s)
+[19:04:15] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16175 tick(s)
+[19:04:15] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16250 tick(s)
+[19:04:16] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16325 tick(s)
+[19:04:16] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16400 tick(s)
+[19:04:17] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16475 tick(s)
+[19:04:17] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16550 tick(s)
+[19:04:17] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16625 tick(s)
+[19:04:18] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16700 tick(s)
+[19:04:18] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16775 tick(s)
+[19:04:19] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16850 tick(s)
+[19:04:19] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 16925 tick(s)
+[19:04:20] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17000 tick(s)
+[19:04:20] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17075 tick(s)
+[19:04:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17150 tick(s)
+[19:04:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17225 tick(s)
+[19:04:21] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17300 tick(s)
+[19:04:22] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17375 tick(s)
+[19:04:22] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17450 tick(s)
+[19:04:23] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17525 tick(s)
+[19:04:23] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17600 tick(s)
+[19:04:24] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17675 tick(s)
+[19:04:24] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17750 tick(s)
+[19:04:24] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17825 tick(s)
+[19:04:25] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17900 tick(s)
+[19:04:25] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 17975 tick(s)
+[19:04:26] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18050 tick(s)
+[19:04:26] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18125 tick(s)
+[19:04:27] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18200 tick(s)
+[19:04:27] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18275 tick(s)
+[19:04:28] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18350 tick(s)
+[19:04:28] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18425 tick(s)
+[19:04:28] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18500 tick(s)
+[trailer] k3b_timelapse: 330 frames (330 written) in 104.1 s (0.32 s/frame)
+[19:04:30] [Server thread/INFO] (Minecraft) System chat: Set minecraft:overworld to 18200 tick(s)
+[19:04:30] [Server thread/INFO] (Minecraft) System chat: Set the weather to clear
+[19:04:30] [Server thread/INFO] (Minecraft) System chat: Summoned new Mannequin
+[19:04:37] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k3c_night.mp4 at 1080x1920
+[19:04:42] [Server thread/WARN] (Minecraft) Can't keep up! Is the server overloaded? Running 98566ms or 1971 ticks behind
+[trailer] k3c_night: 210 frames (210 written) in 71.0 s (0.34 s/frame)
+[19:05:40] [Server thread/INFO] (Minecraft) Player0 lost connection: Disconnected
+[19:05:40] [Server thread/INFO] (Minecraft) System chat: Player0 left the game
+[19:05:40] [Server thread/INFO] (Minecraft) Stopping singleplayer server as player logged out
+[19:05:41] [Server thread/INFO] (Minecraft) Stopping server
+[19:05:41] [Server thread/INFO] (Minecraft) Saving players
+[19:05:41] [Server thread/INFO] (Minecraft) Saving worlds
+[19:05:44] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[19:05:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[19:05:46] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[19:05:47] [Render thread/INFO] (Minecraft) Stopping!
+[19:05:47] [Render thread/WARN] (Minecraft) Couldn't acquire next surface texture with config Optional[Configuration[width=1080, height=1920, presentMode=FIFO]]
+
+com.mojang.renderpearl.api.device.SurfaceException: Failed to acquire image, swapchain out of date
+	at knot//com.mojang.renderpearl.backend.vulkan.VulkanGpuSurface.acquireNextTexture(VulkanGpuSurface.java:277)
+	at knot//com.mojang.renderpearl.frontend.FrontendGpuSurface.acquireNextTexture(FrontendGpuSurface.java:71)
+	at knot//net.minecraft.client.Minecraft.renderFrame(Minecraft.java:1330)
+	at knot//net.minecraft.client.Minecraft.setScreenAndShow(Minecraft.java:2321)
+	at knot//net.minecraft.client.Minecraft.disconnect(Minecraft.java:2271)
+	at knot//net.minecraft.client.Minecraft.disconnectWithProgressScreen(Minecraft.java:2220)
+	at knot//net.minecraft.client.Minecraft.disconnectWithProgressScreen(Minecraft.java:2216)
+	at knot//net.minecraft.client.Minecraft.exitWorldAndClose(Minecraft.java:1169)
+	at knot//net.minecraft.client.main.Main.main(Main.java:296)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:517)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1793818670968.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/damage_tester_mod/damage_tester_mod/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 8m 3s
+19 actionable tasks: 18 executed, 1 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.2/userguide/configuration_cache_enabling.html
