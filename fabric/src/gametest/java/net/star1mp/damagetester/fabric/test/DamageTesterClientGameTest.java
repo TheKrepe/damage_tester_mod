@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 public class DamageTesterClientGameTest implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
-        if (DamageTesterShowcase.enabled()) {
+        if (DamageTesterShowcase.enabled() || net.star1mp.damagetester.fabric.test.trailer.DamageTesterTrailer.enabled()) {
             return; // screenshot run, see DamageTesterShowcase
         }
         context.waitTicks(40);

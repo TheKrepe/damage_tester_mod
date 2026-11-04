@@ -1,0 +1,58 @@
+name: Trailer clips
+
+on:
+  workflow_dispatch:
+    inputs:
+      groups:
+        description: 'JSON list of shot groups or shot names, e.g. ["A","B"]'
+        default: '["A","B","C","D","E"]'
+      maxticks:
+        description: 'Cap shot length (ticks) for quick tests'
+        default: '100000'
+      profile:
+        description: 'Mannequin profile mode (texture, texture_ns, name)'
+        default: 'texture'
+
+permissions:
+  contents: write
+
+jobs:
+  record:
+    strategy:
+      fail-fast: false
+      matrix:
+        group: ${{ fromJSON(inputs.groups) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install virtual display + Mesa + ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers ffmpeg
+      - name: Record clips
+        env:
+          DT_TRAILER: ${{ matrix.group }}
+          DT_TRAILER_MAXTICKS: ${{ inputs.maxticks }}
+          DT_PROFILE_MODE: ${{ inputs.profile }}
+          DT_TRAILER_OUT: ${{ github.workspace }}/trailer_out
+          LP_NUM_THREADS: '4'
+        run: xvfb-run -a -s "-screen 0 2000x1200x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain 2>&1 | tee record.log | grep -E "\[trailer\]|ERROR|Exception|FAILED|BUILD" | head -400
+      - name: Collect sounds and logs
+        if: always()
+        run: |
+          mkdir -p trailer_out
+          python3 .github/scripts/extract_sounds.py trailer_out/sounds || true
+          grep -E "\[trailer\]" record.log > trailer_out/log_${{ matrix.group }}.txt || true
+          tail -300 record.log > trailer_out/tail_${{ matrix.group }}.txt || true
+          if [ -f trailer_out/events.csv ]; then mv trailer_out/events.csv trailer_out/events_${{ matrix.group }}.csv; fi
+          ls -laR trailer_out | head -80
+      - name: Publish clips to a branch
+        if: always()
+        run: |
+          cd trailer_out
+          git init -q -b ci-trailer-${{ matrix.group }}
+          git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "trailer ${{ matrix.group }} ${{ github.sha }}" || exit 0
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-trailer-${{ matrix.group }}
