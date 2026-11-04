@@ -358,6 +358,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     x, y, z, cam.x(), cam.y(), cam.z(), cam.yaw(), cam.pitch(), mc.options.fov().get()));
         }
         try {
+            java.nio.file.Files.createDirectories(this.out);
             java.nio.file.Files.writeString(this.out.resolve("speakers.csv"), sb.toString(),
                     java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
         } catch (java.io.IOException ex) {
