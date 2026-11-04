@@ -48,7 +48,6 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             return;
         }
         context.waitTicks(40);
-        context.getInput().resizeWindow(1920, 1080);
         context.runOnClient(client -> {
             client.options.renderDistance().set(8);
             client.options.bobView().set(false);
@@ -60,7 +59,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             command(context, sp, "weather clear");
             command(context, sp, "gamerule advance_time false");
             command(context, sp, "gamerule advance_weather false");
-            sp.getConnection().waitForChunksRender(4000);
+            sp.getConnection().waitForChunksRender(6000);
 
             List<Integer> row = sp.getServer().computeOnServer(server -> this.buildYard(sp.getConnection().getServerLevel(),
                     sp.getConnection().getServerPlayer()));
@@ -69,7 +68,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
                 command(context, sp, "place feature minecraft:" + (t[0] % 2 == 0 ? "oak" : "birch") + " " + (bx + t[0]) + " " + by + " " + (bz + t[1]));
             }
             context.waitTicks(20);
-            sp.getConnection().waitForChunksRender(4000);
+            sp.getConnection().waitForChunksRender(6000);
 
             // ---------------------------------------------------------------- hero shot
             spectator(context, sp, bx + 0.5, by + 4.2, bz - 1.5, 0.0F, 22.0F);
@@ -116,7 +115,6 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             command(context, sp, "time set 1000");
 
             // ---------------------------------------------------------------- with the HUD: real attacks + GIF frames
-            context.getInput().resizeWindow(960, 540);
             Vec3 target = position(sp, hero);
             command(context, sp, "gamemode creative @a");
             sp.getServer().runOnServer(server -> {
@@ -146,8 +144,6 @@ public class DamageTesterShowcase implements FabricClientGameTest {
                 }
             }
             this.cleanHud(context, true);
-            context.getInput().resizeWindow(1920, 1080);
-            context.waitTicks(5);
             context.getInput().pressKey(options -> options.keyAttack);
             context.waitTicks(3);
             shot(context, "06_in_game");
@@ -339,7 +335,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
         command(context, sp, String.format(java.util.Locale.ROOT, "tp @a %.2f %.2f %.2f %.1f %.1f", x, y, z, yaw, pitch));
         context.waitTicks(5);
         context.getInput().lookAt(yaw, pitch);
-        sp.getConnection().waitForChunksRender(4000);
+        sp.getConnection().waitForChunksRender(6000);
         this.cleanHud(context, true);
     }
 
@@ -370,7 +366,12 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             context.runOnClient(client -> client.gui.hud.toggle());
             context.waitTick();
         }
+        // Rendering is software-only on CI, so only switch to full HD for the screenshot itself.
+        context.getInput().resizeWindow(1920, 1080);
+        context.waitTicks(20);
         context.takeScreenshot("showcase_" + name);
+        context.getInput().resizeWindow(960, 540);
+        context.waitTicks(2);
         context.runOnClient(client -> {
             if (client.gui.hud.isHidden()) {
                 client.gui.hud.toggle();

@@ -19,7 +19,7 @@ jobs:
       - name: Take showcase screenshots
         env:
           DT_SHOWCASE: "1"
-        run: xvfb-run -a -s "-screen 0 1920x1080x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain
+        run: xvfb-run -a -s "-screen 0 2000x1200x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain
       - name: Build GIF and video
         if: always()
         run: |
