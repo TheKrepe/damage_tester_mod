@@ -121,6 +121,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     s.getGameRules().set(GameRules.SPAWN_MONSTERS, false, null);
                     s.getGameRules().set(GameRules.MOB_GRIEFING, false, null);
                     s.getGameRules().set(GameRules.SHOW_ADVANCEMENT_MESSAGES, false, null);
+                    s.getGameRules().set(GameRules.SEND_COMMAND_FEEDBACK, false, null);
                 })
                 .create()) {
             this.sp = world;
@@ -956,7 +957,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
 
         this.shot("s12_redstone", "B", 180).time(morning).cam(Cine.dolly(
-                w.v(14.5, 4.6, 9.8), w.v(23.5, 4.2, 9.4), w.v(16.5, 0.3, 4.5), w.v(25.0, 0.3, 4.5))).setup(() -> {
+                w.v(8.8, 3.4, 8.6), w.v(10.2, 3.1, 8.2), w.v(18.5, 0.2, 4.5), w.v(19.5, 0.2, 4.5))).setup(() -> {
             int t = this.tester(TesterVariant.STANDARD, 12.5, 1, 4.5, SOUTH, "dye:red");
             int hero = this.actor(null, "steve", 12.5, 6.0, NORTH, new ItemStack(Items.DIAMOND_SWORD));
             this.strike(20, hero, t, 4, false);
