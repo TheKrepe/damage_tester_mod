@@ -1,0 +1,15 @@
+[07:55:00] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=31, y=109, z=34} score 29.93051500436519
+[07:55:11] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=515, y=109, z=226} score 94.11514209873074
+[07:55:21] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-1, y=109, z=902} score 98.65151181744132
+[07:55:25] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-805, y=109, z=-62} score 78.00556774956219
+[07:55:27] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-97, y=109, z=-610} score 64.78049017777457
+[07:55:29] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1091, y=109, z=1094} score 94.3760482535112
+[07:55:29] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 31 104 34
+[07:56:59] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[07:56:59] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 120681 ms
+[07:57:02] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording i04_logo_orbit.mp4 at 854x480
+[trailer] i04_logo_orbit: 90 frames (90 written) in 17.4 s (0.19 s/frame)
+[07:57:19] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording s03_hits_fp.mp4 at 854x480
+[trailer] s03_hits_fp: 90 frames (90 written) in 13.2 s (0.15 s/frame)
+[07:57:32] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording f06_cart_follow.mp4 at 854x480
+[trailer] f06_cart_follow: 90 frames (90 written) in 19.2 s (0.21 s/frame)
