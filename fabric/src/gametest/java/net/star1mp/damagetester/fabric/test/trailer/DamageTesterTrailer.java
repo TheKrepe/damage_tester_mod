@@ -589,7 +589,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         String tag = "dt_actor_" + n;
         Vec3 p = this.w.v(x, y, z);
         String nameNbt = name == null ? "" : ",CustomName:\"" + name + "\",CustomNameVisible:1b";
-        String nbt = "{" + (profile == null ? "" : "profile:" + profile + ",") + "hide_description:1b" + nameNbt
+        String nbt = "{" + (profile == null ? "" : "profile:" + profile + ",") + "hide_description:1b,Invulnerable:1b" + nameNbt
                 + ",Tags:[\"" + tag + "\"],Rotation:[" + yaw + "f,0f]}";
         this.cmd(String.format(Locale.ROOT, "summon minecraft:mannequin %.3f %.3f %.3f %s", p.x, p.y, p.z, nbt));
         int id = this.srvGet(level -> {
@@ -606,7 +606,6 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             e.setYHeadRot(yaw);
             e.setYBodyRot(yaw);
             e.setItemSlot(EquipmentSlot.MAINHAND, mainHand);
-            e.setInvulnerable(true); // no red hurt flash from bumps and falls
             if (name != null) {
                 e.setCustomName(Component.literal(name));
                 e.setCustomNameVisible(true);
@@ -1595,9 +1594,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.at(12, () -> {
                 this.srv(level -> {
                     if (this.entity(level, ari) instanceof LivingEntity a && this.entity(level, kai) instanceof LivingEntity k) {
-                        a.setInvulnerable(false);
-                        a.hurtServer(level, level.damageSources().mobAttack(k), 0.5F);
-                        a.setHealth(a.getMaxHealth());
+                        level.broadcastDamageEvent(a, level.damageSources().mobAttack(k));
                     }
                 });
                 this.event("hit", "ari");
