@@ -48,17 +48,11 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             return;
         }
         context.waitTicks(40);
-        context.runOnClient(client -> {
-            client.options.renderDistance().set(8);
-            client.options.bobView().set(false);
-        });
         try (TestSingleplayerContext sp = context.worldBuilder()
                 .adjustSettings(s -> s.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE))
                 .create()) {
             command(context, sp, "time set 1000");
             command(context, sp, "weather clear");
-            command(context, sp, "gamerule advance_time false");
-            command(context, sp, "gamerule advance_weather false");
             sp.getConnection().waitForChunksRender(6000);
 
             List<Integer> row = sp.getServer().computeOnServer(server -> this.buildYard(sp.getConnection().getServerLevel(),
