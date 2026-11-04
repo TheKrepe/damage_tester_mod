@@ -7,6 +7,7 @@ modId = "${mod_id}"
 version = "${version}"
 displayName = "${mod_name}"
 iconFile = "assets/damage_tester/icon.png"
+bannerFile = "assets/damage_tester/banner.png"
 authors = "${mod_author}"
 description = '''${description}'''
 
