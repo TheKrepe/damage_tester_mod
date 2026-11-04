@@ -11,15 +11,10 @@ done
 sleep 30
 shot() { import -display "$DISPLAY" -window root "shots/$1.png"; }
 shot 1_title
-WID=$(xdotool search --name "Minecraft" | head -1); echo "window $WID"
-xdotool windowactivate --sync "$WID" 2>/dev/null; xdotool windowmove "$WID" 0 0; xdotool windowsize "$WID" 1280 720; sleep 3
-shot 2_title_sized
-# gui 640x360: Mods button is the left half of the row under Multiplayer (y = 90+48+48 = 186..206)
-xdotool mousemove 268 392 click 1; sleep 4
-shot 3_after_click
-xdotool type --delay 120 "damage"; sleep 3
-shot 4_search
-# first entry of the list
-xdotool mousemove 120 150 click 1; sleep 3
-shot 5_selected
+n=0
+for xy in "567 467" "615 467" "663 467" "711 467" "862 323"; do
+  n=$((n+1)); xdotool mousemove $xy; sleep 1; shot "h$n"; xdotool click 1; sleep 4; shot "c$n"
+  xdotool type --delay 120 "damage"; sleep 2; xdotool mousemove 330 200 click 1; sleep 3; shot "s$n"
+  xdotool key Escape; sleep 3
+done
 pkill -f "java.*neoforge" || true
