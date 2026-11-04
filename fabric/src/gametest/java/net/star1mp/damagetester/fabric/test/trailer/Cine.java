@@ -23,6 +23,9 @@ import net.minecraft.world.phys.Vec3;
 
 /** Frame-exact video capture for the trailer: cameras, frame timing and an ffmpeg pipe. */
 public final class Cine {
+    /** Vertical 1080x1920 capture for shorts (groups starting with K). */
+    public static boolean VERTICAL = false;
+
     public static final int FPS = 30;
     public static final double TICKS_PER_FRAME = 20.0 / FPS;
 
@@ -229,7 +232,7 @@ public final class Cine {
             Files.createDirectories(this.file.getParent());
             List<String> cmd = new ArrayList<>(List.of("ffmpeg", "-y", "-loglevel", "error",
                     "-f", "rawvideo", "-pix_fmt", "rgba", "-s", w + "x" + h, "-r", String.valueOf(FPS), "-i", "-",
-                    "-vf", "scale=1920:1080:flags=lanczos,format=yuv420p",
+                    "-vf", (VERTICAL ? "scale=1080:1920" : "scale=1920:1080") + ":flags=lanczos,format=yuv420p",
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "15", "-movflags", "+faststart",
                     this.file.toString()));
             this.process = new ProcessBuilder(cmd).inheritIO().redirectInput(ProcessBuilder.Redirect.PIPE).start();

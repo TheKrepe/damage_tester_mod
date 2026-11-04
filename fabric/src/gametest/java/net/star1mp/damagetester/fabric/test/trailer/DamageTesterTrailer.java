@@ -90,6 +90,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     private final Map<Integer, Integer> firstTarget = new LinkedHashMap<>();
     /** Wanted yaw per actor, written by the server thread and applied to the client mannequin every frame. */
     private static final Map<Integer, Float> FACING = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Entities whose screen position is logged every frame (for speech bubbles in the edit). */
+    private final Map<String, Integer> speakers = new LinkedHashMap<>();
     private final List<IntConsumer> everyTick = new ArrayList<>();
     private int actorCounter;
 
@@ -106,7 +108,12 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.out = Path.of(System.getenv().getOrDefault("DT_TRAILER_OUT", "trailer")).toAbsolutePath();
         this.events = new Cine.EventLog(this.out.resolve("events.csv"));
         context.waitTicks(40);
-        context.getInput().resizeWindow(1920, 1080);
+        Cine.VERTICAL = System.getenv("DT_TRAILER").startsWith("K");
+        if (Cine.VERTICAL) {
+            context.getInput().resizeWindow(1080, 1920);
+        } else {
+            context.getInput().resizeWindow(1920, 1080);
+        }
         context.waitTicks(5);
         context.runOnClient(mc -> {
             mc.options.guiScale().set(3);
@@ -257,6 +264,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.actions.clear();
         this.everyTick.clear();
         this.firstTarget.clear();
+        this.speakers.clear();
         FACING.clear();
         this.cleanup();
         this.cmd("time set " + s.time);
@@ -317,6 +325,9 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                         Cine.placeCamera(mc, s.cam.at(u, t, mc, partial));
                     }
                     alignBodies(mc, false);
+                    if (!this.speakers.isEmpty() && s.cam != null) {
+                        this.logSpeakers(mc, s, index, s.cam.at(u, t, mc, partial), partial);
+                    }
                     Cine.renderFrame(mc, partial, rec, index);
                 });
                 frame++;
@@ -331,6 +342,73 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         long ms = System.currentTimeMillis() - t0;
         System.out.printf(Locale.ROOT, "[trailer] %s: %d frames (%d written) in %.1f s (%.2f s/frame)%n",
                 s.name, expected, rec.written(), ms / 1000.0, ms / 1000.0 / Math.max(1, expected));
+    }
+
+    private void logSpeakers(net.minecraft.client.Minecraft mc, Shot s, int frame, Pose cam, float partial) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Integer> e : this.speakers.entrySet()) {
+            Entity en = mc.level.getEntity(e.getValue());
+            if (en == null) {
+                continue;
+            }
+            double x = net.minecraft.util.Mth.lerp(partial, en.xo, en.getX());
+            double y = net.minecraft.util.Mth.lerp(partial, en.yo, en.getY()) + en.getBbHeight();
+            double z = net.minecraft.util.Mth.lerp(partial, en.zo, en.getZ());
+            sb.append(String.format(Locale.ROOT, "%s,%d,%s,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.2f,%.2f,%d%n", s.name, frame, e.getKey(),
+                    x, y, z, cam.x(), cam.y(), cam.z(), cam.yaw(), cam.pitch(), mc.options.fov().get()));
+        }
+        try {
+            java.nio.file.Files.writeString(this.out.resolve("speakers.csv"), sb.toString(),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (java.io.IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void pose(int t, int actorId, net.minecraft.world.entity.Pose pose) {
+        this.at(t, () -> this.srv(level -> {
+            Entity e = this.entity(level, actorId);
+            if (e != null) {
+                e.setPose(pose);
+            }
+        }));
+    }
+
+    /** Walks an actor in a straight line between two ticks, facing the way it goes. */
+    private void walk(int from, int to, int actorId, Vec3 a, Vec3 b) {
+        float yaw = (float) Math.toDegrees(Math.atan2(b.z - a.z, b.x - a.x)) - 90.0F;
+        this.every(i -> {
+            if (i < from || i > to) {
+                return;
+            }
+            double u = (double) (i - from) / Math.max(1, to - from);
+            this.moveActor(actorId, Cine.lerp(u, a, b));
+            if (i == from) {
+                FACING.put(actorId, yaw);
+                this.srv(level -> {
+                    if (this.entity(level, actorId) instanceof LivingEntity le) {
+                        le.setYRot(yaw);
+                    }
+                });
+            }
+        });
+    }
+
+    private void turn(int t, int actorId, float yaw) {
+        this.at(t, () -> {
+            FACING.put(actorId, yaw);
+            this.srv(level -> {
+                Entity e = this.entity(level, actorId);
+                if (e != null) {
+                    e.setYRot(yaw);
+                }
+            });
+        });
+    }
+
+    /** A line of dialogue: logged for the edit (bubble + mumble). */
+    private void say(int t, String who, String key) {
+        this.at(t, () -> this.event("say", who + ":" + key));
     }
 
     private void at(int t, Runnable r) {
@@ -1387,6 +1465,188 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                         new int[][]{{0xFFD23F, 0xFF7A1A}, {0xC77DFF, 0xFFFFFF}, {0x2FD5C2, 0xBFE9FF}, {0xFF5555, 0xFFD23F}}[k % 4]);
             }
             int unused = cart;
+        });
+
+        // ============================================================ COMEDY SHORTS (vertical, groups K1..K3)
+        final float east = -90.0F;
+        final float west = 90.0F;
+
+        // ---- K1: expectation vs reality
+        this.shot("k1a_warmup", "K1", 110).time(morning).fov(72).cam(Cine.dolly(
+                w.v(tx + 2.0, 1.45, tz + 4.6), w.v(tx + 1.5, 1.5, tz + 3.7), w.v(tx + 0.1, 1.15, tz + 1.0), w.v(tx + 0.1, 1.25, tz + 1.1))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int kai = this.actor(null, "kai", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            this.speakers.put("kai", kai);
+            for (int k = 0; k < 4; k++) {
+                this.pose(8 + k * 12, kai, net.minecraft.world.entity.Pose.CROUCHING);
+                this.pose(14 + k * 12, kai, net.minecraft.world.entity.Pose.STANDING);
+            }
+            this.turn(60, kai, SOUTH + 20);
+            this.say(62, "kai", "watch");
+            this.turn(100, kai, NORTH);
+            int unused = t;
+        });
+        this.shot("k1b_swing", "K1", 56).time(morning).fov(70).fps(1.6).cam(Cine.dolly(
+                w.v(tx - 1.9, 0.55, tz + 2.9), w.v(tx - 1.6, 0.6, tz + 2.6), w.v(tx + 0.1, 1.3, tz + 0.9), w.v(tx, 1.25, tz + 0.6))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int kai = this.actor(null, "kai", tx, tz + 1.55, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            Vec3 a = w.v(tx, 0, tz + 1.55);
+            this.every(i -> {
+                if (i >= 8 && i <= 26) {
+                    double u = (i - 8) / 18.0;
+                    this.moveActor(kai, a.add(0, 4 * 1.3 * u * (1 - u), -0.35 * u));
+                }
+            });
+            this.at(6, () -> this.event("jump", ""));
+            this.at(22, () -> this.swing(kai));
+            this.at(26, () -> {
+                this.srv(level -> this.damage(level, t, level.damageSources().generic(), 1.0F, false));
+                this.event("hit_weak", "1");
+            });
+        });
+        this.shot("k1c_stare", "K1", 60).time(morning).fov(70).cam(Cine.dolly(
+                w.v(tx + 0.6, 1.62, tz + 3.7), w.v(tx + 0.5, 1.62, tz + 3.4), w.v(tx, 1.55, tz + 1.5), w.v(tx, 1.55, tz + 1.5))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int kai = this.actor(null, "kai", tx, tz + 1.2, NORTH, new ItemStack(Items.WOODEN_SWORD));
+            this.speakers.put("kai", kai);
+            this.turn(18, kai, SOUTH);
+            this.say(22, "kai", "dots");
+            int unused = t;
+        });
+        this.shot("k1d_zuri", "K1", 120).time(morning).fov(72).cam(Cine.dolly(
+                w.v(tx + 0.4, 1.9, tz + 7.6), w.v(tx + 0.4, 1.8, tz + 7.0), w.v(tx + 0.4, 1.0, tz + 1.0), w.v(tx + 0.4, 1.0, tz + 1.0))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int kai = this.actor(null, "kai", tx - 1.1, tz + 1.4, NORTH + 30, new ItemStack(Items.WOODEN_SWORD));
+            int zuri = this.actor(null, "zuri", tx + 4.5, tz + 2.2, west, new ItemStack(Items.MACE));
+            this.speakers.put("kai", kai);
+            this.speakers.put("zuri", zuri);
+            this.walk(6, 34, zuri, w.v(tx + 4.5, 0, tz + 2.2), w.v(tx + 1.0, 0, tz + 1.9));
+            this.turn(35, zuri, NORTH + 25);
+            this.maceJump(42, zuri, t, 47.0F, 18, 2.6);
+            this.turn(66, kai, east + 45);
+            this.say(70, "kai", "what");
+            this.walk(84, 116, zuri, w.v(tx + 0.8, 0, tz + 1.2), w.v(tx + 5.5, 0, tz + 2.6));
+        });
+        this.shot("k1e_lag", "K1", 90).time(morning).fov(70).cam(Cine.dolly(
+                w.v(tx - 1.1 + 0.4, 1.62, tz + 3.9), w.v(tx - 1.1 + 0.3, 1.62, tz + 3.4), w.v(tx - 1.1, 1.55, tz + 1.4), w.v(tx - 1.1, 1.55, tz + 1.4))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int kai = this.actor(null, "kai", tx - 1.1, tz + 1.4, SOUTH, new ItemStack(Items.WOODEN_SWORD));
+            this.speakers.put("kai", kai);
+            this.say(14, "kai", "lag");
+            this.turn(60, kai, SOUTH - 40);
+            int unused = t;
+        });
+
+        // ---- K2: disguise
+        final double rz = 40.5;
+        final double[] rowX = {-6.5, -3.5, -0.5, 5.5};
+        final double ariX = 2.5;
+        this.shot("k2a_row", "K2", 100).time(day).fov(72).cam(Cine.dolly(
+                w.v(-9.5, 1.7, rz - 4.5), w.v(-8.5, 1.7, rz - 4.0), w.v(ariX, 1.2, rz), w.v(ariX, 1.2, rz))).setup(() -> {
+            for (double x : rowX) {
+                this.tester(x, rz, SOUTH, "");
+            }
+            int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
+            this.speakers.put("ari", ari);
+            this.say(30, "ari", "shh");
+        });
+        this.shot("k2b_hits", "K2", 150).time(day).fov(72).cam(Cine.dolly(
+                w.v(-8.5, 1.8, rz - 4.2), w.v(1.5, 1.8, rz - 4.4), w.v(-6.5, 1.1, rz), w.v(ariX, 1.2, rz))).setup(() -> {
+            int[] ts = new int[rowX.length];
+            for (int k = 0; k < rowX.length; k++) {
+                ts[k] = this.tester(rowX[k], rz, SOUTH, "");
+            }
+            int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
+            int kai = this.actor(null, "kai", -8.0, rz - 1.4, east, new ItemStack(Items.IRON_SWORD));
+            this.speakers.put("ari", ari);
+            this.walk(4, 16, kai, w.v(-8.0, 0, rz - 1.4), w.v(-6.5, 0, rz - 1.4));
+            this.strike(20, kai, ts[0], 7, false);
+            this.walk(30, 42, kai, w.v(-6.5, 0, rz - 1.4), w.v(-3.5, 0, rz - 1.4));
+            this.strike(46, kai, ts[1], 9, false);
+            this.walk(56, 68, kai, w.v(-3.5, 0, rz - 1.4), w.v(-0.5, 0, rz - 1.4));
+            this.strike(72, kai, ts[2], 12, true);
+            this.walk(84, 100, kai, w.v(-0.5, 0, rz - 1.4), w.v(ariX - 0.2, 0, rz - 1.4));
+            this.turn(102, kai, NORTH);
+            this.say(112, "ari", "sweat");
+        });
+        this.shot("k2c_close", "K2", 70).time(day).fov(68).cam(Cine.dolly(
+                w.v(ariX + 2.2, 1.6, rz - 3.0), w.v(ariX + 1.9, 1.6, rz - 2.7), w.v(ariX - 0.1, 1.5, rz - 0.5), w.v(ariX - 0.1, 1.5, rz - 0.5))).setup(() -> {
+            int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
+            int kai = this.actor(null, "kai", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
+            this.tester(-0.5, rz, SOUTH, "");
+            this.tester(5.5, rz, SOUTH, "");
+            this.speakers.put("ari", ari);
+            this.speakers.put("kai", kai);
+            this.say(8, "kai", "hmm");
+            this.say(36, "ari", "dots");
+        });
+        this.shot("k2d_ouch", "K2", 100).time(day).fov(72).cam(Cine.dolly(
+                w.v(ariX + 0.5, 2.0, rz - 7.0), w.v(ariX + 1.5, 2.0, rz - 6.6), w.v(ariX + 0.5, 1.1, rz), w.v(ariX + 2.5, 1.1, rz))).setup(() -> {
+            for (double x : rowX) {
+                this.tester(x, rz, SOUTH, "");
+            }
+            int ari = this.actor(null, "ari", ariX, rz, SOUTH, ItemStack.EMPTY);
+            int kai = this.actor(null, "kai", ariX - 0.2, rz - 1.4, NORTH, new ItemStack(Items.IRON_SWORD));
+            this.speakers.put("ari", ari);
+            this.speakers.put("kai", kai);
+            this.at(10, () -> this.swing(kai));
+            this.at(12, () -> {
+                this.srv(level -> {
+                    if (this.entity(level, ari) instanceof LivingEntity a && this.entity(level, kai) instanceof LivingEntity k) {
+                        a.hurtServer(level, level.damageSources().mobAttack(k), 0.5F);
+                        a.setHealth(a.getMaxHealth());
+                    }
+                });
+                this.event("hit", "ari");
+                this.event("hurt", "ari");
+            });
+            this.say(13, "ari", "ouch");
+            this.walk(26, 50, ari, w.v(ariX, 0, rz - 0.3), w.v(ariX + 9.0, 0, rz - 2.0));
+            this.say(52, "kai", "what");
+        });
+
+        // ---- K3: training all night (counter at (4,0,4) next to the pen tester)
+        this.shot("k3a_morning", "K3", 90).time(morning).fov(72).cam(Cine.dolly(
+                w.v(tx + 2.9, 1.5, tz + 4.4), w.v(tx + 2.6, 1.5, tz + 3.9), w.v(tx + 0.9, 1.0, tz + 0.6), w.v(tx + 0.9, 1.0, tz + 0.6))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int hero = this.actor(null, "steve", tx, tz + 1.45, NORTH, new ItemStack(Items.DIAMOND_SWORD));
+            this.speakers.put("hero", hero);
+            this.strike(12, hero, t, 7, false);
+            this.say(24, "hero", "one_more");
+            this.strike(40, hero, t, 7, false);
+            this.strike(66, hero, t, 12, true);
+        });
+        this.shot("k3b_timelapse", "K3", 220).time(2000).fov(72).cam(Cine.dolly(
+                w.v(tx + 3.8, 2.6, tz + 5.6), w.v(tx + 3.5, 2.5, tz + 5.1), w.v(tx + 0.9, 0.9, tz + 0.6), w.v(tx + 0.9, 0.9, tz + 0.6))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int hero = this.actor(null, "steve", tx, tz + 1.45, NORTH, new ItemStack(Items.DIAMOND_SWORD));
+            float[] d = {6, 7, 8, 6, 9, 7, 12, 6};
+            for (int k = 0; k < 34; k++) {
+                this.strike(4 + k * 6, hero, t, d[k % d.length], k % 7 == 6);
+            }
+            this.every(i -> this.cmd("time set " + (2000 + i * 75)));
+            int unused = hero;
+        });
+        this.shot("k3c_night", "K3", 140).time(18200).fov(70).cam(Cine.dolly(
+                w.v(tx + 2.5, 1.2, tz + 3.2), w.v(tx + 2.2, 1.15, tz + 2.9), w.v(tx + 0.5, 0.9, tz + 0.9), w.v(tx + 0.5, 0.8, tz + 0.9))).setup(() -> {
+            int t = this.tester(tx, tz, SOUTH, "");
+            int hero = this.actor(null, "steve", tx, tz + 1.45, NORTH, new ItemStack(Items.DIAMOND_SWORD));
+            this.speakers.put("hero", hero);
+            this.speakers.put("tester", t);
+            this.srv(level -> {
+                level.setBlock(w.p(1, 0, 6), Blocks.TORCH.defaultBlockState(), 3);
+                level.setBlock(w.p(4, 1, 4), Blocks.LANTERN.defaultBlockState(), 3);
+            });
+            this.strike(10, hero, t, 1, false);
+            this.say(26, "hero", "one_more_tired");
+            this.strike(48, hero, t, 0.5F, false);
+            this.pose(72, hero, net.minecraft.world.entity.Pose.SWIMMING);
+            this.at(72, () -> this.event("faceplant", ""));
+            this.say(98, "tester", "again");
+            this.at(139, () -> this.srv(level -> {
+                level.setBlock(w.p(1, 0, 6), Blocks.AIR.defaultBlockState(), 3);
+                level.setBlock(w.p(4, 1, 4), Blocks.AIR.defaultBlockState(), 3);
+            }));
         });
 
         this.shot("e02_end_bg", "E", 180).time(sunset + 200).cam(Cine.dolly(w.v(tx - 5.2, 0.9, tz + 2.6), w.v(tx - 3.6, 1.0, tz + 1.3), w.v(tx, 1.3, tz), w.v(tx, 1.35, tz))).setup(() -> {

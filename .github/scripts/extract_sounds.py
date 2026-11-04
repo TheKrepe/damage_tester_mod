@@ -17,7 +17,7 @@ pat = re.compile(r'minecraft/sounds/(entity/player/attack/.*|entity/generic/expl
                  r'block/pumpkin/.*|entity/minecart/.*|minecart/.*|entity/wind_charge/.*|block/powder_snow/.*|'
                  r'mob/witch/.*|random/glass.*|dig/glass.*|item/bundle/.*|block/note_block/.*|note/.*|ui/.*|block/redstone_torch/.*|'
                  r'block/lever/.*|random/anvil_land.*|block/anvil/.*|entity/player/levelup.*|item/book/.*|block/crafter/.*|'
-                 r'mob/wither/shoot.*|mob/wither/.*|block/trial_spawner/.*|block/vault/.*|block/copper_bulb/.*)\.ogg$')
+                 r'mob/wither/shoot.*|mob/wither/.*|mob/villager/.*|entity/villager/.*|random/eat.*|random/burp.*|entity/player/hurt.*|game/player/hurt.*|entity/player/swim.*|random/pop.*|entity/item/pickup.*|mob/zombie/.*|entity/zombie/.*|block/trial_spawner/.*|block/vault/.*|block/copper_bulb/.*)\.ogg$')
 n = 0
 for name, meta in idx.items():
     if pat.match(name):

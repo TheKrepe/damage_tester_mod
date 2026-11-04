@@ -38,7 +38,7 @@ jobs:
           DT_PROFILE_MODE: ${{ inputs.profile }}
           DT_TRAILER_OUT: ${{ github.workspace }}/trailer_out
           LP_NUM_THREADS: '4'
-        run: xvfb-run -a -s "-screen 0 2000x1200x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain 2>&1 | tee record.log | grep -E "\[trailer\]|ERROR|Exception|FAILED|BUILD" | head -400
+        run: xvfb-run -a -s "-screen 0 2000x2000x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain 2>&1 | tee record.log | grep -E "\[trailer\]|ERROR|Exception|FAILED|BUILD" | head -400
       - name: Collect sounds and logs
         if: always()
         run: |
