@@ -380,13 +380,13 @@ public final class TrailerWorld {
             this.set(level, h[0], 0, h[1], Blocks.HAY_BLOCK);
         }
         this.set(level, -13, 1, 45, Blocks.HAY_BLOCK);
-        // gallows for two hanging testers: beam at y=4 over x 9..13, z 44
-        for (int y = 0; y < 4; y++) {
+        // gallows for two hanging testers: beam at y=3 over x 8..13, z 44 (bags hang at punching height)
+        for (int y = 0; y < 3; y++) {
             this.set(level, 8, y, 44, Blocks.OAK_LOG);
             this.set(level, 13, y, 44, Blocks.OAK_LOG);
         }
         for (int x = 8; x <= 13; x++) {
-            this.set(level, x, 4, 44, Blocks.SPRUCE_PLANKS);
+            this.set(level, x, 3, 44, Blocks.SPRUCE_PLANKS);
         }
         // weapon racks
         this.set(level, -13, 0, 30, Blocks.BARREL);

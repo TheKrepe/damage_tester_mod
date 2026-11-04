@@ -1246,11 +1246,11 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         // the follow camera needs the id resolved at run time
         this.shots.get(this.shots.size() - 1).cam((u, t, mc, partial) -> Cine.follow(cartId.get(), new Vec3(-3.2, 2.2, 3.4), 0.8).at(u, t, mc, partial));
 
-        this.shot("f07_bags", "D", 170).time(day).cam(Cine.orbit(w.v(10.5, 1.6, 44.5), 6.5, 0.6, -20, 30, 0.2)).setup(() -> {
-            int h1 = this.hangingTester(9, 4, 44, "");
-            int h2 = this.hangingTester(12, 4, 44, "straw");
-            int kai = this.actor("Kai", "kai", 9.5, 42.6, NORTH, ItemStack.EMPTY);
-            int ari = this.actor("Ari", "ari", 12.5, 42.6, NORTH, ItemStack.EMPTY);
+        this.shot("f07_bags", "D", 170).time(day).cam(Cine.orbit(w.v(10.5, 1.3, 44.0), 6.2, 0.6, 210, 150, 0.3)).setup(() -> {
+            int h1 = this.hangingTester(9, 3, 44, "");
+            int h2 = this.hangingTester(12, 3, 44, "straw");
+            int kai = this.actor("Kai", "kai", 9.5, 43.35, SOUTH, ItemStack.EMPTY);
+            int ari = this.actor("Ari", "ari", 12.5, 43.35, SOUTH, ItemStack.EMPTY);
             for (int j = 0; j < 9; j++) {
                 this.strike(10 + j * 17, kai, h1, 1 + j % 2, false);
                 this.strike(18 + j * 17, ari, h2, 1, false);
