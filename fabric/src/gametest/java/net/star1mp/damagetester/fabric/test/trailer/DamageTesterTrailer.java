@@ -101,6 +101,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.out = Path.of(System.getenv().getOrDefault("DT_TRAILER_OUT", "trailer")).toAbsolutePath();
         this.events = new Cine.EventLog(this.out.resolve("events.csv"));
         context.waitTicks(40);
+        context.getInput().resizeWindow(1920, 1080);
+        context.waitTicks(5);
         context.runOnClient(mc -> {
             mc.options.guiScale().set(3);
             mc.options.fov().set(70);
@@ -118,6 +120,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     s.getGameRules().set(GameRules.SPAWN_MOBS, false, null);
                     s.getGameRules().set(GameRules.SPAWN_MONSTERS, false, null);
                     s.getGameRules().set(GameRules.MOB_GRIEFING, false, null);
+                    s.getGameRules().set(GameRules.SHOW_ADVANCEMENT_MESSAGES, false, null);
                 })
                 .create()) {
             this.sp = world;
@@ -134,7 +137,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.cmd("weather clear");
         this.cmd("time set 1000");
         this.cmd("gamemode spectator @a");
-        this.srv(level -> this.w.findSite(level, this.player().blockPosition()));
+        this.srv(level -> this.w.findSite(level, new BlockPos(0, 80, 0)));
         this.cmd(String.format(Locale.ROOT, "tp @a %d %d %d", this.w.cx, this.w.g + 20, this.w.cz + 10));
         this.ctx.waitTicks(40);
         this.srv(level -> {
@@ -156,7 +159,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.ctx.waitTicks(30);
         }
         try {
-            this.sp.getConnection().waitForChunksRender(600);
+            this.sp.getConnection().waitForChunksRender(200);
         } catch (Throwable e) {
             System.out.println("[trailer] chunk render wait: " + e);
         }
@@ -261,12 +264,16 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             mc.gui.toastManager().clear();
         });
         // pre-roll: settle entities, interpolation and chunk meshes
-        for (int k = 0; k < 20; k++) {
+        for (int k = 0; k < 40; k++) {
             if (s.cam != null) {
                 this.ctx.runOnClient(mc -> Cine.placeCamera(mc, s.cam.at(0, 0, mc, 0)));
             }
             this.ctx.waitTick();
         }
+        this.ctx.runOnClient(mc -> {
+            mc.gui.hud.getChat().clearMessages(false);
+            mc.gui.toastManager().clear();
+        });
         Cine.Recorder rec = new Cine.Recorder(this.out.resolve("clips").resolve(s.name + ".mp4"));
         double step = Cine.TICKS_PER_FRAME / s.fps;
         int frame = 0;
@@ -286,6 +293,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 int index = frame;
                 double u = t / ticks;
                 this.ctx.runOnClient(mc -> {
+                    mc.gui.toastManager().clear();
                     if (s.cam != null) {
                         Cine.placeCamera(mc, s.cam.at(u, t, mc, partial));
                     }
@@ -499,6 +507,10 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             e.setYHeadRot(yaw);
             e.setYBodyRot(yaw);
             e.setItemSlot(EquipmentSlot.MAINHAND, mainHand);
+            if (name != null) {
+                e.setCustomName(Component.literal(name));
+                e.setCustomNameVisible(true);
+            }
         });
         return id;
     }
@@ -704,7 +716,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
 
     private void defineShots() {
         TrailerWorld w = this.w;
-        final long sunrise = 23300;
+        final long sunrise = 23700;
         final long morning = 1500;
         final long day = 4500;
         final long sunset = 12350;
@@ -786,7 +798,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
 
         this.shot("s03_hits_fp", "A", 150).fp().setup(() -> {
             this.tester(tx, tz, SOUTH, "");
-            this.fpAt(tx + 0.3, 0, tz + 2.6, w.v(tx, 1.15, tz));
+            this.fpAt(tx + 0.3, 0, tz + 2.85, w.v(tx, 1.75, tz));
             this.hand(1, new ItemStack(Items.NETHERITE_SWORD));
             for (int k = 0; k < 5; k++) {
                 this.attack(14 + k * 26);
@@ -805,7 +817,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
 
         this.shot("s05_armor_fp", "B", 170).fp().time(morning).setup(() -> {
             this.tester(tx, tz, SOUTH, "");
-            this.fpAt(tx + 0.4, 0, tz + 2.5, w.v(tx, 1.1, tz));
+            this.fpAt(tx + 0.4, 0, tz + 2.8, w.v(tx, 1.7, tz));
             this.hand(1, new ItemStack(Items.DIAMOND_SWORD));
             this.attack(12);
             this.hand(34, new ItemStack(Items.DIAMOND_CHESTPLATE));
@@ -1201,7 +1213,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         double sz = TrailerWorld.SHOW_Z + 0.5;
         this.shot("c01_skins_fp", "E", 210).fp().time(day).setup(() -> {
             this.tester(sx, sz, SOUTH, "");
-            this.fpAt(sx + 0.3, 0, sz + 2.3, w.v(sx, 1.15, sz));
+            this.fpAt(sx + 0.3, 0, sz + 2.6, w.v(sx, 1.5, sz));
             ItemStack[] items = {new ItemStack(Items.HAY_BLOCK), new ItemStack(Items.OAK_PLANKS), new ItemStack(Items.CHERRY_PLANKS),
                     new ItemStack(Items.WARPED_PLANKS), new ItemStack(Items.DYE.pick(DyeColor.RED)), new ItemStack(Items.DYE.pick(DyeColor.LIGHT_BLUE)),
                     new ItemStack(Items.DYE.pick(DyeColor.LIME)), new ItemStack(Items.JACK_O_LANTERN), new ItemStack(Items.SHEARS)};
