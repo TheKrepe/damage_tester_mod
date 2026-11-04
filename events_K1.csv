@@ -1,0 +1,8 @@
+k1a_warmup,3.050,say,kai:watch
+k1b_swing,0.400,jump,
+k1b_swing,2.000,hit_weak,1
+k1c_stare,1.450,say,kai:dots
+k1d_zuri,2.050,jump,
+k1d_zuri,2.950,mace,47.0
+k1d_zuri,3.450,say,kai:what
+k1e_lag,0.650,say,kai:lag
