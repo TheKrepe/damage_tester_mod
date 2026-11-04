@@ -1,0 +1,14 @@
+k2a_row,1.450,say,ari:shh
+k2b_hits,0.950,swing,
+k2b_hits,1.050,hit,7.0
+k2b_hits,2.250,swing,
+k2b_hits,2.350,hit_strong,9.0
+k2b_hits,3.550,swing,
+k2b_hits,3.650,hit_crit,12.0
+k2b_hits,5.550,say,ari:sweat
+k2c_close,0.350,say,kai:hmm
+k2c_close,1.750,say,ari:dots
+k2d_ouch,0.550,hit,ari
+k2d_ouch,0.550,hurt,ari
+k2d_ouch,0.600,say,ari:ouch
+k2d_ouch,2.550,say,kai:what
