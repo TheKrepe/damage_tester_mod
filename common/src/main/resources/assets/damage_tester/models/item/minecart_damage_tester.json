@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "damage_tester:item/moving_damage_tester"
+    "layer0": "damage_tester:item/minecart_damage_tester"
   }
 }

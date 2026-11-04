@@ -8,8 +8,8 @@ public enum TesterVariant {
     SMALL("small_damage_tester", 0.35F, 0.98F, 0.8F),
     /** Hangs on a rope from the underside of a block, like a punching bag. */
     HANGING("hanging_damage_tester", 0.6F, 1.25F, 1.0F),
-    /** Rolls around on a little cart, for target practice with bows and tridents. */
-    MOVING("moving_damage_tester", 0.6F, 1.9F, 1.55F);
+    /** Rides inside a minecart: put it on rails and build your own moving-target contraptions. */
+    MINECART("minecart_damage_tester", 0.6F, 1.9F, 1.55F);
 
     private final String id;
     private final float width;
@@ -42,6 +42,11 @@ public enum TesterVariant {
     /** Hanging testers are placed against the underside of a block, everything else on top. */
     public boolean hangs() {
         return this == HANGING;
+    }
+
+    /** Minecart testers are placed on rails, inside a vanilla minecart. */
+    public boolean ridesMinecart() {
+        return this == MINECART;
     }
 
     /** Length of the rope between the block and the top of a hanging tester's head, in blocks. */

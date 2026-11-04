@@ -50,13 +50,6 @@ public class DamageTesterModel extends HumanoidModel<DamageTesterRenderState> {
         mesh.getRoot().addOrReplaceChild("base",
                 CubeListBuilder.create().texOffs(0, 32).addBox(-6.0F, 22.0F, -6.0F, 12.0F, 2.0F, 12.0F),
                 PartPose.ZERO);
-        // Little cart wheels for the moving tester.
-        mesh.getRoot().addOrReplaceChild("wheels", CubeListBuilder.create().texOffs(48, 32)
-                        .addBox(-7.0F, 21.5F, -5.0F, 1.0F, 3.0F, 3.0F)
-                        .addBox(6.0F, 21.5F, -5.0F, 1.0F, 3.0F, 3.0F)
-                        .addBox(-7.0F, 21.5F, 2.0F, 1.0F, 3.0F, 3.0F)
-                        .addBox(6.0F, 21.5F, 2.0F, 1.0F, 3.0F, 3.0F),
-                PartPose.ZERO);
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 

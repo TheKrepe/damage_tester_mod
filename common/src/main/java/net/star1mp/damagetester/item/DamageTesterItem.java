@@ -37,6 +37,21 @@ public class DamageTesterItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Vec3 spawnPos;
+        if (this.variant.ridesMinecart()) {
+            BlockPos railPos = context.getClickedPos();
+            if (!net.minecraft.world.level.block.BaseRailBlock.isRail(level.getBlockState(railPos))) {
+                return InteractionResult.FAIL;
+            }
+            ItemStack stack = context.getItemInHand();
+            if (level instanceof ServerLevel serverLevel) {
+                float yaw = Mth.floor((Mth.wrapDegrees(context.getRotation() - 180.0F) + 45.0F) / 90.0F) * 90.0F;
+                if (DamageTesterEntity.spawnInMinecart(serverLevel, railPos, stack, context.getPlayer(), yaw) == null) {
+                    return InteractionResult.FAIL;
+                }
+            }
+            stack.shrink(1);
+            return InteractionResult.SUCCESS;
+        }
         if (this.variant.hangs()) {
             if (context.getClickedFace() != Direction.DOWN) {
                 return InteractionResult.FAIL;

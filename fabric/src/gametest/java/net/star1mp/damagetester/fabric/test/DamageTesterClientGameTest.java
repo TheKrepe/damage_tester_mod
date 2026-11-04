@@ -231,11 +231,17 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
                 BlockPos targetPos = new BlockPos(tx, ty, tz);
                 level.setBlock(targetPos, net.minecraft.world.level.block.Blocks.TARGET.defaultBlockState(), 3);
                 DamageTesterEntity onTarget = DamageTesterEntity.spawnFromItem(level, ItemStack.EMPTY, null, new Vec3(tx + 0.5, ty + 1, tz + 0.5), 180.0F);
-                // moving tester further away
-                int mx = base.getX() + 1, mz = base.getZ() + 10;
-                int my = level.getHeight(Heightmap.Types.MOTION_BLOCKING, mx, mz);
-                DamageTesterEntity moving = DamageTesterEntity.spawnFromItem(net.star1mp.damagetester.entity.TesterVariant.MOVING, level,
-                        ItemStack.EMPTY, null, new Vec3(mx + 0.5, my, mz + 0.5), 180.0F);
+                // minecart tester on a short piece of track, with a powered activator rail in it
+                int mz = base.getZ() + 9;
+                int my = level.getHeight(Heightmap.Types.MOTION_BLOCKING, base.getX(), mz);
+                for (int dx = -3; dx <= 3; dx++) {
+                    level.setBlock(new BlockPos(base.getX() + dx, my, mz), net.minecraft.world.level.block.Blocks.RAIL.defaultBlockState(), 3);
+                }
+                BlockPos railPos = new BlockPos(base.getX(), my, mz);
+                DamageTesterEntity moving = DamageTesterEntity.spawnInMinecart(level, railPos, ItemStack.EMPTY, null, 180.0F);
+                if (moving == null || !(moving.getVehicle() instanceof net.minecraft.world.entity.vehicle.minecart.AbstractMinecart)) {
+                    throw new AssertionError("Minecart tester did not get into its cart");
+                }
                 // damage counter next to the small tester, facing the player
                 BlockPos counterPos = new BlockPos(base.getX() + 2, gy, base.getZ() + 3);
                 level.setBlock(counterPos, ModContent.DAMAGE_COUNTER.get().defaultBlockState()
@@ -246,6 +252,7 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             BlockPos targetPos = (BlockPos) scene[4];
             BlockPos counterPos = (BlockPos) scene[5];
             Vec3 movingStart = (Vec3) scene[6];
+            int cartTesterId = movingId;
             context.waitTicks(10);
             hit(sp, smallId, (level, player) -> level.damageSources().playerAttack(player), 6.0F);
             hit(sp, hangingId, (level, player) -> level.damageSources().playerAttack(player), 8.0F);
@@ -259,14 +266,21 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             }
             context.waitTicks(25);
             context.takeScreenshot("variants");
+            hit(sp, movingId, (level, player) -> level.damageSources().playerAttack(player), 5.0F);
             sp.getServer().runOnServer(server -> {
                 ServerLevel level = sp.getConnection().getServerLevel();
                 Entity moving = level.getEntity(movingId);
-                double moved = moving.position().distanceTo(movingStart);
-                System.out.println("[DamageTesterTest] moving tester moved " + moved + " blocks");
-                if (moved < 1.0) {
-                    throw new AssertionError("Moving tester did not move");
+                Entity cart = moving.getVehicle();
+                if (cart == null) {
+                    throw new AssertionError("Minecart tester fell out of its cart");
                 }
+                // an activator rail ejects passengers: the tester must stay in
+                cart.ejectPassengers();
+                if (moving.getVehicle() != cart) {
+                    throw new AssertionError("Minecart tester was ejected");
+                }
+                // give it a push along the rails
+                cart.setDeltaMovement(0.4, 0.0, 0.0);
                 if (level.getEntity(hangingId) == null || level.getEntity(hangingId).isRemoved()) {
                     throw new AssertionError("Hanging tester fell off");
                 }
@@ -281,6 +295,29 @@ public class DamageTesterClientGameTest implements FabricClientGameTest {
             context.getInput().lookAt(0.0F, 30.0F);
             context.waitTicks(5);
             context.takeScreenshot("variants_counter");
+
+            // ================= minecart tester: moved along the rails, then break the cart
+            context.getInput().lookAt(0.0F, 25.0F);
+            context.waitTicks(5);
+            context.takeScreenshot("minecart_tester");
+            sp.getServer().runOnServer(server -> {
+                ServerLevel level = sp.getConnection().getServerLevel();
+                Entity moving = level.getEntity(cartTesterId);
+                double moved = moving.position().distanceTo(movingStart);
+                System.out.println("[DamageTesterTest] minecart tester moved " + moved + " blocks");
+                if (moved < 0.5) {
+                    throw new AssertionError("Minecart tester did not roll");
+                }
+                moving.getVehicle().discard();
+            });
+            context.waitTicks(10);
+            sp.getServer().runOnServer(server -> {
+                ServerLevel level = sp.getConnection().getServerLevel();
+                Entity moving = level.getEntity(cartTesterId);
+                if (moving != null && !moving.isRemoved()) {
+                    throw new AssertionError("Minecart tester should turn into an item when its cart breaks");
+                }
+            });
         }
     }
 

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "damage_tester:moving_damage_tester"
+        "recipes": "damage_tester:minecart_damage_tester"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "damage_tester:moving_damage_tester"
+      "damage_tester:minecart_damage_tester"
     ]
   }
 }

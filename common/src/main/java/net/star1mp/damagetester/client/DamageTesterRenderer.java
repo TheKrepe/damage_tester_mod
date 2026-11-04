@@ -50,12 +50,6 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     public DamageTesterRenderer(EntityRendererProvider.Context context) {
         super(context, new DamageTesterModel(DamageTesterModel.createBodyLayer().bakeRoot()), 0.0F); // no shadow
         this.baseModel = new Model<>(DamageTesterModel.createBaseLayer().bakeRoot(), RenderTypes::entityCutout) {
-            private final net.minecraft.client.model.geom.ModelPart wheels = this.root().getChild("wheels");
-
-            @Override
-            public void setupAnim(DamageTesterRenderState state) {
-                this.wheels.visible = state.variant == TesterVariant.MOVING;
-            }
         };
         this.font = context.getFont();
 
@@ -156,8 +150,8 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
 
     /** The plank base does not wobble, so it is drawn outside of the tilted model. */
     private void submitBase(DamageTesterRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
-        if (state.variant == TesterVariant.HANGING) {
-            return;
+        if (state.variant == TesterVariant.HANGING || state.variant == TesterVariant.MINECART) {
+            return; // hangs on a rope / stands in the cart
         }
         poseStack.pushPose();
         poseStack.rotate(Axis.YP.rotationDegrees(180.0F - state.bodyRot));

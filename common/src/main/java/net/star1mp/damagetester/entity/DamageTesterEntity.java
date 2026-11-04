@@ -33,10 +33,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -82,13 +85,6 @@ public class DamageTesterEntity extends LivingEntity {
     public static final String SKIN_PLANKS_PREFIX = "planks:";
     public static final String SKIN_DYE_PREFIX = "dye:";
 
-    // moving tester
-    public static final int MOVE_CIRCLE = 0;
-    public static final int MOVE_LINE = 1;
-    public static final int MOVE_STOPPED = 2;
-    private static final float MOVE_SPEED = 0.11F;
-    private static final float CIRCLE_RADIUS = 2.5F;
-    private static final float LINE_HALF_LENGTH = 3.0F;
 
     // ---------------------------------------------------------------- server state
     private boolean measuring;
@@ -105,12 +101,6 @@ public class DamageTesterEntity extends LivingEntity {
     private float maxHit;
     private float lastDps;
 
-    private double anchorX;
-    private double anchorZ;
-    private float travelAngle;
-    private int moveMode = MOVE_CIRCLE;
-    private float moveDirection = 1.0F;
-    private boolean hasAnchor;
 
     // ---------------------------------------------------------------- client state
     private float wobbleAngle;
@@ -156,7 +146,6 @@ public class DamageTesterEntity extends LivingEntity {
         tester.snapTo(pos.x(), pos.y(), pos.z(), yaw, 0.0F);
         tester.setYHeadRot(yaw);
         tester.setYBodyRot(yaw);
-        tester.setAnchor(pos, yaw);
         if (stack.has(DataComponents.CUSTOM_NAME)) {
             tester.setCustomName(stack.getHoverName());
         }
@@ -173,19 +162,6 @@ public class DamageTesterEntity extends LivingEntity {
         return spawnFromItem(TesterVariant.STANDARD, level, stack, player, pos, yaw);
     }
 
-    private void setAnchor(Vec3 pos, float yaw) {
-        this.hasAnchor = true;
-        if (this.getVariant() == TesterVariant.MOVING) {
-            // The circle starts at the placement spot: put its centre to the tester's right.
-            float rad = yaw * Mth.DEG_TO_RAD;
-            this.anchorX = pos.x() - Mth.cos(rad) * CIRCLE_RADIUS;
-            this.anchorZ = pos.z() - Mth.sin(rad) * CIRCLE_RADIUS;
-            this.travelAngle = (float) Math.atan2(pos.z() - this.anchorZ, pos.x() - this.anchorX);
-        } else {
-            this.anchorX = pos.x();
-            this.anchorZ = pos.z();
-        }
-    }
 
     // =================================================================== skins
 
@@ -386,13 +362,24 @@ public class DamageTesterEntity extends LivingEntity {
         public static final Stats EMPTY = new Stats(false, false, 0, 0, 0, 0, 0);
     }
 
+    /** What dismantling drops instead of the pick result (used when a minecart tester loses its cart). */
+    @Nullable
+    private ItemStack dropOnDismantle;
+    private boolean allowDismount;
+
     private void dismantle(ServerLevel level, boolean drop) {
         if (this.isRemoved()) {
             return;
         }
         if (drop) {
-            this.spawnAtLocation(level, this.getPickResult());
+            this.spawnAtLocation(level, this.dropOnDismantle != null ? this.dropOnDismantle : this.getPickResult());
         }
+        // A minecart tester takes its cart with it when it is picked up.
+        if (this.getVariant().ridesMinecart() && this.getVehicle() instanceof AbstractMinecart cart && !cart.isRemoved()
+                && this.dropOnDismantle == null) {
+            cart.discard();
+        }
+        this.allowDismount = true;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack stack = this.getItemBySlot(slot);
             if (!stack.isEmpty()) {
@@ -407,6 +394,42 @@ public class DamageTesterEntity extends LivingEntity {
         this.discard();
     }
 
+    /**
+     * Minecart testers stay in their cart, even on an activator rail. They only leave it when the
+     * cart is gone or the tester itself is removed.
+     */
+    @Override
+    public void stopRiding() {
+        if (this.getVariant().ridesMinecart() && !this.allowDismount && !this.isRemoved()
+                && this.getVehicle() != null && !this.getVehicle().isRemoved()) {
+            return;
+        }
+        super.stopRiding();
+    }
+
+    /** Puts a minecart on the rail at {@code railPos} with a tester inside it. */
+    @Nullable
+    public static DamageTesterEntity spawnInMinecart(ServerLevel level, BlockPos railPos, ItemStack stack, @Nullable Player player, float yaw) {
+        BlockState rail = level.getBlockState(railPos);
+        if (!BaseRailBlock.isRail(rail)) {
+            return null;
+        }
+        double slope = rail.getBlock() instanceof BaseRailBlock railBlock && rail.getValue(railBlock.getShapeProperty()).isSlope() ? 0.5 : 0.0;
+        AbstractMinecart cart = AbstractMinecart.createMinecart(level, railPos.getX() + 0.5, railPos.getY() + 0.0625 + slope,
+                railPos.getZ() + 0.5, EntityTypes.MINECART, net.minecraft.world.entity.EntitySpawnReason.DISPENSER, ItemStack.EMPTY, player);
+        if (cart == null) {
+            return null;
+        }
+        level.addFreshEntity(cart);
+        DamageTesterEntity tester = spawnFromItem(TesterVariant.MINECART, level, stack, player, cart.position(), yaw);
+        if (tester == null) {
+            cart.discard();
+            return null;
+        }
+        tester.startRiding(cart, true, true);
+        return tester;
+    }
+
     @Override
     public void kill(ServerLevel level) {
         this.dismantle(level, false);
@@ -417,11 +440,9 @@ public class DamageTesterEntity extends LivingEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.getVariant() != TesterVariant.MOVING) {
-            // The tester never turns by itself.
-            this.setYBodyRot(this.getYRot());
-            this.setYHeadRot(this.getYRot());
-        }
+        // The tester never turns by itself.
+        this.setYBodyRot(this.getYRot());
+        this.setYHeadRot(this.getYRot());
         this.hurtTime = 0;
 
         if (this.level() instanceof ServerLevel serverLevel) {
@@ -434,8 +455,14 @@ public class DamageTesterEntity extends LivingEntity {
                 this.dismantle(serverLevel, true);
                 return;
             }
-            if (this.getVariant() == TesterVariant.MOVING) {
-                this.serverMove();
+            if (this.getVariant().ridesMinecart() && this.tickCount > 5) {
+                Entity vehicle = this.getVehicle();
+                if (vehicle == null || vehicle.isRemoved()) {
+                    // The minecart was broken (it drops itself): what's left is a normal tester.
+                    this.dropOnDismantle = new ItemStack(ModContent.DAMAGE_TESTER_ITEM.get());
+                    this.dismantle(serverLevel, true);
+                    return;
+                }
             }
         } else {
             this.clientTick();
@@ -448,56 +475,12 @@ public class DamageTesterEntity extends LivingEntity {
         return !state.isAir() && state.isFaceSturdy(this.level(), above, Direction.DOWN);
     }
 
-    /** Rolls the moving tester along a circle or back and forth on a line around its anchor. */
-    private void serverMove() {
-        if (!this.hasAnchor) {
-            this.setAnchor(this.position(), this.getYRot());
-        }
-        double vy = this.isNoGravity() ? 0.0 : (this.onGround() ? -0.04 : Math.max(this.getDeltaMovement().y - 0.08, -1.0));
-        double dx = 0.0;
-        double dz = 0.0;
-        if (this.moveMode != MOVE_STOPPED) {
-            double targetX;
-            double targetZ;
-            if (this.moveMode == MOVE_CIRCLE) {
-                this.travelAngle += this.moveDirection * MOVE_SPEED / CIRCLE_RADIUS;
-                targetX = this.anchorX + Math.cos(this.travelAngle) * CIRCLE_RADIUS;
-                targetZ = this.anchorZ + Math.sin(this.travelAngle) * CIRCLE_RADIUS;
-            } else {
-                // travelAngle is used as the position along the line, bouncing between both ends.
-                this.travelAngle += this.moveDirection * MOVE_SPEED;
-                if (Math.abs(this.travelAngle) > LINE_HALF_LENGTH) {
-                    this.travelAngle = Math.copySign(LINE_HALF_LENGTH, this.travelAngle);
-                    this.moveDirection = -this.moveDirection;
-                }
-                // The line runs sideways relative to the way the tester was placed.
-                float rad = this.lineYaw * Mth.DEG_TO_RAD;
-                targetX = this.anchorX + Math.cos(rad) * this.travelAngle;
-                targetZ = this.anchorZ + Math.sin(rad) * this.travelAngle;
-            }
-            dx = Mth.clamp(targetX - this.getX(), -0.3, 0.3);
-            dz = Mth.clamp(targetZ - this.getZ(), -0.3, 0.3);
-        }
-        this.move(MoverType.SELF, new Vec3(dx, vy, dz));
-        this.setDeltaMovement(0.0, vy, 0.0);
-        if (this.horizontalCollision && this.moveMode != MOVE_STOPPED) {
-            this.moveDirection = -this.moveDirection;
-        }
-        if (dx * dx + dz * dz > 1.0E-4) {
-            float yaw = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
-            this.setYRot(yaw);
-            this.setYBodyRot(yaw);
-            this.setYHeadRot(yaw);
-        }
-    }
-
-    private float lineYaw;
 
     @Override
     public void travel(Vec3 input) {
         TesterVariant v = this.getVariant();
-        if (v == TesterVariant.MOVING || v.hangs()) {
-            return; // moved manually / fixed in place
+        if (v.hangs()) {
+            return; // fixed in place
         }
         super.travel(input);
     }
@@ -518,22 +501,6 @@ public class DamageTesterEntity extends LivingEntity {
         if (held.isEmpty()) {
             if (hand != InteractionHand.MAIN_HAND) {
                 return InteractionResult.PASS;
-            }
-            if (player.isShiftKeyDown() && this.getVariant() == TesterVariant.MOVING) {
-                if (!this.level().isClientSide()) {
-                    this.moveMode = (this.moveMode + 1) % 3;
-                    if (this.moveMode == MOVE_LINE) {
-                        this.lineYaw = this.getYRot();
-                        this.anchorX = this.getX();
-                        this.anchorZ = this.getZ();
-                        this.travelAngle = 0.0F;
-                    } else if (this.moveMode == MOVE_CIRCLE) {
-                        this.setAnchor(this.position(), this.getYRot());
-                    }
-                    player.sendOverlayMessage(Component.translatable("message.damage_tester.move_mode." + this.moveMode));
-                    this.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.6F, 1.0F);
-                }
-                return InteractionResult.SUCCESS;
             }
             EquipmentSlot slot = this.getClickedSlot(location);
             if (slot == null) {
@@ -670,30 +637,12 @@ public class DamageTesterEntity extends LivingEntity {
     protected void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putString("Skin", this.getSkin());
-        if (this.hasAnchor) {
-            output.putBoolean("HasAnchor", true);
-            output.putDouble("AnchorX", this.anchorX);
-            output.putDouble("AnchorZ", this.anchorZ);
-            output.putFloat("TravelAngle", this.travelAngle);
-            output.putFloat("MoveDirection", this.moveDirection);
-            output.putInt("MoveMode", this.moveMode);
-            output.putFloat("LineYaw", this.lineYaw);
-        }
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
         this.setSkin(input.getStringOr("Skin", ""));
-        this.hasAnchor = input.getBooleanOr("HasAnchor", false);
-        if (this.hasAnchor) {
-            this.anchorX = input.getDoubleOr("AnchorX", this.getX());
-            this.anchorZ = input.getDoubleOr("AnchorZ", this.getZ());
-            this.travelAngle = input.getFloatOr("TravelAngle", 0.0F);
-            this.moveDirection = input.getFloatOr("MoveDirection", 1.0F);
-            this.moveMode = Mth.clamp(input.getIntOr("MoveMode", MOVE_CIRCLE), 0, 2);
-            this.lineYaw = input.getFloatOr("LineYaw", this.getYRot());
-        }
         if (this.getVariant().hangs()) {
             this.setNoGravity(true);
         }

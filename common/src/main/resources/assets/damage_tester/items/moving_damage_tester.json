@@ -1,6 +1,0 @@
-{
-  "model": {
-    "type": "minecraft:model",
-    "model": "damage_tester:item/moving_damage_tester"
-  }
-}

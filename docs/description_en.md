@@ -34,7 +34,7 @@ Right-click the dummy with an item (shears restore the default look):
 | **Damage Tester** | The classic dummy on a stand |
 | **Small Damage Tester** | Child-sized, for testing damage against small mobs |
 | **Hanging Damage Tester** | Hangs under a block (right-click the bottom face) and swings like a punching bag |
-| **Moving Damage Tester** | Rides on a little cart, great for archery practice. Sneak + right-click with an empty hand to switch modes: circle → back and forth → stopped |
+| **Minecart Damage Tester** | A minecart with a dummy inside. Place it on rails (right-click or with a dispenser) and it rides along them, perfect for contraptions and moving targets. Activator rails don't throw it out. Break the cart and you get the minecart and a regular Damage Tester back |
 | **Damage Counter** (block) | Its screen shows the stats of the nearest dummy within 8 blocks: last hit, DPS, total, hits and best hit |
 
 ## Recipes
@@ -42,7 +42,7 @@ Right-click the dummy with an item (shears restore the default look):
 - **Damage Tester:** stick, hay bale, stick in the top row, armor stand below the hay bale.
 - **Small Damage Tester:** hay bale, stick and wooden slab in a column.
 - **Hanging Damage Tester:** Damage Tester + lead.
-- **Moving Damage Tester:** Damage Tester + minecart.
+- **Minecart Damage Tester:** Damage Tester + minecart.
 - **Damage Counter:** planks on the sides, a glass pane on top, a target block in the middle, redstone at the bottom.
 
 All items are in their own "Damage Tester" creative tab.

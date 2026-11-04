@@ -57,9 +57,6 @@ public final class ModContent {
                         .sized(variant.width(), variant.height())
                         .eyeHeight(variant.eyeHeight())
                         .clientTrackingRange(10);
-                if (variant == TesterVariant.MOVING) {
-                    builder.updateInterval(1);
-                }
                 return builder.build(entityKey);
             }));
             TESTER_ITEMS.put(variant, Services.PLATFORM.register(BuiltInRegistries.ITEM, variant.id(),
@@ -106,7 +103,7 @@ public final class ModContent {
                 TESTER_ITEMS.get(TesterVariant.STANDARD).get(),
                 TESTER_ITEMS.get(TesterVariant.SMALL).get(),
                 TESTER_ITEMS.get(TesterVariant.HANGING).get(),
-                TESTER_ITEMS.get(TesterVariant.MOVING).get()
+                TESTER_ITEMS.get(TesterVariant.MINECART).get()
         };
     }
 
@@ -133,7 +130,7 @@ public final class ModContent {
                 TESTER_ITEMS.get(TesterVariant.STANDARD).get(),
                 TESTER_ITEMS.get(TesterVariant.SMALL).get(),
                 TESTER_ITEMS.get(TesterVariant.HANGING).get(),
-                TESTER_ITEMS.get(TesterVariant.MOVING).get(),
+                TESTER_ITEMS.get(TesterVariant.MINECART).get(),
                 DAMAGE_COUNTER_ITEM.get()
         };
     }
@@ -150,6 +147,14 @@ public final class ModContent {
                     Direction facing = source.state().getValue(DispenserBlock.FACING);
                     ServerLevel level = source.level();
                     BlockPos target = source.pos().relative(facing);
+                    if (variant.ridesMinecart()) {
+                        // Like a minecart: only onto rails in front of the dispenser.
+                        if (DamageTesterEntity.spawnInMinecart(level, target, stack, null, facing.toYRot()) == null) {
+                            return super.execute(source, stack);
+                        }
+                        stack.shrink(1);
+                        return stack;
+                    }
                     Vec3 pos = Vec3.atBottomCenterOf(target);
                     AABB box = TESTER_TYPES.get(variant).get().getDimensions().makeBoundingBox(pos.x(), pos.y(), pos.z());
                     if (!level.noCollision(null, box) || !level.getEntities(null, box).isEmpty()) {
