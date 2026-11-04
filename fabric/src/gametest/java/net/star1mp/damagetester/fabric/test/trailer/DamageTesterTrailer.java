@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -85,6 +86,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     private int tick;
     private double fpsMul;
     private final Map<Integer, List<Runnable>> actions = new HashMap<>();
+    /** First tester each actor strikes in the current shot: actors face it before recording starts. */
+    private final Map<Integer, Integer> firstTarget = new LinkedHashMap<>();
     private final List<IntConsumer> everyTick = new ArrayList<>();
     private int actorCounter;
 
@@ -251,6 +254,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.fpsMul = s.fps;
         this.actions.clear();
         this.everyTick.clear();
+        this.firstTarget.clear();
         this.cleanup();
         this.cmd("time set " + s.time);
         this.cmd("weather " + s.weather);
@@ -265,6 +269,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
         this.tick = 0;
         s.setup.run();
+        this.faceTargets();
         this.hud(s.hud);
         int fov = s.fov > 0 ? s.fov : s.cam != null ? 58 : 70;
         this.ctx.runOnClient(mc -> {
@@ -307,6 +312,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     if (s.cam != null) {
                         Cine.placeCamera(mc, s.cam.at(u, t, mc, partial));
                     }
+                    alignBodies(mc);
                     Cine.renderFrame(mc, partial, rec, index);
                 });
                 frame++;
@@ -542,8 +548,54 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
     }
 
+    /**
+     * Mannequins have no AI, so on the client their body only drifts after the head. Keep the body
+     * turned with the head so actors always look and stand towards what they hit.
+     */
+    private static void alignBodies(net.minecraft.client.Minecraft mc) {
+        if (mc.level == null) {
+            return;
+        }
+        for (Entity e : mc.level.entitiesForRendering()) {
+            if (e instanceof net.minecraft.world.entity.decoration.Mannequin m) {
+                m.yBodyRot = m.yHeadRot;
+                m.yBodyRotO = m.yHeadRotO;
+            }
+        }
+    }
+
+    /** Before recording: every actor turns to its first target (or the nearest tester). */
+    private void faceTargets() {
+        this.srv(level -> {
+            for (Entity e : level.getAllEntities()) {
+                if (!(e instanceof net.minecraft.world.entity.decoration.Mannequin a)) {
+                    continue;
+                }
+                Entity target = this.firstTarget.containsKey(a.getId()) ? this.entity(level, this.firstTarget.get(a.getId())) : null;
+                if (target == null) {
+                    double best = 18 * 18;
+                    for (Entity o : level.getAllEntities()) {
+                        if (o instanceof DamageTesterEntity && o.distanceToSqr(a) < best) {
+                            best = o.distanceToSqr(a);
+                            target = o;
+                        }
+                    }
+                }
+                if (target != null) {
+                    this.face(a, target.position());
+                }
+            }
+        });
+    }
+
     /** Actor swings at tick t and the hit lands 2 ticks later. */
     private void strike(int t, int actorId, int testerId, float amount, boolean crit) {
+        this.firstTarget.putIfAbsent(actorId, testerId);
+        this.at(Math.max(1, t - 6), () -> this.srv(level -> {
+            if (this.entity(level, actorId) instanceof LivingEntity a && this.entity(level, testerId) != null) {
+                this.face(a, this.entity(level, testerId).position());
+            }
+        }));
         this.at(t, () -> {
             this.srv(level -> {
                 if (this.entity(level, actorId) instanceof LivingEntity a && this.entity(level, testerId) != null) {
