@@ -1,0 +1,6 @@
+k1b_swing,0.400,jump,
+k1b_swing,2.000,hit_weak,1
+k2d_ouch,0.550,hit,ari
+k2d_ouch,0.550,hurt,ari
+k2d_ouch,0.600,say,ari:ouch
+k2d_ouch,2.550,say,kai:what
