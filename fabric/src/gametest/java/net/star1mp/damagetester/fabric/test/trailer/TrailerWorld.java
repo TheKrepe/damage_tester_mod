@@ -158,7 +158,7 @@ public final class TrailerWorld {
                         : r < 0.215 ? Blocks.CORNFLOWER : null;
                 if (b != null) {
                     level.setBlock(pos, b.defaultBlockState(), 2);
-                } else if (r < 0.235) {
+                } else if (r < 0.222) {
                     level.setBlock(pos, Blocks.TALL_GRASS.defaultBlockState(), 2);
                     level.setBlock(pos.above(), Blocks.TALL_GRASS.defaultBlockState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER), 2);
                 }
@@ -459,15 +459,15 @@ public final class TrailerWorld {
             for (int z = 30; z <= 34; z++) {
                 this.set(level, x, -1, z, z == 32 ? Blocks.DIRT_PATH.defaultBlockState() : Blocks.GRASS_BLOCK.defaultBlockState());
             }
-            this.set(level, x, 0, 36, Blocks.OAK_FENCE);
+            this.set(level, x, 0, 28, Blocks.OAK_FENCE);
             if (x % 4 == 0) {
-                this.set(level, x, 1, 36, Blocks.LANTERN);
+                this.set(level, x, 1, 28, Blocks.LANTERN);
             }
         }
         for (int x = -45; x <= -23; x += 5) {
-            this.set(level, x, 0, 35, Blocks.HAY_BLOCK);
+            this.set(level, x, 0, 29, Blocks.HAY_BLOCK);
         }
-        this.set(level, -46, 0, 35, Blocks.CARVED_PUMPKIN);
-        this.set(level, -22, 0, 35, Blocks.JACK_O_LANTERN);
+        this.set(level, -46, 0, 29, Blocks.CARVED_PUMPKIN);
+        this.set(level, -22, 0, 29, Blocks.JACK_O_LANTERN);
     }
 }

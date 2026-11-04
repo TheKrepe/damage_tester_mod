@@ -142,7 +142,6 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.ctx.waitTicks(40);
         this.srv(level -> {
             this.w.flatten(level);
-            this.w.buildAll(level);
         });
         for (int[] t : TrailerWorld.TREES) {
             int x = this.w.cx + t[0];
@@ -152,6 +151,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.cmd("place feature minecraft:" + tree + " " + x + " " + y + " " + z);
         }
         this.srv(this.w::decorate);
+        this.srv(this.w::buildAll);
         this.ctx.waitTicks(60);
         // let the client see all sets once so chunk meshes exist
         for (Vec3 p : new Vec3[]{this.w.v(0, 30, 10), this.w.v(-35, 25, 30), this.w.v(30, 25, 34), this.w.v(0, 25, 40)}) {
@@ -176,6 +176,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         Cam cam;
         boolean hud;
         boolean survival = true;
+        int fov = -1;
         long time = 1000;
         String weather = "clear";
         Runnable setup = () -> {
@@ -204,6 +205,11 @@ public class DamageTesterTrailer implements FabricClientGameTest {
 
         Shot time(long t) {
             this.time = t;
+            return this;
+        }
+
+        Shot fov(int f) {
+            this.fov = f;
             return this;
         }
 
@@ -259,7 +265,10 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         this.tick = 0;
         s.setup.run();
         this.hud(s.hud);
+        int fov = s.fov > 0 ? s.fov : s.cam != null ? 58 : 70;
         this.ctx.runOnClient(mc -> {
+            mc.options.fov().set(fov);
+            mc.options.fovEffectScale().set(0.0);
             mc.gui.hud.getChat().clearMessages(false);
             mc.gui.toastManager().clear();
         });
@@ -805,9 +814,9 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             }
         });
 
-        this.shot("s04_hits_orbit", "A", 180).time(morning).cam(Cine.orbit(w.v(tx, 0.9, tz + 0.8), 6.5, 1.4, 35, -45, 0.2)).setup(() -> {
+        this.shot("s04_hits_orbit", "A", 180).time(morning).cam(Cine.orbit(w.v(tx, 0.9, tz + 0.6), 5.0, 1.0, -10, -70, 0.3)).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
-            int hero = this.actor(null, "steve", tx, tz + 1.7, NORTH, new ItemStack(Items.DIAMOND_SWORD));
+            int hero = this.actor(null, "steve", tx + 1.0, tz + 1.3, NORTH + 35, new ItemStack(Items.DIAMOND_SWORD));
             this.armor(hero, "iron");
             float[] dmg = {7, 7, 11, 7, 7, 12};
             for (int k = 0; k < dmg.length; k++) {
@@ -835,10 +844,10 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
 
         this.shot("s06_armor_cine", "B", 130).time(morning).cam(Cine.dolly(
-                w.v(tx - 3.5, 0.8, tz + 3.5), w.v(tx + 3.0, 1.2, tz + 3.8), tChest, tChest)).setup(() -> {
+                w.v(tx - 2.8, 1.3, tz + 3.0), w.v(tx - 0.8, 1.5, tz + 3.6), tChest, tChest)).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
             this.armor(t, "netherite");
-            int hero = this.actor(null, "steve", tx + 0.2, tz + 1.7, NORTH, new ItemStack(Items.NETHERITE_AXE));
+            int hero = this.actor(null, "steve", tx + 1.25, tz + 1.05, NORTH + 45, new ItemStack(Items.NETHERITE_AXE));
             this.armor(hero, "diamond");
             this.strike(20, hero, t, 4.8F, false);
             this.strike(55, hero, t, 4.8F, false);
@@ -850,13 +859,25 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.cmd("gamemode creative @a");
             Vec3 eye = w.v(tx, 11.5, tz + 1.4);
             Pose p = Pose.look(eye, tHead);
-            this.cmd(String.format(Locale.ROOT, "tp @a %.3f %.3f %.3f %.2f %.2f", eye.x, eye.y - 1.62, eye.z, p.yaw(), p.pitch()));
+            String tp = String.format(Locale.ROOT, "tp @a %.3f %.3f %.3f %.2f %.2f", eye.x, eye.y - 1.62, eye.z, p.yaw(), p.pitch());
+            this.cmd(tp);
+            this.srv(level -> {
+                this.player().getAbilities().flying = true;
+                this.player().onUpdateAbilities();
+            });
             this.ctx.waitTicks(2);
             this.ctx.getInput().lookAt(p.yaw(), p.pitch());
             this.hand(1, new ItemStack(Items.MACE));
+            this.at(1, () -> {
+                this.cmd(tp);
+                this.srv(level -> {
+                    this.player().getAbilities().flying = false;
+                    this.player().onUpdateAbilities();
+                });
+            });
             AtomicInteger done = new AtomicInteger();
             this.every(i -> {
-                if (done.get() != 0) {
+                if (done.get() != 0 || i < 4) {
                     return;
                 }
                 double y = this.ctx.computeOnClient(mc -> mc.player.getY());
@@ -935,7 +956,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
 
         this.shot("s12_redstone", "B", 180).time(morning).cam(Cine.dolly(
-                w.v(16, 6.5, 15), w.v(24, 5.5, 13), w.v(16, 0, 4), w.v(23, 0, 4))).setup(() -> {
+                w.v(14.5, 4.6, 9.8), w.v(23.5, 4.2, 9.4), w.v(16.5, 0.3, 4.5), w.v(25.0, 0.3, 4.5))).setup(() -> {
             int t = this.tester(TesterVariant.STANDARD, 12.5, 1, 4.5, SOUTH, "dye:red");
             int hero = this.actor(null, "steve", 12.5, 6.0, NORTH, new ItemStack(Items.DIAMOND_SWORD));
             this.strike(20, hero, t, 4, false);
@@ -953,7 +974,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.hitWith(40, t, l -> l.damageSources().inFire(), 4, "fire");
         });
 
-        this.shot("d02_magic", "C", 80).time(day).cam(Cine.dolly(w.v(-3, 1.2, 37), w.v(-1.5, 1.6, 35.5), w.v(0.5, 1.0, 40.5), w.v(0.5, 1.2, 40.5))).setup(() -> {
+        this.shot("d02_magic", "C", 80).time(day).cam(Cine.dolly(w.v(-2.8, 1.7, 36.2), w.v(-2.0, 1.8, 35.4), w.v(0.5, 1.1, 40.5), w.v(0.8, 1.2, 40.0))).setup(() -> {
             int t = this.tester(0.5, 40.5, SOUTH, "");
             int witch = this.actor("Noor", "noor", 3.5, 37.0, NORTH, new ItemStack(Items.SPLASH_POTION));
             this.at(12, () -> {
@@ -971,7 +992,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             });
         });
 
-        this.shot("d03_explosion", "C", 90).time(day).cam(Cine.dolly(w.v(-11, 2.2, 32), w.v(-9, 2.6, 31), w.v(-4, 0.8, 40), w.v(-4, 1.2, 40))).setup(() -> {
+        this.shot("d03_explosion", "C", 90).time(day).cam(Cine.dolly(w.v(-6.5, 1.9, 35.0), w.v(-7.5, 2.2, 34.4), w.v(-4.0, 0.9, 40.5), w.v(-4.2, 1.1, 40.5))).setup(() -> {
             int t = this.tester(-3.5, 40.5, SOUTH, "");
             AtomicInteger tnt = new AtomicInteger();
             this.at(4, () -> {
@@ -997,7 +1018,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             });
         });
 
-        this.shot("d04_lightning", "C", 70).time(13800).weather("thunder").cam(Cine.dolly(w.v(-6, 0.6, 46), w.v(-5, 1.0, 44.5), w.v(-8, 2.5, 40), w.v(-8, 2.2, 40))).setup(() -> {
+        this.shot("d04_lightning", "C", 70).time(day).cam(Cine.dolly(w.v(-4.5, 1.8, 35.5), w.v(-5.5, 1.6, 36.5), w.v(-7.5, 1.6, 40.5), w.v(-7.5, 1.4, 40.5))).setup(() -> {
             int t = this.tester(-7.5, 40.5, SOUTH, "");
             this.at(30, () -> {
                 this.srv(level -> {
@@ -1012,7 +1033,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             });
         });
 
-        this.shot("d05_wither", "C", 90).time(day).cam(Cine.orbit(w.v(4.5, 1.0, 40.5), 4.5, 1.2, 20, -15, 0.3)).setup(() -> {
+        this.shot("d05_wither", "C", 90).time(day).cam(Cine.orbit(w.v(4.5, 1.0, 40.5), 4.0, 0.8, 25, -10, 0.35)).setup(() -> {
             int t = this.tester(4.5, 40.5, SOUTH, "");
             this.at(6, () -> this.srv(level -> ((LivingEntity) this.entity(level, t)).addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 1))));
             this.hitWith(30, t, l -> l.damageSources().wither(), 4, "wither");
@@ -1024,13 +1045,13 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             });
         });
 
-        this.shot("d06_freeze", "C", 90).time(day).cam(Cine.dolly(w.v(11, 1.0, 37), w.v(10, 1.4, 36), w.v(8.5, 1.0, 40.5), w.v(8.5, 1.2, 40.5))).setup(() -> {
+        this.shot("d06_freeze", "C", 90).time(day).cam(Cine.dolly(w.v(11.2, 1.8, 37.0), w.v(10.4, 1.7, 36.6), w.v(8.5, 1.1, 40.5), w.v(8.5, 1.2, 40.5))).setup(() -> {
             int t = this.tester(8.5, 40.5, SOUTH, "");
             this.srv(level -> {
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dz = -1; dz <= 1; dz++) {
                         if (dx != 0 || dz != 0) {
-                            level.setBlock(this.w.p(8 + dx, 0, 40 + dz), Blocks.POWDER_SNOW.defaultBlockState(), 3);
+                            level.setBlock(this.w.p(8 + dx, 0, 40 + dz), Blocks.SNOW.defaultBlockState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LAYERS, 2), 3);
                         }
                     }
                 }
@@ -1054,9 +1075,9 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             }));
         });
 
-        this.shot("d07_trident", "C", 70).time(day).weather("rain").cam(Cine.dolly(w.v(6, 1.6, 31), w.v(4, 1.4, 33), w.v(0.5, 1.2, 40.5), w.v(0.5, 1.2, 40.5))).setup(() -> {
+        this.shot("d07_trident", "C", 70).time(day).cam(Cine.dolly(w.v(4.5, 1.8, 33.5), w.v(3.2, 1.6, 35.5), w.v(0.5, 1.2, 40.5), w.v(0.5, 1.3, 40.5))).setup(() -> {
             int t = this.tester(0.5, 40.5, SOUTH, "");
-            int thrower = this.actor("Kai", "kai", 0.5, 31.5, NORTH, new ItemStack(Items.TRIDENT));
+            int thrower = this.actor("Kai", "kai", -0.5, 33.0, NORTH + 10, new ItemStack(Items.TRIDENT));
             this.at(14, () -> {
                 this.srv(level -> {
                     LivingEntity s = (LivingEntity) this.entity(level, thrower);
@@ -1070,7 +1091,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             });
         });
 
-        this.shot("d08_wind", "C", 60).time(day).cam(Cine.orbit(w.v(-3.5, 1.0, 40.5), 5, 1.0, -60, -30, 0.3)).setup(() -> {
+        this.shot("d08_wind", "C", 60).time(day).cam(Cine.orbit(w.v(-3.5, 1.0, 39.0), 4.6, 0.9, -70, -40, 0.3)).setup(() -> {
             int t = this.tester(-3.5, 40.5, SOUTH, "");
             int caster = this.actor("Ari", "ari", -3.5, 35.0, NORTH, new ItemStack(Items.WIND_CHARGE));
             this.at(10, () -> {
@@ -1142,13 +1163,13 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.chat(170, "Ari", "rematch at sunset?");
         });
 
-        this.shot("f04_contest", "D", 190).time(day).cam(Cine.dolly(w.v(4.5, 1.3, 36.5), w.v(3.6, 1.0, 37.6), w.v(1.5, 0.7, 40.5), w.v(1.2, 0.8, 40.4))).setup(() -> {
+        this.shot("f04_contest", "D", 190).time(day).cam(Cine.dolly(w.v(5.0, 1.7, 35.2), w.v(4.2, 1.5, 36.2), w.v(0.6, 0.8, 40.5), w.v(0.8, 0.8, 40.5))).setup(() -> {
             this.srv(level -> level.setBlock(this.w.p(1, 0, 40), ModContent.DAMAGE_COUNTER.get().defaultBlockState()
                     .setValue(net.star1mp.damagetester.block.DamageCounterBlock.FACING, net.minecraft.core.Direction.SOUTH), 3));
             int t = this.tester(-0.5, 40.5, SOUTH, "");
             int[] a = new int[4];
             for (int k = 0; k < 4; k++) {
-                a[k] = this.actor(friends[k][0], friends[k][1], -2.5 + k * 1.3, 37.6, NORTH, weapons[k]);
+                a[k] = this.actor(friends[k][0], friends[k][1], -3.6 + k * 1.1, 38.6 - (k % 2) * 0.6, NORTH + 25, weapons[k]);
                 this.armor(a[k], gear[k]);
             }
             this.strike(15, a[0], t, 8, false);
@@ -1183,11 +1204,11 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             }
         });
 
-        this.shot("f08_small", "D", 110).time(day).cam(Cine.dolly(w.v(-9, 0.5, 30.5), w.v(-7.5, 0.7, 30.8), w.v(-10, 0.5, 27.5), w.v(-9.5, 0.6, 27.5))).setup(() -> {
+        this.shot("f08_small", "D", 110).time(day).cam(Cine.dolly(w.v(-10.2, 1.3, 31.6), w.v(-8.6, 1.2, 31.0), w.v(-9.6, 0.6, 27.5), w.v(-9.2, 0.7, 27.5))).setup(() -> {
             int small = this.tester(TesterVariant.SMALL, -10.5, 0, 27.5, SOUTH, "dye:pink");
             int big = this.tester(-8.0, 27.5, SOUTH, "");
-            int noor = this.actor("Noor", "noor", -10.5, 29.2, NORTH, new ItemStack(Items.WOODEN_SWORD));
-            int kai = this.actor("Kai", "kai", -8.0, 29.2, NORTH, new ItemStack(Items.STONE_SWORD));
+            int noor = this.actor("Noor", "noor", -11.9, 28.0, -90.0F, new ItemStack(Items.WOODEN_SWORD));
+            int kai = this.actor("Kai", "kai", -6.6, 28.0, 90.0F, new ItemStack(Items.STONE_SWORD));
             for (int j = 0; j < 4; j++) {
                 this.strike(12 + j * 24, noor, small, 4, false);
                 this.strike(20 + j * 24, kai, big, 5, j == 2);
@@ -1226,13 +1247,13 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
 
         String[] row = {"", "straw", "planks:minecraft:oak_planks", "planks:minecraft:cherry_planks", "jack_o_lantern", "dye:red", "jeb"};
-        this.shot("c02_row_dolly", "E", 180).time(day).cam(Cine.dolly(w.v(-45, 1.5, 37.5), w.v(-23, 1.7, 37.5), w.v(-41, 1.1, 32.5), w.v(-27, 1.1, 32.5))).setup(() -> {
+        this.shot("c02_row_dolly", "E", 180).time(day).cam(Cine.dolly(w.v(-44, 1.5, 36.8), w.v(-25, 1.7, 36.8), w.v(-40, 1.1, 32.5), w.v(-28, 1.1, 32.5))).setup(() -> {
             for (int k = 0; k < row.length; k++) {
                 this.tester(-43 + k * 3 + 0.5, sz, SOUTH, row[k]);
             }
         });
 
-        this.shot("c03_dye_cycle", "E", 100).time(day).cam(Cine.dolly(w.v(sx + 1.2, 1.5, sz + 3.6), w.v(sx + 0.6, 1.45, sz + 2.8), w.v(sx, 1.2, sz), w.v(sx, 1.25, sz))).setup(() -> {
+        this.shot("c03_dye_cycle", "E", 100).time(day).cam(Cine.dolly(w.v(sx + 1.0, 1.5, sz + 3.0), w.v(sx + 0.5, 1.45, sz + 2.3), w.v(sx, 1.2, sz), w.v(sx, 1.25, sz))).setup(() -> {
             int t = this.tester(sx, sz, SOUTH, "");
             DyeColor[] colors = DyeColor.values();
             for (int k = 0; k < colors.length; k++) {
@@ -1244,14 +1265,14 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             }
         });
 
-        this.shot("c04_jeb", "E", 110).time(day).cam(Cine.orbit(w.v(sx, 1.0, sz), 3.6, 0.7, -40, 40, 0.3)).setup(() -> {
+        this.shot("c04_jeb", "E", 110).time(day).cam(Cine.orbit(w.v(sx, 1.0, sz), 3.4, 0.6, -45, 15, 0.35)).setup(() -> {
             int t = this.tester(sx, sz, SOUTH, "jeb");
-            int kai = this.actor("Kai", "kai", sx + 0.2, sz + 1.6, NORTH, weapons[0]);
+            int kai = this.actor("Kai", "kai", sx + 1.3, sz + 0.9, NORTH + 55, weapons[0]);
             this.strike(40, kai, t, 7, false);
             this.strike(80, kai, t, 11, true);
         });
 
-        this.shot("c05_night", "E", 200).time(night).cam(Cine.orbit(w.v(-34.5, 1.0, sz), 7.5, 1.6, -35, 35, 0.4)).setup(() -> {
+        this.shot("c05_night", "E", 200).time(night).cam(Cine.orbit(w.v(-34.5, 1.0, sz), 6.0, 1.2, -35, 30, 0.4)).setup(() -> {
             int a = this.tester(-37.5, sz, SOUTH, "jack_o_lantern");
             int b = this.tester(-34.5, sz, SOUTH, "jack_o_lantern");
             int c = this.tester(-31.5, sz, SOUTH, "jack_o_lantern");
@@ -1271,9 +1292,9 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         });
 
         String[] woods = {"oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove", "cherry", "pale_oak", "bamboo", "crimson", "warped"};
-        this.shot("c06_planks", "E", 150).time(day).cam(Cine.dolly(w.v(-46, 1.3, 33), w.v(-23, 1.5, 33), w.v(-43, 1.0, 29.5), w.v(-24, 1.0, 29.5))).setup(() -> {
+        this.shot("c06_planks", "E", 150).time(day).cam(Cine.dolly(w.v(-45, 1.4, 36.3), w.v(-24, 1.6, 36.3), w.v(-42, 1.0, 32.5), w.v(-26, 1.0, 32.5))).setup(() -> {
             for (int k = 0; k < woods.length; k++) {
-                this.tester(-45 + k * 2 + 0.5, 29.5, SOUTH, "planks:minecraft:" + woods[k] + "_planks");
+                this.tester(-45 + k * 2 + 0.5, 32.5, SOUTH, "planks:minecraft:" + woods[k] + "_planks");
             }
         });
 
@@ -1296,7 +1317,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             int unused = cart;
         });
 
-        this.shot("e02_end_bg", "E", 180).time(sunset + 200).cam(Cine.dolly(w.v(tx - 6.5, 0.4, tz + 3.0), w.v(tx - 4.2, 0.6, tz + 1.4), w.v(tx, 1.3, tz), w.v(tx, 1.35, tz))).setup(() -> {
+        this.shot("e02_end_bg", "E", 180).time(sunset + 200).cam(Cine.dolly(w.v(tx - 5.2, 0.9, tz + 2.6), w.v(tx - 3.6, 1.0, tz + 1.3), w.v(tx, 1.3, tz), w.v(tx, 1.35, tz))).setup(() -> {
             int t = this.tester(tx, tz, SOUTH, "");
             int hero = this.actor(null, "steve", tx + 0.3, tz + 1.6, NORTH, new ItemStack(Items.DIAMOND_SWORD));
             this.strike(60, hero, t, 13, true);
