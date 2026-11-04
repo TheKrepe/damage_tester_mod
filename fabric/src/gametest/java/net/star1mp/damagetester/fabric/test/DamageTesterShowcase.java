@@ -75,20 +75,19 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             Vec3 heroPos = position(sp, hero);
             spectator(context, sp, heroPos.x + 0.6, heroPos.y + 1.6, heroPos.z - 3.6, 8.0F, 6.0F);
             context.waitTicks(10);
-            this.hit(sp, hero, (level, player) -> level.damageSources().playerAttack(player), 7.5F, false);
-            context.waitTicks(2);
-            this.hit(sp, hero, (level, player) -> level.damageSources().onFire(), 4.0F, false);
-            context.waitTicks(2);
-            this.hit(sp, hero, (level, player) -> level.damageSources().magic(), 3.0F, false);
-            context.waitTicks(2);
+            // vanilla's half-second hurt cooldown applies, so space the hits out
+            this.hit(sp, hero, (level, player) -> level.damageSources().onFire(), 6.0F, false);
+            context.waitTicks(11);
+            this.hit(sp, hero, (level, player) -> level.damageSources().magic(), 4.5F, false);
+            context.waitTicks(11);
             this.hit(sp, hero, (level, player) -> level.damageSources().playerAttack(player), 11.0F, true);
-            context.waitTicks(4);
+            context.waitTicks(3);
             shot(context, "02_damage_numbers");
 
             // ---------------------------------------------------------------- skins line-up
             List<Integer> skins = sp.getServer().computeOnServer(server -> this.buildSkinRow(sp.getConnection().getServerLevel()));
             context.waitTicks(10);
-            spectator(context, sp, bx + 40.5, by + 2.3, bz + 2.2, 0.0F, 9.0F);
+            spectator(context, sp, bx + 40.5, by + 2.0, bz + 3.6, 0.0F, 8.0F);
             context.waitTicks(30);
             shot(context, "03_skins");
 
@@ -127,7 +126,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // two sword hits, a netherite axe hit, then a jump attack (critical hit).
             for (int t = 0; t < 92; t++) {
                 switch (t) {
-                    case 2, 20, 48, 73 -> context.getInput().pressKey(options -> options.keyAttack);
+                    case 2, 20, 48, 76 -> context.getInput().pressKey(options -> options.keyAttack);
                     case 24 -> sp.getServer().runOnServer(server -> sp.getConnection().getServerPlayer()
                             .setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_AXE)));
                     case 50 -> sp.getServer().runOnServer(server -> sp.getConnection().getServerPlayer()
