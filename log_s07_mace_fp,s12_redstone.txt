@@ -1,0 +1,13 @@
+[08:48:19] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=32, y=80, z=32} score 43.9962099126136
+[08:48:37] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=516, y=80, z=-288} score 146.63262749255702
+[08:48:51] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=0, y=80, z=900} score 99.04527951643307
+[08:48:58] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-836, y=80, z=-64} score 73.50558719058156
+[08:49:01] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-32, y=80, z=-612} score 61.31952152842787
+[08:49:04] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1092, y=80, z=1092} score 102.47111942501871
+[08:49:04] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 32 105 32
+[08:51:12] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[08:51:12] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 179766 ms
+[08:51:18] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording s07_mace_fp.mp4 at 1920x1080
+[trailer] s07_mace_fp: 135 frames (135 written) in 32.3 s (0.24 s/frame)
+[08:51:54] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording s12_redstone.mp4 at 1920x1080
+[trailer] s12_redstone: 270 frames (270 written) in 113.0 s (0.42 s/frame)

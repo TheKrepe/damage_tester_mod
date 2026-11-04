@@ -1,0 +1,8 @@
+s07_mace_fp,1.275,mace,
+s12_redstone,0.950,swing,
+s12_redstone,1.050,hit,4.0
+s12_redstone,3.450,swing,
+s12_redstone,3.550,hit_strong,9.0
+s12_redstone,6.200,swing,
+s12_redstone,6.300,hit_crit,16.0
+s12_redstone,6.350,lamp,
