@@ -1,0 +1,2 @@
+RU: Тренировочный манекен, который показывает настоящий урон каждого удара, качается от ударов, считает DPS и бывает в нескольких вариантах и скинах.
+EN: A training dummy that shows the real damage of every hit, wobbles when struck, tracks your DPS and comes in several variants and skins.
