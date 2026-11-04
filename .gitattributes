@@ -13,6 +13,7 @@
 *.pyd binary
 *.cfg text eol=lf
 *.jks binary
-*.ogg binary*.gif binary
+*.ogg binary
+*.gif binary
 *.mp4 binary
 *.webp binary
