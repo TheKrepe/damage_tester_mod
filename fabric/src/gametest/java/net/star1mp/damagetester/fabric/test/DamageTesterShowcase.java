@@ -73,7 +73,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // ---------------------------------------------------------------- close-up: colors and a crit
             int hero = row.get(2);
             Vec3 heroPos = position(sp, hero);
-            spectator(context, sp, heroPos.x + 0.6, heroPos.y + 1.5, heroPos.z - 3.2, 8.0F, 4.0F);
+            spectator(context, sp, heroPos.x + 0.6, heroPos.y + 1.6, heroPos.z - 3.6, 8.0F, 6.0F);
             context.waitTicks(10);
             this.hit(sp, hero, (level, player) -> level.damageSources().playerAttack(player), 7.5F, false);
             context.waitTicks(2);
@@ -88,8 +88,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // ---------------------------------------------------------------- skins line-up
             List<Integer> skins = sp.getServer().computeOnServer(server -> this.buildSkinRow(sp.getConnection().getServerLevel()));
             context.waitTicks(10);
-            // looking along the row so every skin is big enough to see
-            spectator(context, sp, bx + 27.5, by + 2.3, bz + 5.0, -58.0F, 12.0F);
+            spectator(context, sp, bx + 40.5, by + 2.3, bz + 2.2, 0.0F, 9.0F);
             context.waitTicks(30);
             shot(context, "03_skins");
 
@@ -105,7 +104,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // ---------------------------------------------------------------- night: the jack o'lantern glows
             command(context, sp, "time set 18000");
             // close to the jack o'lantern tester (6th in the row)
-            spectator(context, sp, bx + 41.5, by + 1.7, bz + 5.6, 0.0F, 6.0F);
+            spectator(context, sp, bx + 42.5, by + 1.6, bz + 5.8, 0.0F, 5.0F);
             context.waitTicks(30);
             shot(context, "05_night");
             command(context, sp, "time set 1000");
@@ -124,20 +123,22 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             this.cleanHud(context, true);
             context.getInput().lookAt(0.0F, 8.0F);
             context.waitTicks(15);
-            int frame = 0;
-            for (int attack = 0; attack < 4; attack++) {
-                boolean jump = attack == 2;
-                if (jump) {
-                    context.getInput().pressKey(options -> options.keyJump);
-                }
-                for (int t = 0; t < 16; t++) {
-                    if ((!jump && t == 2) || (jump && t == 10)) {
-                        context.getInput().pressKey(options -> options.keyAttack);
+            // A short scripted fight, one screenshot per tick (turned into a GIF on CI):
+            // two sword hits, a netherite axe hit, then a jump attack (critical hit).
+            for (int t = 0; t < 92; t++) {
+                switch (t) {
+                    case 2, 20, 48, 73 -> context.getInput().pressKey(options -> options.keyAttack);
+                    case 24 -> sp.getServer().runOnServer(server -> sp.getConnection().getServerPlayer()
+                            .setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_AXE)));
+                    case 50 -> sp.getServer().runOnServer(server -> sp.getConnection().getServerPlayer()
+                            .setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND_SWORD)));
+                    case 66 -> context.getInput().holdKeyFor(options -> options.keyJump, 2);
+                    default -> {
                     }
-                    context.waitTick();
-                    this.cleanHud(context, false);
-                    context.takeScreenshot(String.format("gif_%03d", frame++));
                 }
+                context.waitTick();
+                this.cleanHud(context, false);
+                context.takeScreenshot(String.format("gif_%03d", t));
             }
             this.cleanHud(context, true);
             context.getInput().pressKey(options -> options.keyAttack);
@@ -272,10 +273,10 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             fence(level, x0 + x, z + 3, x % 4 == 0);
         }
         String[] skins = {"", DamageTesterEntity.SKIN_STRAW, "planks:minecraft:oak_planks", "planks:minecraft:cherry_planks",
-                "planks:minecraft:dark_oak_planks", DamageTesterEntity.SKIN_JACK, "dye:red", "dye:light_blue", "jeb"};
+                DamageTesterEntity.SKIN_JACK, "dye:red", "jeb"};
         List<Integer> ids = new ArrayList<>();
         for (int i = 0; i < skins.length; i++) {
-            DamageTesterEntity t = stand(level, TesterVariant.STANDARD, x0 - 10 + i * 2 + (i >= 5 ? 1 : 0), z);
+            DamageTesterEntity t = stand(level, TesterVariant.STANDARD, x0 - 6 + i * 2, z);
             if (skins[i].equals("jeb")) {
                 t.setCustomName(Component.literal("jeb_"));
             } else {
@@ -332,6 +333,8 @@ public class DamageTesterShowcase implements FabricClientGameTest {
         context.waitTicks(5);
         context.getInput().lookAt(yaw, pitch);
         sp.getConnection().waitForChunksRender(6000);
+        context.getInput().resizeWindow(1920, 1080);
+        context.waitTicks(10);
         this.cleanHud(context, true);
     }
 
@@ -362,9 +365,6 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             context.runOnClient(client -> client.gui.hud.toggle());
             context.waitTick();
         }
-        // Rendering is software-only on CI, so only switch to full HD for the screenshot itself.
-        context.getInput().resizeWindow(1920, 1080);
-        context.waitTicks(20);
         context.takeScreenshot("showcase_" + name);
         context.getInput().resizeWindow(960, 540);
         context.waitTicks(2);
