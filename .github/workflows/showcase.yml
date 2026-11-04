@@ -1,0 +1,37 @@
+name: Showcase screenshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  showcase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '25' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install virtual display + Mesa + ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers ffmpeg python3-pil
+      - name: Take showcase screenshots
+        env:
+          DT_SHOWCASE: "1"
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" ./gradlew :fabric:runClientGameTest --stacktrace --console=plain
+      - name: Build GIF and video
+        if: always()
+        run: |
+          python3 .github/scripts/make_showcase_gif.py fabric/build/run/clientGameTest/screenshots showcase
+          ls fabric/build/run/clientGameTest/screenshots/*_gif_*.png | sort | awk '{print "file \x27" ENVIRON["PWD"] "/" $0 "\x27\nduration 0.05"}' > frames.txt || true
+          ffmpeg -y -f concat -safe 0 -i frames.txt -vf "scale=1280:-2,format=yuv420p" -r 20 showcase/damage_tester_demo.mp4 || true
+          ls -la showcase
+      - name: Publish to the ci-showcase branch
+        if: always()
+        run: |
+          cd showcase
+          git init -q -b ci-showcase
+          git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "showcase ${{ github.sha }}" || exit 0
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-showcase

@@ -6,7 +6,8 @@
   "environment": "*",
   "entrypoints": {
     "fabric-client-gametest": [
-      "net.star1mp.damagetester.fabric.test.DamageTesterClientGameTest"
+      "net.star1mp.damagetester.fabric.test.DamageTesterClientGameTest",
+      "net.star1mp.damagetester.fabric.test.DamageTesterShowcase"
     ]
   },
   "depends": {

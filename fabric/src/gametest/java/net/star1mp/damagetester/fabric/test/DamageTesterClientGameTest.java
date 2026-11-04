@@ -24,6 +24,9 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 public class DamageTesterClientGameTest implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
+        if (DamageTesterShowcase.enabled()) {
+            return; // screenshot run, see DamageTesterShowcase
+        }
         context.waitTicks(40);
         try (TestSingleplayerContext sp = context.worldBuilder()
                 .adjustSettings(s -> s.setGameMode(WorldCreationUiState.SelectedGameMode.CREATIVE))
