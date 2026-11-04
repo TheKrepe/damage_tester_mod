@@ -73,7 +73,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // ---------------------------------------------------------------- close-up: colors and a crit
             int hero = row.get(2);
             Vec3 heroPos = position(sp, hero);
-            spectator(context, sp, heroPos.x + 1.2, heroPos.y + 1.7, heroPos.z - 2.4, 25.0F, 8.0F);
+            spectator(context, sp, heroPos.x + 0.6, heroPos.y + 1.5, heroPos.z - 3.2, 8.0F, 4.0F);
             context.waitTicks(10);
             this.hit(sp, hero, (level, player) -> level.damageSources().playerAttack(player), 7.5F, false);
             context.waitTicks(2);
@@ -88,7 +88,8 @@ public class DamageTesterShowcase implements FabricClientGameTest {
             // ---------------------------------------------------------------- skins line-up
             List<Integer> skins = sp.getServer().computeOnServer(server -> this.buildSkinRow(sp.getConnection().getServerLevel()));
             context.waitTicks(10);
-            spectator(context, sp, bx + 38.5, by + 2.6, bz + 1.0, 0.0F, 10.0F);
+            // looking along the row so every skin is big enough to see
+            spectator(context, sp, bx + 27.5, by + 2.3, bz + 5.0, -58.0F, 12.0F);
             context.waitTicks(30);
             shot(context, "03_skins");
 
@@ -103,13 +104,14 @@ public class DamageTesterShowcase implements FabricClientGameTest {
 
             // ---------------------------------------------------------------- night: the jack o'lantern glows
             command(context, sp, "time set 18000");
-            spectator(context, sp, bx + 38.5, by + 2.6, bz + 1.0, 0.0F, 10.0F);
+            // close to the jack o'lantern tester (6th in the row)
+            spectator(context, sp, bx + 41.5, by + 1.7, bz + 5.6, 0.0F, 6.0F);
             context.waitTicks(30);
             shot(context, "05_night");
             command(context, sp, "time set 1000");
 
             // ---------------------------------------------------------------- with the HUD: real attacks + GIF frames
-            Vec3 target = position(sp, hero);
+            Vec3 target = position(sp, row.get(0));
             command(context, sp, "gamemode creative @a");
             sp.getServer().runOnServer(server -> {
                 ServerPlayer player = sp.getConnection().getServerPlayer();
@@ -129,7 +131,7 @@ public class DamageTesterShowcase implements FabricClientGameTest {
                     context.getInput().pressKey(options -> options.keyJump);
                 }
                 for (int t = 0; t < 16; t++) {
-                    if ((!jump && t == 2) || (jump && t == 7)) {
+                    if ((!jump && t == 2) || (jump && t == 10)) {
                         context.getInput().pressKey(options -> options.keyAttack);
                     }
                     context.waitTick();
