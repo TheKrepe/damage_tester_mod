@@ -1,0 +1,11 @@
+[07:55:00] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=28, y=109, z=22} score 31.500746525117297
+[07:55:16] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=512, y=109, z=214} score 103.7725569981846
+[07:55:29] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-4, y=109, z=890} score 112.40107546700409
+[07:55:36] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-840, y=109, z=-74} score 73.08857336784287
+[07:55:39] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-100, y=109, z=-622} score 65.15859817801513
+[07:55:42] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1088, y=109, z=1082} score 91.15803668009318
+[07:55:42] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 28 107 22
+[07:57:44] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[07:57:44] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 168548 ms
+[07:57:49] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording p_profiles.mp4 at 854x480
+[trailer] p_profiles: 90 frames (90 written) in 25.5 s (0.28 s/frame)
