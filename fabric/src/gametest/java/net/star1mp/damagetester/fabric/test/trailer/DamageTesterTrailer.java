@@ -535,6 +535,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         double dx = target.x - a.getX();
         double dz = target.z - a.getZ();
         float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0F;
+        System.out.printf(Locale.ROOT, "[trailer] face %d -> %.1f (was %.1f)%n", a.getId(), yaw, a.getYRot());
         a.setYRot(yaw);
         a.setYHeadRot(yaw);
         a.setYBodyRot(yaw);
@@ -558,8 +559,11 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         }
         for (Entity e : mc.level.entitiesForRendering()) {
             if (e instanceof net.minecraft.world.entity.decoration.Mannequin m) {
-                m.yBodyRot = m.yHeadRot;
-                m.yBodyRotO = m.yHeadRotO;
+                // the entity rotation is synced reliably; head rotation is not for mannequins
+                m.yBodyRot = m.getYRot();
+                m.yBodyRotO = m.yRotO;
+                m.yHeadRot = m.getYRot();
+                m.yHeadRotO = m.yRotO;
             }
         }
     }
