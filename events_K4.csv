@@ -1,0 +1,6 @@
+k4c_turn,0.650,creak,
+k4d_lookback,0.700,whoosh,
+k4d_lookback,1.750,say,kai:imagination
+k4e_boo,1.750,say,tester:boo
+k4e_boo,2.250,jump,
+k4e_boo,2.300,say,kai:scream

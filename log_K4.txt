@@ -1,0 +1,19 @@
+[18:13:25] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=32, y=80, z=32} score 43.9962099126136
+[18:13:35] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=516, y=80, z=-288} score 146.63262749255702
+[18:13:43] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=0, y=80, z=900} score 99.04527951643307
+[18:13:47] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-836, y=80, z=-64} score 73.50558719058156
+[18:13:49] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=-32, y=80, z=-612} score 61.31952152842787
+[18:13:51] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] candidate BlockPos{x=1092, y=80, z=1092} score 102.47111942501871
+[18:13:51] [Server thread/INFO] (Minecraft) [STDOUT]: [trailer] site 32 105 32
+[18:14:47] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] chunk render wait: java.lang.AssertionError: Timed out waiting for predicate
+[18:14:47] [Test thread/INFO] (Minecraft) [STDOUT]: [trailer] world ready in 86021 ms
+[18:14:52] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k4a_intro.mp4 at 1080x1920
+[trailer] k4a_intro: 120 frames (120 written) in 21.2 s (0.18 s/frame)
+[18:15:15] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k4b_walk.mp4 at 1080x1920
+[trailer] k4b_walk: 165 frames (165 written) in 39.8 s (0.24 s/frame)
+[18:15:53] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k4c_turn.mp4 at 1080x1920
+[trailer] k4c_turn: 105 frames (105 written) in 20.9 s (0.20 s/frame)
+[18:16:14] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k4d_lookback.mp4 at 1080x1920
+[trailer] k4d_lookback: 150 frames (150 written) in 34.1 s (0.23 s/frame)
+[18:16:46] [Render thread/INFO] (Minecraft) [STDOUT]: [trailer] recording k4e_boo.mp4 at 1080x1920
+[trailer] k4e_boo: 195 frames (195 written) in 24.4 s (0.13 s/frame)
