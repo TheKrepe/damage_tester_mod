@@ -94,8 +94,12 @@ public class DamageTesterTrailer implements FabricClientGameTest {
     private static final Map<Integer, Integer> LOOK = new java.util.concurrent.ConcurrentHashMap<>();
     private static final Set<Integer> WALKING = java.util.concurrent.ConcurrentHashMap.newKeySet();
     private static int frameCounter;
+    /** Wanted yaw of testers on the client (testers "turn their head" in the comedy shorts). */
+    private static final Map<Integer, Float> TYAW = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final Set<Integer> TSNAP = java.util.concurrent.ConcurrentHashMap.newKeySet();
     /** Entities whose screen position is logged every frame (for speech bubbles in the edit). */
     private final Map<String, Integer> speakers = new LinkedHashMap<>();
+    private final AtomicInteger cameraTarget = new AtomicInteger();
     private final List<IntConsumer> everyTick = new ArrayList<>();
     private int actorCounter;
 
@@ -272,6 +276,8 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         FACING.clear();
         LOOK.clear();
         WALKING.clear();
+        TYAW.clear();
+        TSNAP.clear();
         this.cleanup();
         this.cmd("time set " + s.time);
         this.cmd("weather " + s.weather);
@@ -403,6 +409,44 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     }
                 });
             }
+        });
+    }
+
+    private void testerTurn(int t, int testerId, float yaw, boolean snap) {
+        this.at(t, () -> {
+            TYAW.put(testerId, yaw);
+            if (snap) {
+                TSNAP.add(testerId);
+            }
+        });
+    }
+
+    /** Drives a minecart tester along a straight line (the cart rides with its tester). */
+    private void driveCart(int from, int to, int testerId, Vec3 a, Vec3 b) {
+        this.every(i -> {
+            if (i < from || i > to) {
+                return;
+            }
+            double u = (double) (i - from) / Math.max(1, to - from);
+            Vec3 p = Cine.lerp(u, a, b);
+            this.srv(level -> {
+                Entity t = this.entity(level, testerId);
+                Entity cart = t == null ? null : t.getVehicle();
+                if (cart != null) {
+                    cart.setDeltaMovement(Vec3.ZERO);
+                    cart.setPos(p.x, p.y, p.z);
+                }
+            });
+        });
+    }
+
+    private void hop(int from, int actorId, Vec3 at, double height, int dur) {
+        this.every(i -> {
+            if (i < from || i > from + dur) {
+                return;
+            }
+            double u = (double) (i - from) / dur;
+            this.moveActor(actorId, at.add(0, 4 * height * u * (1 - u), 0));
         });
     }
 
@@ -658,6 +702,18 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         }
         frameCounter++;
         for (Entity e : mc.level.entitiesForRendering()) {
+            if (e instanceof DamageTesterEntity te && TYAW.containsKey(te.getId())) {
+                float want = TYAW.get(te.getId());
+                float cur = te.yBodyRot;
+                float yaw = snap || TSNAP.remove(te.getId()) ? want : cur + net.minecraft.util.Mth.wrapDegrees(want - cur) * 0.12F;
+                te.setYRot(yaw);
+                te.yRotO = yaw;
+                te.yBodyRot = yaw;
+                te.yBodyRotO = yaw;
+                te.yHeadRot = yaw;
+                te.yHeadRotO = yaw;
+                continue;
+            }
             if (!(e instanceof net.minecraft.world.entity.decoration.Mannequin m)) {
                 continue;
             }
@@ -1724,6 +1780,147 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 level.setBlock(w.p(1, 0, 6), Blocks.AIR.defaultBlockState(), 3);
                 level.setBlock(w.p(4, 1, 4), Blocks.AIR.defaultBlockState(), 3);
             }));
+        });
+
+        // ---- K4: pumpkins at night (showroom row)
+        final double pz = 32.5;
+        final double[] px = {-40.5, -37.5, -34.5, -31.5};
+        final double walkZ = 34.9;
+        Runnable nightSet = () -> {
+            this.ctx.runOnClient(mc -> mc.options.gamma().set(1.0));
+        };
+        this.shot("k4a_intro", "K4", 70).time(18000).fov(72).cam(Cine.dolly(
+                w.v(-36.0, 3.6, 40.5), w.v(-36.0, 2.6, 39.0), w.v(-36.0, 1.0, 33.0), w.v(-36.0, 1.0, 33.0))).setup(() -> {
+            nightSet.run();
+            for (double x : px) {
+                this.tester(x, pz, SOUTH, "jack_o_lantern");
+            }
+            int kai = this.actor(null, "steve", -45.0, walkZ, east, new ItemStack(Items.TORCH));
+            this.walk(10, 70, kai, w.v(-45.0, 0, walkZ), w.v(-41.0, 0, walkZ));
+        });
+        this.shot("k4b_walk", "K4", 150).time(18000).fov(72).cam(Cine.dolly(
+                w.v(-42.0, 1.5, 39.6), w.v(-31.5, 1.5, 39.6), w.v(-42.0, 1.0, 33.6), w.v(-31.5, 1.0, 33.6))).setup(() -> {
+            nightSet.run();
+            int[] ts = new int[px.length];
+            for (int k = 0; k < px.length; k++) {
+                ts[k] = this.tester(px[k], pz, SOUTH, "jack_o_lantern");
+            }
+            int kai = this.actor(null, "steve", -42.5, walkZ, east, new ItemStack(Items.TORCH));
+            this.speakers.put("kai", kai);
+            this.walk(4, 92, kai, w.v(-42.5, 0, walkZ), w.v(-30.0, 0, walkZ));
+            // the third pumpkin follows Kai with its eyes...
+            this.testerTurn(48, ts[2], -35.0F, false);
+            this.testerTurn(74, ts[2], -70.0F, false);
+            // ...and freezes the moment he turns around
+            this.look(98, kai, ts[2]);
+            this.testerTurn(99, ts[2], SOUTH, true);
+            this.say(112, "kai", "imagination");
+            this.turn(140, kai, east);
+        });
+        this.shot("k4c_boo", "K4", 120).time(18000).fov(70).cam(Cine.dolly(
+                w.v(-37.3, 1.35, 35.6), w.v(-37.0, 1.35, 35.3), w.v(-31.0, 1.25, 33.8), w.v(-31.0, 1.25, 33.8))).setup(() -> {
+            nightSet.run();
+            int t3 = 0;
+            for (int k = 0; k < px.length; k++) {
+                int id = this.tester(px[k], pz, SOUTH, "jack_o_lantern");
+                if (k == 2) {
+                    t3 = id;
+                }
+            }
+            final int boo = t3;
+            int kai = this.actor(null, "steve", -30.0, walkZ, east, new ItemStack(Items.TORCH));
+            this.speakers.put("kai", kai);
+            this.speakers.put("tester", boo);
+            this.walk(4, 34, kai, w.v(-30.0, 0, walkZ), w.v(-27.5, 0, walkZ));
+            this.testerTurn(24, boo, -75.0F, false);
+            this.say(40, "tester", "boo");
+            this.look(48, kai, boo);
+            this.hop(50, kai, w.v(-27.5, 0, walkZ), 0.7, 8);
+            this.at(50, () -> this.event("jump", ""));
+            this.say(51, "kai", "scream");
+            this.walk(66, 96, kai, w.v(-27.5, 0, walkZ), w.v(-17.0, 0, walkZ + 0.4));
+            this.testerTurn(100, boo, SOUTH, false);
+        });
+
+        // ---- K5: the runaway minecart (straight track along z=50)
+        final int railZ = 50;
+        Runnable track = () -> this.srv(level -> {
+            for (int x = -14; x <= 48; x++) {
+                level.setBlock(w.p(x, -1, railZ), Blocks.GRAVEL.defaultBlockState(), 2);
+                level.setBlock(w.p(x, 0, railZ), Blocks.RAIL.defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.RAIL_SHAPE,
+                                net.minecraft.world.level.block.state.properties.RailShape.EAST_WEST), 2);
+                for (int dz = -1; dz <= 2; dz++) {
+                    if (dz != 0) {
+                        net.minecraft.world.level.block.state.BlockState above = level.getBlockState(w.p(x, 0, railZ + dz));
+                        if (!above.isAir() && !above.isSolid()) {
+                            level.setBlock(w.p(x, 0, railZ + dz), Blocks.AIR.defaultBlockState(), 2);
+                        }
+                    }
+                }
+            }
+        });
+        final double rz5 = railZ + 0.5;
+        final double kz = railZ + 1.75;
+        this.shot("k5a_miss", "K5", 100).time(day).fov(72).cam(Cine.dolly(
+                w.v(-1.0, 0.9, railZ + 6.5), w.v(0.0, 0.9, railZ + 6.0), w.v(4.0, 1.0, rz5), w.v(4.5, 1.0, rz5))).setup(() -> {
+            track.run();
+            int cart = this.cartTester(-9, railZ, east, "dye:orange", 0, 0);
+            int kai = this.actor(null, "steve", 4.0, kz, NORTH, new ItemStack(Items.IRON_SWORD));
+            this.speakers.put("kai", kai);
+            this.look(1, kai, cart);
+            this.driveCart(10, 60, cart, w.v(-8.5, 0, rz5), w.v(16.5, 0, rz5));
+            this.at(10, () -> this.event("cart", ""));
+            this.at(42, () -> this.swing(kai));
+            this.at(42, () -> this.event("swing_miss", ""));
+            this.say(50, "kai", "hey");
+        });
+        this.shot("k5b_chase", "K5", 150).time(day).fov(72).cam((u, t, mc, partial) -> Cine.follow(this.cameraTarget.get(),
+                new Vec3(-1.6, 1.5, 6.6), 1.0).at(u, t, mc, partial)).setup(() -> {
+            track.run();
+            int cart = this.cartTester(10, railZ, east, "dye:orange", 0, 0);
+            int kai = this.actor(null, "steve", 6.0, kz, east, new ItemStack(Items.IRON_SWORD));
+            this.cameraTarget.set(kai);
+            this.speakers.put("kai", kai);
+            this.driveCart(1, 150, cart, w.v(10.5, 0, rz5), w.v(41.0, 0, rz5));
+            this.at(1, () -> this.event("cart", ""));
+            this.walk(1, 150, kai, w.v(6.0, 0, kz), w.v(33.0, 0, kz));
+            for (int k : new int[]{40, 85, 125}) {
+                this.at(k, () -> this.swing(kai));
+                this.at(k, () -> this.event("swing_miss", ""));
+            }
+            this.say(18, "kai", "stop");
+        });
+        this.shot("k5c_tired", "K5", 80).time(day).fov(70).cam(Cine.dolly(
+                w.v(31.3, 1.35, railZ + 5.0), w.v(31.7, 1.3, railZ + 4.6), w.v(33.6, 1.0, kz), w.v(33.6, 0.9, kz))).setup(() -> {
+            track.run();
+            int cart = this.cartTester(44, railZ, east, "dye:orange", 0, 0);
+            int kai = this.actor(null, "steve", 33.5, kz, east, new ItemStack(Items.IRON_SWORD));
+            this.speakers.put("kai", kai);
+            this.pose(4, kai, net.minecraft.world.entity.Pose.CROUCHING);
+            this.look(1, kai, cart);
+            this.say(16, "kai", "you_win");
+            this.turn(50, kai, SOUTH + 30);
+        });
+        this.shot("k5d_return", "K5", 140).time(day).fov(72).cam(Cine.dolly(
+                w.v(34.5, 1.9, railZ + 8.2), w.v(34.5, 1.8, railZ + 7.6), w.v(34.5, 1.0, rz5), w.v(35.0, 1.0, rz5))).setup(() -> {
+            track.run();
+            int cart = this.cartTester(44, railZ, east, "dye:orange", 0, 0);
+            int kai = this.actor(null, "steve", 33.5, kz, SOUTH + 30, new ItemStack(Items.IRON_SWORD));
+            int zuri = this.actor(null, "zuri", 26.0, kz + 0.2, east, new ItemStack(Items.MACE));
+            this.speakers.put("kai", kai);
+            this.speakers.put("zuri", zuri);
+            this.pose(1, kai, net.minecraft.world.entity.Pose.CROUCHING);
+            this.driveCart(6, 58, cart, w.v(44.5, 0, rz5), w.v(35.6, 0, rz5));
+            this.at(6, () -> this.event("cart", ""));
+            this.look(20, kai, cart);
+            this.pose(34, kai, net.minecraft.world.entity.Pose.STANDING);
+            this.say(60, "kai", "q");
+            this.walk(64, 86, zuri, w.v(26.0, 0, kz + 0.2), w.v(34.6, 0, kz - 0.3));
+            this.strike(90, zuri, cart, 12, true);
+            this.look(92, kai, zuri);
+            this.say(98, "kai", "what");
+            this.walk(104, 136, zuri, w.v(34.6, 0, kz - 0.3), w.v(46.0, 0, kz + 0.3));
         });
 
         this.shot("e02_end_bg", "E", 180).time(sunset + 200).cam(Cine.dolly(w.v(tx - 5.2, 0.9, tz + 2.6), w.v(tx - 3.6, 1.0, tz + 1.3), w.v(tx, 1.3, tz), w.v(tx, 1.35, tz))).setup(() -> {
