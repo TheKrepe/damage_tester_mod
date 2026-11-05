@@ -1788,37 +1788,51 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         final double walkZ = 34.9;
         Runnable nightSet = () -> {
             this.ctx.runOnClient(mc -> mc.options.gamma().set(1.0));
+            this.srv(level -> {
+                for (int x = -44; x <= -24; x += 3) {
+                    level.setBlock(w.p(x, 2, 35), Blocks.LIGHT.defaultBlockState()
+                            .setValue(net.minecraft.world.level.block.LightBlock.LEVEL, 11), 3);
+                }
+            });
         };
-        this.shot("k4a_intro", "K4", 70).time(18000).fov(72).cam(Cine.dolly(
-                w.v(-36.0, 3.6, 40.5), w.v(-36.0, 2.6, 39.0), w.v(-36.0, 1.0, 33.0), w.v(-36.0, 1.0, 33.0))).setup(() -> {
+        this.shot("k4a_intro", "K4", 80).time(18000).fov(72).cam(Cine.dolly(
+                w.v(-39.0, 1.25, 36.6), w.v(-35.5, 1.55, 36.2), w.v(-39.0, 1.3, 32.5), w.v(-35.0, 1.35, 32.5))).setup(() -> {
             nightSet.run();
             for (double x : px) {
                 this.tester(x, pz, SOUTH, "jack_o_lantern");
             }
-            int kai = this.actor(null, "steve", -45.0, walkZ, east, new ItemStack(Items.TORCH));
-            this.walk(10, 70, kai, w.v(-45.0, 0, walkZ), w.v(-41.0, 0, walkZ));
         });
-        this.shot("k4b_walk", "K4", 150).time(18000).fov(72).cam(Cine.dolly(
-                w.v(-42.0, 1.5, 39.6), w.v(-31.5, 1.5, 39.6), w.v(-42.0, 1.0, 33.6), w.v(-31.5, 1.0, 33.6))).setup(() -> {
+        this.shot("k4b_walk", "K4", 110).time(18000).fov(72).cam((u, t, mc, partial) -> {
+            Entity e = mc.level == null ? null : mc.level.getEntity(this.cameraTarget.get());
+            if (e == null) {
+                return new Pose(0, 100, 0, 0, 0);
+            }
+            Vec3 p = new Vec3(net.minecraft.util.Mth.lerp(partial, e.xo, e.getX()), e.getY(), e.getZ());
+            return Pose.look(p.add(2.4, 1.55, 2.6), p.add(-0.6, 1.2, -0.8));
+        }).setup(() -> {
             nightSet.run();
             int[] ts = new int[px.length];
             for (int k = 0; k < px.length; k++) {
                 ts[k] = this.tester(px[k], pz, SOUTH, "jack_o_lantern");
             }
-            int kai = this.actor(null, "steve", -42.5, walkZ, east, new ItemStack(Items.TORCH));
+            int kai = this.actor(null, "steve", -41.0, walkZ, east, new ItemStack(Items.TORCH));
+            this.cameraTarget.set(kai);
             this.speakers.put("kai", kai);
-            this.walk(4, 92, kai, w.v(-42.5, 0, walkZ), w.v(-30.0, 0, walkZ));
-            // the third pumpkin follows Kai with its eyes...
-            this.testerTurn(48, ts[2], -35.0F, false);
-            this.testerTurn(74, ts[2], -70.0F, false);
-            // ...and freezes the moment he turns around
-            this.look(98, kai, ts[2]);
-            this.testerTurn(99, ts[2], SOUTH, true);
-            this.say(112, "kai", "imagination");
-            this.turn(140, kai, east);
+            this.walk(4, 108, kai, w.v(-41.0, 0, walkZ), w.v(-31.0, 0, walkZ));
+            this.testerTurn(66, ts[2], -60.0F, false);
         });
-        this.shot("k4c_boo", "K4", 120).time(18000).fov(70).cam(Cine.dolly(
-                w.v(-37.3, 1.35, 35.6), w.v(-37.0, 1.35, 35.3), w.v(-31.0, 1.25, 33.8), w.v(-31.0, 1.25, 33.8))).setup(() -> {
+        this.shot("k4c_turn", "K4", 70).time(18000).fov(66).cam(Cine.dolly(
+                w.v(-34.3, 1.5, 34.7), w.v(-34.4, 1.48, 34.3), w.v(-34.5, 1.45, 32.5), w.v(-34.5, 1.45, 32.5))).setup(() -> {
+            nightSet.run();
+            int t3 = this.tester(px[2], pz, SOUTH, "jack_o_lantern");
+            this.tester(px[1], pz, SOUTH, "jack_o_lantern");
+            this.tester(px[3], pz, SOUTH, "jack_o_lantern");
+            this.testerTurn(1, t3, -10.0F, true);
+            this.testerTurn(14, t3, -75.0F, false);
+            this.at(14, () -> this.event("creak", ""));
+        });
+        this.shot("k4d_lookback", "K4", 100).time(18000).fov(70).cam(Cine.dolly(
+                w.v(-29.6, 1.75, 36.4), w.v(-29.9, 1.72, 36.0), w.v(-34.5, 1.2, 32.8), w.v(-34.5, 1.25, 32.8))).setup(() -> {
             nightSet.run();
             int t3 = 0;
             for (int k = 0; k < px.length; k++) {
@@ -1827,19 +1841,39 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                     t3 = id;
                 }
             }
-            final int boo = t3;
-            int kai = this.actor(null, "steve", -30.0, walkZ, east, new ItemStack(Items.TORCH));
+            int boo = t3;
+            int kai = this.actor(null, "steve", -31.0, walkZ, east, new ItemStack(Items.TORCH));
+            this.speakers.put("kai", kai);
+            this.testerTurn(1, boo, -75.0F, true);
+            this.look(12, kai, boo);
+            this.testerTurn(15, boo, SOUTH, true);
+            this.at(15, () -> this.event("whoosh", ""));
+            this.say(36, "kai", "imagination");
+        });
+        this.shot("k4e_boo", "K4", 130).time(18000).fov(70).cam(Cine.dolly(
+                w.v(-36.4, 1.42, 34.9), w.v(-36.2, 1.42, 34.7), w.v(-30.4, 1.3, 34.1), w.v(-30.4, 1.3, 34.1))).setup(() -> {
+            nightSet.run();
+            int t3 = 0;
+            for (int k = 0; k < px.length; k++) {
+                int id = this.tester(px[k], pz, SOUTH, "jack_o_lantern");
+                if (k == 2) {
+                    t3 = id;
+                }
+            }
+            int boo = t3;
+            int kai = this.actor(null, "steve", -31.0, walkZ, east, new ItemStack(Items.TORCH));
             this.speakers.put("kai", kai);
             this.speakers.put("tester", boo);
-            this.walk(4, 34, kai, w.v(-30.0, 0, walkZ), w.v(-27.5, 0, walkZ));
-            this.testerTurn(24, boo, -75.0F, false);
-            this.say(40, "tester", "boo");
-            this.look(48, kai, boo);
-            this.hop(50, kai, w.v(-27.5, 0, walkZ), 0.7, 8);
-            this.at(50, () -> this.event("jump", ""));
-            this.say(51, "kai", "scream");
-            this.walk(66, 96, kai, w.v(-27.5, 0, walkZ), w.v(-17.0, 0, walkZ + 0.4));
-            this.testerTurn(100, boo, SOUTH, false);
+            this.walk(4, 30, kai, w.v(-31.0, 0, walkZ), w.v(-29.2, 0, walkZ));
+            this.testerTurn(16, boo, -80.0F, false);
+            this.say(36, "tester", "boo");
+            this.look(44, kai, boo);
+            this.hop(46, kai, w.v(-29.2, 0, walkZ), 0.8, 8);
+            this.at(46, () -> this.event("jump", ""));
+            this.say(47, "kai", "scream");
+            this.walk(62, 86, kai, w.v(-29.2, 0, walkZ), w.v(-20.0, 0, walkZ + 0.5));
+            // ...and then it looks right at you
+            this.testerTurn(100, boo, 35.0F, false);
         });
 
         // ---- K5: the runaway minecart (straight track along z=50)
@@ -1863,26 +1897,32 @@ public class DamageTesterTrailer implements FabricClientGameTest {
         final double rz5 = railZ + 0.5;
         final double kz = railZ + 1.75;
         this.shot("k5a_miss", "K5", 100).time(day).fov(72).cam(Cine.dolly(
-                w.v(-1.0, 0.9, railZ + 6.5), w.v(0.0, 0.9, railZ + 6.0), w.v(4.0, 1.0, rz5), w.v(4.5, 1.0, rz5))).setup(() -> {
+                w.v(1.6, 1.45, railZ + 5.2), w.v(1.9, 1.4, railZ + 4.8), w.v(4.4, 1.1, railZ + 1.0), w.v(4.4, 1.1, railZ + 1.0))).setup(() -> {
             track.run();
             int cart = this.cartTester(-9, railZ, east, "dye:orange", 0, 0);
             int kai = this.actor(null, "steve", 4.0, kz, NORTH, new ItemStack(Items.IRON_SWORD));
             this.speakers.put("kai", kai);
             this.look(1, kai, cart);
-            this.driveCart(10, 60, cart, w.v(-8.5, 0, rz5), w.v(16.5, 0, rz5));
-            this.at(10, () -> this.event("cart", ""));
-            this.at(42, () -> this.swing(kai));
-            this.at(42, () -> this.event("swing_miss", ""));
-            this.say(50, "kai", "hey");
+            this.driveCart(16, 56, cart, w.v(-6.5, 0, rz5), w.v(16.5, 0, rz5));
+            this.at(16, () -> this.event("cart", ""));
+            this.at(40, () -> this.swing(kai));
+            this.at(40, () -> this.event("swing_miss", ""));
+            this.say(48, "kai", "hey");
         });
-        this.shot("k5b_chase", "K5", 150).time(day).fov(72).cam((u, t, mc, partial) -> Cine.follow(this.cameraTarget.get(),
-                new Vec3(-1.6, 1.5, 6.6), 1.0).at(u, t, mc, partial)).setup(() -> {
+        this.shot("k5b_chase", "K5", 150).time(day).fov(72).cam((u, t, mc, partial) -> {
+            Entity e = mc.level == null ? null : mc.level.getEntity(this.cameraTarget.get());
+            if (e == null) {
+                return new Pose(0, 100, 0, 0, 0);
+            }
+            Vec3 p = new Vec3(net.minecraft.util.Mth.lerp(partial, e.xo, e.getX()), e.getY(), e.getZ());
+            return Pose.look(p.add(-3.4, 1.8, 2.3), p.add(3.2, 0.8, -1.0));
+        }).setup(() -> {
             track.run();
             int cart = this.cartTester(10, railZ, east, "dye:orange", 0, 0);
             int kai = this.actor(null, "steve", 6.0, kz, east, new ItemStack(Items.IRON_SWORD));
             this.cameraTarget.set(kai);
             this.speakers.put("kai", kai);
-            this.driveCart(1, 150, cart, w.v(10.5, 0, rz5), w.v(41.0, 0, rz5));
+            this.driveCart(1, 150, cart, w.v(9.0, 0, rz5), w.v(40.0, 0, rz5));
             this.at(1, () -> this.event("cart", ""));
             this.walk(1, 150, kai, w.v(6.0, 0, kz), w.v(33.0, 0, kz));
             for (int k : new int[]{40, 85, 125}) {
@@ -1903,7 +1943,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.turn(50, kai, SOUTH + 30);
         });
         this.shot("k5d_return", "K5", 140).time(day).fov(72).cam(Cine.dolly(
-                w.v(34.5, 1.9, railZ + 8.2), w.v(34.5, 1.8, railZ + 7.6), w.v(34.5, 1.0, rz5), w.v(35.0, 1.0, rz5))).setup(() -> {
+                w.v(32.6, 1.6, railZ + 5.6), w.v(32.9, 1.55, railZ + 5.2), w.v(35.0, 1.0, railZ + 1.0), w.v(35.2, 1.0, railZ + 1.0))).setup(() -> {
             track.run();
             int cart = this.cartTester(44, railZ, east, "dye:orange", 0, 0);
             int kai = this.actor(null, "steve", 33.5, kz, SOUTH + 30, new ItemStack(Items.IRON_SWORD));
