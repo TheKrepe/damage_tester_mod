@@ -1851,7 +1851,7 @@ public class DamageTesterTrailer implements FabricClientGameTest {
             this.say(36, "kai", "imagination");
         });
         this.shot("k4e_boo", "K4", 130).time(18000).fov(70).cam(Cine.dolly(
-                w.v(-36.4, 1.42, 34.9), w.v(-36.2, 1.42, 34.7), w.v(-30.4, 1.3, 34.1), w.v(-30.4, 1.3, 34.1))).setup(() -> {
+                w.v(-36.9, 1.45, 35.6), w.v(-36.7, 1.45, 35.4), w.v(-32.9, 1.25, 33.5), w.v(-32.8, 1.25, 33.5))).setup(() -> {
             nightSet.run();
             int t3 = 0;
             for (int k = 0; k < px.length; k++) {
@@ -1861,19 +1861,19 @@ public class DamageTesterTrailer implements FabricClientGameTest {
                 }
             }
             int boo = t3;
-            int kai = this.actor(null, "steve", -31.0, walkZ, east, new ItemStack(Items.TORCH));
+            int kai = this.actor(null, "steve", -33.4, walkZ, east, new ItemStack(Items.TORCH));
             this.speakers.put("kai", kai);
             this.speakers.put("tester", boo);
-            this.walk(4, 30, kai, w.v(-31.0, 0, walkZ), w.v(-29.2, 0, walkZ));
+            this.walk(4, 30, kai, w.v(-33.4, 0, walkZ), w.v(-31.6, 0, walkZ));
             this.testerTurn(16, boo, -80.0F, false);
             this.say(36, "tester", "boo");
             this.look(44, kai, boo);
-            this.hop(46, kai, w.v(-29.2, 0, walkZ), 0.8, 8);
+            this.hop(46, kai, w.v(-31.6, 0, walkZ), 0.8, 8);
             this.at(46, () -> this.event("jump", ""));
             this.say(47, "kai", "scream");
-            this.walk(62, 86, kai, w.v(-29.2, 0, walkZ), w.v(-20.0, 0, walkZ + 0.5));
+            this.walk(62, 86, kai, w.v(-31.6, 0, walkZ), w.v(-22.0, 0, walkZ + 0.5));
             // ...and then it looks right at you
-            this.testerTurn(100, boo, 35.0F, false);
+            this.testerTurn(100, boo, 40.0F, false);
         });
 
         // ---- K5: the runaway minecart (straight track along z=50)
