@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
-    "damage_tester:damage_tester",
-    "minecraft:minecart"
+    {
+      "item": "damage_tester:damage_tester"
+    },
+    {
+      "item": "minecraft:minecart"
+    }
   ],
   "result": {
     "id": "damage_tester:minecart_damage_tester"

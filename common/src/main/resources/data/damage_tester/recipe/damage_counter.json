@@ -2,10 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "G": "minecraft:glass_pane",
-    "P": "#minecraft:planks",
-    "R": "minecraft:redstone",
-    "T": "minecraft:target"
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:target"
+    }
   },
   "pattern": [
     "PGP",

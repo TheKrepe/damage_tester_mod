@@ -2,9 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "H": "minecraft:hay_block",
-    "S": "minecraft:stick",
-    "W": "#minecraft:wooden_slabs"
+    "H": {
+      "item": "minecraft:hay_block"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "tag": "minecraft:wooden_slabs"
+    }
   },
   "pattern": [
     "H",

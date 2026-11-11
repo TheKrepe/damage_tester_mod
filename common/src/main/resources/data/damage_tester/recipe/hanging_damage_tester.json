@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
-    "damage_tester:damage_tester",
-    "minecraft:lead"
+    {
+      "item": "damage_tester:damage_tester"
+    },
+    {
+      "item": "minecraft:lead"
+    }
   ],
   "result": {
     "id": "damage_tester:hanging_damage_tester"
