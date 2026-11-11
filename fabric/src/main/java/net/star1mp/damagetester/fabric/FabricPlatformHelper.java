@@ -33,7 +33,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public net.minecraft.world.item.CreativeModeTab createCreativeTab(net.minecraft.network.chat.Component title,
             Supplier<net.minecraft.world.item.ItemStack> icon, Supplier<net.minecraft.world.item.Item[]> items) {
-        return net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab.builder()
+        return net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup.builder()
                 .title(title)
                 .icon(icon)
                 .displayItems((parameters, output) -> {

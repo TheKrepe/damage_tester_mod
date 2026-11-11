@@ -190,9 +190,8 @@ public class DamageTesterEntity extends LivingEntity {
         if (stack.is(ItemTags.PLANKS)) {
             return SKIN_PLANKS_PREFIX + BuiltInRegistries.ITEM.getKey(stack.getItem());
         }
-        DyeColor dye = stack.get(DataComponents.DYE);
-        if (dye != null) {
-            return SKIN_DYE_PREFIX + dye.getSerializedName();
+        if (stack.getItem() instanceof net.minecraft.world.item.DyeItem dyeItem) {
+            return SKIN_DYE_PREFIX + dyeItem.getDyeColor().getSerializedName();
         }
         return null;
     }
@@ -346,7 +345,7 @@ public class DamageTesterEntity extends LivingEntity {
                 this.combatHits);
         for (UUID uuid : this.attackers) {
             if (level.getPlayerByUUID(uuid) instanceof ServerPlayer player && player.distanceToSqr(this) < 64.0 * 64.0) {
-                player.sendOverlayMessage(message);
+                player.displayClientMessage(message, true);
             }
         }
     }
@@ -492,7 +491,7 @@ public class DamageTesterEntity extends LivingEntity {
     // =================================================================== interaction
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+    public InteractionResult interactAt(Player player, Vec3 location, InteractionHand hand) {
         if (player.isSpectator() || !player.getAbilities().mayBuild) {
             return InteractionResult.PASS;
         }
