@@ -9,15 +9,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Vanilla decides whether a melee hit is critical inside {@code Player.attack} and then calls
- * {@code attackVisualEffects(target, critical, ...)}. We listen there so the tester can show crits.
+ * Vanilla calls {@code Player.crit(target)} from {@code Player.attack} only when the melee hit was
+ * critical. We listen there so the tester can show crits.
  */
 @Mixin(Player.class)
 public abstract class PlayerCritMixin {
-    @Inject(method = "attackVisualEffects", at = @At("HEAD"))
-    private void damageTester$onAttackEffects(Entity target, boolean critical, boolean sweep, boolean fullStrength,
-                                              boolean stab, float magicBoost, CallbackInfo ci) {
-        if (critical && target instanceof DamageTesterEntity tester) {
+    @Inject(method = "crit", at = @At("HEAD"))
+    private void damageTester$onCrit(Entity target, CallbackInfo ci) {
+        if (target instanceof DamageTesterEntity tester) {
             tester.markCriticalHit();
         }
     }

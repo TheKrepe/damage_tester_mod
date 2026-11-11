@@ -34,7 +34,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
@@ -51,8 +56,6 @@ import net.minecraft.world.level.block.TargetBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.star1mp.damagetester.ModContent;
 import net.star1mp.damagetester.config.DamageTesterConfig;
@@ -113,6 +116,8 @@ public class DamageTesterEntity extends LivingEntity {
 
     @Nullable
     private TesterVariant variant;
+    private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
 
     public DamageTesterEntity(EntityType<? extends DamageTesterEntity> type, Level level) {
         super(type, level);
@@ -138,18 +143,18 @@ public class DamageTesterEntity extends LivingEntity {
     /** Spawns a tester the way the item / dispenser do. Returns null if it could not be created. */
     @Nullable
     public static DamageTesterEntity spawnFromItem(TesterVariant variant, ServerLevel level, ItemStack stack, @Nullable Player player, Vec3 pos, float yaw) {
-        DamageTesterEntity tester = ModContent.TESTER_TYPES.get(variant).get().create(level, net.minecraft.world.entity.EntitySpawnReason.SPAWN_ITEM_USE);
+        DamageTesterEntity tester = ModContent.TESTER_TYPES.get(variant).get().create(level);
         if (tester == null) {
             return null;
         }
-        tester.snapTo(pos.x(), pos.y(), pos.z(), yaw, 0.0F);
+        tester.moveTo(pos.x(), pos.y(), pos.z(), yaw, 0.0F);
         tester.setYHeadRot(yaw);
         tester.setYBodyRot(yaw);
         if (stack.has(DataComponents.CUSTOM_NAME)) {
             tester.setCustomName(stack.getHoverName());
         }
         level.addFreshEntity(tester);
-        SoundEvent sound = variant.hangs() ? SoundEvents.LEAD_TIED : SoundEvents.ARMOR_STAND_PLACE;
+        SoundEvent sound = variant.hangs() ? SoundEvents.LEASH_KNOT_PLACE : SoundEvents.ARMOR_STAND_PLACE;
         level.playSound(null, tester.getX(), tester.getY(), tester.getZ(), sound, SoundSource.BLOCKS, 0.75F, 0.8F);
         tester.gameEvent(GameEvent.ENTITY_PLACE, player);
         return tester;
@@ -199,8 +204,8 @@ public class DamageTesterEntity extends LivingEntity {
     // =================================================================== damage measuring
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        if (this.isRemoved()) {
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.isRemoved() || !(this.level() instanceof ServerLevel level)) {
             return false;
         }
         // /kill, the void and similar "must die" sources simply remove the tester.
@@ -216,15 +221,15 @@ public class DamageTesterEntity extends LivingEntity {
             }
             this.attackers.add(player.getUUID());
         }
-        return super.hurtServer(level, source, amount);
+        return super.hurt(source, amount);
     }
 
     @Override
-    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+    protected void actuallyHurt(DamageSource source, float amount) {
         this.measuring = true;
         this.measuredDamage = 0.0F;
         try {
-            super.actuallyHurt(level, source, amount);
+            super.actuallyHurt(source, amount);
         } finally {
             this.measuring = false;
         }
@@ -370,7 +375,7 @@ public class DamageTesterEntity extends LivingEntity {
             return;
         }
         if (drop) {
-            this.spawnAtLocation(level, this.dropOnDismantle != null ? this.dropOnDismantle : this.getPickResult());
+            this.spawnAtLocation(this.dropOnDismantle != null ? this.dropOnDismantle : this.getPickResult());
         }
         // A minecart tester takes its cart with it when it is picked up.
         if (this.getVariant().ridesMinecart() && this.getVehicle() instanceof AbstractMinecart cart && !cart.isRemoved()
@@ -381,7 +386,7 @@ public class DamageTesterEntity extends LivingEntity {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack stack = this.getItemBySlot(slot);
             if (!stack.isEmpty()) {
-                this.spawnAtLocation(level, stack.copy());
+                this.spawnAtLocation(stack.copy());
                 this.setItemSlot(slot, ItemStack.EMPTY);
             }
         }
@@ -412,9 +417,9 @@ public class DamageTesterEntity extends LivingEntity {
         if (!BaseRailBlock.isRail(rail)) {
             return null;
         }
-        double slope = rail.getBlock() instanceof BaseRailBlock railBlock && rail.getValue(railBlock.getShapeProperty()).isSlope() ? 0.5 : 0.0;
+        double slope = rail.getBlock() instanceof BaseRailBlock railBlock && rail.getValue(railBlock.getShapeProperty()).isAscending() ? 0.5 : 0.0;
         AbstractMinecart cart = AbstractMinecart.createMinecart(level, railPos.getX() + 0.5, railPos.getY() + 0.0625 + slope,
-                railPos.getZ() + 0.5, EntityType.MINECART, net.minecraft.world.entity.EntitySpawnReason.DISPENSER, ItemStack.EMPTY, player);
+                railPos.getZ() + 0.5, AbstractMinecart.Type.RIDEABLE, ItemStack.EMPTY, player);
         if (cart == null) {
             return null;
         }
@@ -424,13 +429,17 @@ public class DamageTesterEntity extends LivingEntity {
             cart.discard();
             return null;
         }
-        tester.startRiding(cart, true, true);
+        tester.startRiding(cart, true);
         return tester;
     }
 
     @Override
-    public void kill(ServerLevel level) {
-        this.dismantle(level, false);
+    public void kill() {
+        if (this.level() instanceof ServerLevel level) {
+            this.dismantle(level, false);
+        } else {
+            this.discard();
+        }
     }
 
     // =================================================================== ticking
@@ -484,8 +493,9 @@ public class DamageTesterEntity extends LivingEntity {
     }
 
     @Override
-    protected void tickHeadTurn(float yBodyRotDelta) {
+    protected float tickHeadTurn(float yBodyRot, float animStep) {
         // no head turning, it's a sack of hay
+        return animStep;
     }
 
     // =================================================================== interaction
@@ -550,7 +560,7 @@ public class DamageTesterEntity extends LivingEntity {
                 if (player.getItemInHand(hand).isEmpty()) {
                     player.setItemInHand(hand, previous);
                 } else if (!player.getInventory().add(previous) && this.level() instanceof ServerLevel serverLevel) {
-                    this.spawnAtLocation(serverLevel, previous);
+                    this.spawnAtLocation(previous);
                 }
             }
         }
@@ -612,8 +622,38 @@ public class DamageTesterEntity extends LivingEntity {
     }
 
     @Override
-    public boolean causeFallDamage(double fallDistance, float multiplier, DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
         return false;
+    }
+
+    @Override
+    public Iterable<ItemStack> getArmorSlots() {
+        return this.armorItems;
+    }
+
+    @Override
+    public Iterable<ItemStack> getHandSlots() {
+        return this.handItems;
+    }
+
+    @Override
+    public ItemStack getItemBySlot(EquipmentSlot slot) {
+        return switch (slot.getType()) {
+            case HAND -> this.handItems.get(slot.getIndex());
+            case HUMANOID_ARMOR -> this.armorItems.get(slot.getIndex());
+            default -> ItemStack.EMPTY;
+        };
+    }
+
+    @Override
+    public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
+        this.verifyEquippedItem(stack);
+        switch (slot.getType()) {
+            case HAND -> this.onEquipItem(slot, this.handItems.set(slot.getIndex(), stack), stack);
+            case HUMANOID_ARMOR -> this.onEquipItem(slot, this.armorItems.set(slot.getIndex(), stack), stack);
+            default -> {
+            }
+        }
     }
 
     @Override
@@ -632,15 +672,26 @@ public class DamageTesterEntity extends LivingEntity {
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
+    public void addAdditionalSaveData(CompoundTag output) {
         super.addAdditionalSaveData(output);
         output.putString("Skin", this.getSkin());
+        ListTag armor = new ListTag();
+        for (ItemStack stack : this.armorItems) {
+            armor.add(stack.saveOptional(this.registryAccess()));
+        }
+        output.put("ArmorItems", armor);
     }
 
     @Override
-    protected void readAdditionalSaveData(ValueInput input) {
+    public void readAdditionalSaveData(CompoundTag input) {
         super.readAdditionalSaveData(input);
-        this.setSkin(input.getStringOr("Skin", ""));
+        this.setSkin(input.getString("Skin"));
+        if (input.contains("ArmorItems", Tag.TAG_LIST)) {
+            ListTag armor = input.getList("ArmorItems", Tag.TAG_COMPOUND);
+            for (int i = 0; i < this.armorItems.size() && i < armor.size(); i++) {
+                this.armorItems.set(i, ItemStack.parseOptional(this.registryAccess(), armor.getCompound(i)));
+            }
+        }
         if (this.getVariant().hangs()) {
             this.setNoGravity(true);
         }

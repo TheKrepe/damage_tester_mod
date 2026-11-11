@@ -10,8 +10,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.star1mp.damagetester.ModContent;
@@ -58,8 +56,8 @@ public class DamageCounterBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        super.saveAdditional(output, registries);
         output.putBoolean("HasTester", this.hasTester);
         output.putBoolean("HasData", this.stats.hasData());
         output.putBoolean("Active", this.stats.active());
@@ -71,17 +69,17 @@ public class DamageCounterBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
-        this.hasTester = input.getBooleanOr("HasTester", false);
+    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+        super.loadAdditional(input, registries);
+        this.hasTester = input.getBoolean("HasTester");
         this.stats = new DamageTesterEntity.Stats(
-                input.getBooleanOr("HasData", false),
-                input.getBooleanOr("Active", false),
-                input.getFloatOr("LastHit", 0.0F),
-                input.getFloatOr("Dps", 0.0F),
-                input.getFloatOr("Total", 0.0F),
-                input.getIntOr("Hits", 0),
-                input.getFloatOr("MaxHit", 0.0F));
+                input.getBoolean("HasData"),
+                input.getBoolean("Active"),
+                input.getFloat("LastHit"),
+                input.getFloat("Dps"),
+                input.getFloat("Total"),
+                input.getInt("Hits"),
+                input.getFloat("MaxHit"));
     }
 
     @Override

@@ -22,7 +22,7 @@ import net.star1mp.damagetester.ModContent;
  * (within {@link DamageCounterBlockEntity#RANGE} blocks) on its front face.
  */
 public class DamageCounterBlock extends Block implements EntityBlock {
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public DamageCounterBlock(Properties properties) {
         super(properties);

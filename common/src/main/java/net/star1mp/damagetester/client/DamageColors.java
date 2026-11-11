@@ -2,7 +2,7 @@ package net.star1mp.damagetester.client;
 
 import java.util.Map;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
@@ -32,7 +32,7 @@ public final class DamageColors {
     }
 
     public static int get(Holder<DamageType> type) {
-        String id = type.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString).orElse("");
+        String id = type.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString).orElse("");
         Integer byId = BY_ID.get(id);
         if (byId != null) {
             return byId;

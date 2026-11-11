@@ -31,8 +31,8 @@ public class DamageTesterNeoForge {
     }
 
     private static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
-        // The client handler is attached in DamageTesterNeoForgeClient.
-        event.registrar("1").playToClient(DamageNumberPayload.TYPE, DamageNumberPayload.STREAM_CODEC);
+        event.registrar("1").playToClient(DamageNumberPayload.TYPE, DamageNumberPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> net.star1mp.damagetester.client.DamageTesterClient.handleDamageNumber(payload)));
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

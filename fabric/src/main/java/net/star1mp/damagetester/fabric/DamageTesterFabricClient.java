@@ -13,7 +13,7 @@ import net.star1mp.damagetester.network.DamageNumberPayload;
 public class DamageTesterFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ModContent.TESTER_TYPES.values().forEach(type -> EntityRenderers.register(type.get(), DamageTesterRenderer::new));
+        ModContent.TESTER_TYPES.values().forEach(type -> net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(type.get(), DamageTesterRenderer::new));
         BlockEntityRenderers.register(ModContent.DAMAGE_COUNTER_BLOCK_ENTITY.get(), DamageCounterRenderer::new);
         ClientPlayNetworking.registerGlobalReceiver(DamageNumberPayload.TYPE,
                 (payload, context) -> DamageTesterClient.handleDamageNumber(payload));

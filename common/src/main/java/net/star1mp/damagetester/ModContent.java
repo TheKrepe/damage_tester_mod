@@ -10,7 +10,7 @@ import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -42,7 +42,7 @@ public final class ModContent {
     public static final ResourceKey<CreativeModeTab> REDSTONE_TAB = vanillaTab("redstone_blocks");
 
     private static ResourceKey<CreativeModeTab> vanillaTab(String name) {
-        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.withDefaultNamespace(name));
+        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.withDefaultNamespace(name));
     }
 
     public static final Map<TesterVariant, Supplier<EntityType<DamageTesterEntity>>> TESTER_TYPES = new EnumMap<>(TesterVariant.class);
@@ -57,10 +57,10 @@ public final class ModContent {
                         .sized(variant.width(), variant.height())
                         .eyeHeight(variant.eyeHeight())
                         .clientTrackingRange(10);
-                return builder.build(entityKey);
+                return builder.build(variant.id());
             }));
             TESTER_ITEMS.put(variant, Services.PLATFORM.register(BuiltInRegistries.ITEM, variant.id(),
-                    () -> new DamageTesterItem(variant, new Item.Properties().stacksTo(16).setId(itemKey))));
+                    () -> new DamageTesterItem(variant, new Item.Properties().stacksTo(16))));
         }
     }
 
@@ -79,15 +79,14 @@ public final class ModContent {
             () -> new DamageCounterBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .strength(1.5F)
-                    .sound(SoundType.WOOD)
-                    .setId(DAMAGE_COUNTER_BLOCK_KEY)));
+                    .sound(SoundType.WOOD)));
 
     public static final Supplier<Item> DAMAGE_COUNTER_ITEM = Services.PLATFORM.register(BuiltInRegistries.ITEM, DAMAGE_COUNTER_NAME,
-            () -> new BlockItem(DAMAGE_COUNTER.get(), new Item.Properties().useBlockDescriptionPrefix().setId(DAMAGE_COUNTER_ITEM_KEY)));
+            () -> new BlockItem(DAMAGE_COUNTER.get(), new Item.Properties()));
 
     public static final Supplier<BlockEntityType<DamageCounterBlockEntity>> DAMAGE_COUNTER_BLOCK_ENTITY = Services.PLATFORM.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, DAMAGE_COUNTER_NAME,
-            () -> BlockEntityTypes.create(DamageCounterBlockEntity::new, DAMAGE_COUNTER.get()));
+            () -> BlockEntityType.Builder.of(DamageCounterBlockEntity::new, DAMAGE_COUNTER.get()).build(null));
 
     /** The mod's own creative tab with everything in it. */
     public static final Supplier<CreativeModeTab> CREATIVE_TAB = Services.PLATFORM.register(
