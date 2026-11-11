@@ -13,11 +13,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.world.phys.Vec3;
 import net.star1mp.damagetester.DamageTester;
 import net.star1mp.damagetester.block.DamageCounterBlock;
@@ -97,7 +97,7 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
                 Line line = state.lines.get(i);
                 float x = -this.font.width(line.text()) / 2.0F;
                 collector.submitText(poseStack, x, top + i * lineHeight, line.text(), false, Font.DisplayMode.POLYGON_OFFSET,
-                        LightCoordsUtil.FULL_BRIGHT, line.color(), 0, 0);
+                        LightTexture.FULL_BRIGHT, line.color(), 0, 0);
             }
             poseStack.popPose();
         } catch (RuntimeException e) {

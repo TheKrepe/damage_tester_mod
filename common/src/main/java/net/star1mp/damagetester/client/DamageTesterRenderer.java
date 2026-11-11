@@ -18,13 +18,13 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.star1mp.damagetester.DamageTester;
 import net.star1mp.damagetester.config.DamageTesterConfig;
@@ -191,7 +191,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             float x = -this.font.width(text) / 2.0F;
             int color = ARGB.color(alpha, number.critical() ? DamageColors.CRITICAL : number.color());
             collector.submitText(poseStack, x, 0.0F, text, true, Font.DisplayMode.NORMAL,
-                    LightCoordsUtil.FULL_BRIGHT, color, 0, 0);
+                    LightTexture.FULL_BRIGHT, color, 0, 0);
             poseStack.popPose();
         }
     }

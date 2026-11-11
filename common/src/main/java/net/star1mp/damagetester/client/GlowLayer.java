@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.renderer.LightTexture;
 import net.star1mp.damagetester.DamageTester;
 
 /** Draws glowing parts (like spider eyes) that stay bright in the dark. */
@@ -24,6 +24,6 @@ public class GlowLayer extends RenderLayer<DamageTesterRenderState, DamageTester
             return;
         }
         collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.eyes(state.glowTexture),
-                LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
+                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
     }
 }
