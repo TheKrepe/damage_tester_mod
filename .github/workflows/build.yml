@@ -26,7 +26,7 @@ jobs:
       - name: Collect release jars
         run: |
           mkdir -p dist
-          find fabric/build/libs neoforge/build/libs forge/build/libs -maxdepth 1 2>/dev/null -name '*.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
+          for d in fabric neoforge forge; do if [ -d $d/build/libs ]; then find $d/build/libs -maxdepth 1 -name '*.jar' ! -name '*-sources.jar' ! -name '*-dev*.jar' ! -name '*-slim.jar' -exec cp {} dist/ \; ; fi; done
           ls -la dist
           test "$(ls dist/*.jar | wc -l)" -eq 2
       - name: Upload jars
