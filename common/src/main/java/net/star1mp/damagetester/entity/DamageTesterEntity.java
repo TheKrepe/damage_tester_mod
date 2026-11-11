@@ -34,7 +34,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -416,7 +415,7 @@ public class DamageTesterEntity extends LivingEntity {
         }
         double slope = rail.getBlock() instanceof BaseRailBlock railBlock && rail.getValue(railBlock.getShapeProperty()).isSlope() ? 0.5 : 0.0;
         AbstractMinecart cart = AbstractMinecart.createMinecart(level, railPos.getX() + 0.5, railPos.getY() + 0.0625 + slope,
-                railPos.getZ() + 0.5, EntityTypes.MINECART, net.minecraft.world.entity.EntitySpawnReason.DISPENSER, ItemStack.EMPTY, player);
+                railPos.getZ() + 0.5, EntityType.MINECART, net.minecraft.world.entity.EntitySpawnReason.DISPENSER, ItemStack.EMPTY, player);
         if (cart == null) {
             return null;
         }
