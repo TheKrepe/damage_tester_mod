@@ -5,6 +5,7 @@ plugins {
 
 legacyForge {
     mcpVersion = minecraft_version
+    accessTransformers = [file('accesstransformer.cfg').absolutePath]
     parchment {
         minecraftVersion = parchment_minecraft
         mappingsVersion = parchment_version
