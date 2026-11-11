@@ -1,0 +1,61 @@
+name: Version branch check
+on:
+  push:
+    branches: [ 'mc/**' ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    if: hashFiles('.github/PROBE') != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: jv
+        run: echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Dump the named Minecraft API (javap)
+        run: |
+          ./gradlew $(cat .github/PROBE) --continue > setup.log 2>&1 || true
+          tail -30 setup.log
+          mkdir -p out
+          find ~/.gradle /home/runner/work -name '*.jar' \( -path '*moddev*' -o -path '*minecraft*' -o -path '*loom*' \) 2>/dev/null | grep -viE 'sources|lwjgl|natives|/libraries/' | xargs -r ls -la | sort -k5 -n | tail -40 > out/jars.txt
+          cat out/jars.txt
+          J=$(awk '{print $NF}' out/jars.txt | grep -iE 'neoforge|forge' | grep -v -- '-sources' | tail -1)
+          [ -z "$J" ] && J=$(awk '{print $NF}' out/jars.txt | tail -1)
+          echo "using $J" | tee out/used.txt
+          unzip -l "$J" | awk '{print $4}' | grep '\.class$' | grep -E '^(net/minecraft|com/mojang|net/neoforged|net/minecraftforge)/' | sed 's/\.class$//' | tr / . > all.txt
+          split -l 1500 all.txt part_
+          for f in part_*; do xargs -a $f javap -p -cp "$J" >> out/javap_all.txt 2>&1 || true; done
+          gzip -9 out/javap_all.txt
+          ls -la out
+      - name: Publish
+        run: |
+          cd out; git init -q -b x; git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm probe
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:ci-probe-${GITHUB_REF_NAME#mc/}
+  server-boot:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        loader: [ fabric, neoforge, forge ]
+    steps:
+      - uses: actions/checkout@v4
+      - id: jv
+        run: |
+          echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+          if grep -q "include('${{ matrix.loader }}')" settings.gradle; then echo "on=1" >> $GITHUB_OUTPUT; fi
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.on == '1'
+        with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.jv.outputs.on == '1'
+      - name: Boot ${{ matrix.loader }} dedicated server
+        if: steps.jv.outputs.on == '1'
+        run: |
+          .github/scripts/boot-server.sh :${{ matrix.loader }}:runServer ${{ matrix.loader }}/runs/server
+          L=boot-_${{ matrix.loader }}_runServer.log
+          if grep -iE "damage_tester" $L | grep -iE "error|exception|couldn't|failed|unknown"; then echo "::error::mod errors in log"; exit 1; fi
