@@ -1,9 +1,24 @@
 # Damage Tester
 
-**Автор:** Star_1mp · **Minecraft:** 26.3 · **Загрузчики:** Fabric и NeoForge
+**Автор:** Star_1mp · **Minecraft:** 1.20 – 26.3 · **Загрузчики:** Fabric, NeoForge, Forge
 
 Тренировочный манекен для Minecraft. Поставьте его в мире, и он будет молча стоять, оценивая каждое ваше действие.
 Ударьте его, и он забавно покачнётся и покажет, сколько урона вы нанесли.
+
+## Версии
+
+Для каждой версии Minecraft есть свой архив, а в нём jar для обоих загрузчиков этой версии.
+
+| Версия Minecraft | Архив | Загрузчики | Ветка |
+|---|---|---|---|
+| 26.3 | `Damage_Tester_<версия>_MC_26.3.zip` | Fabric + NeoForge | `main` |
+| 26.2 | `Damage_Tester_<версия>_MC_26.2.zip` | Fabric + NeoForge | `mc/26.2` |
+| 26.1 – 26.1.2 | `Damage_Tester_<версия>_MC_26.1-26.1.2.zip` | Fabric + NeoForge | `mc/26.1` |
+| 1.21.11 | `Damage_Tester_<версия>_MC_1.21.11.zip` | Fabric + NeoForge | `mc/1.21.11` |
+| 1.21 – 1.21.1 | `Damage_Tester_<версия>_MC_1.21-1.21.1.zip` | Fabric + NeoForge | `mc/1.21.1` |
+| 1.20 – 1.20.1 | `Damage_Tester_<версия>_MC_1.20-1.20.1.zip` | Fabric + Forge | `mc/1.20.1` |
+
+Для Fabric везде нужен Fabric API.
 
 ## Возможности
 
