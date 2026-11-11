@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipes": "damage_tester:small_damage_tester"
+        "recipe": "damage_tester:small_damage_tester"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
