@@ -52,7 +52,7 @@ public final class TesterSkins {
         String skin = entity.getSkin();
         if (skin.startsWith(DamageTesterEntity.SKIN_DYE_PREFIX)) {
             DyeColor color = DyeColor.byName(skin.substring(DamageTesterEntity.SKIN_DYE_PREFIX.length()), DyeColor.WHITE);
-            return FastColor.ARGB32.opaque(color.getTextureDiffuseColor());
+            return diffuse(color);
         }
         return 0;
     }
@@ -66,13 +66,18 @@ public final class TesterSkins {
     private static int rainbow(int ticks, float partial) {
         DyeColor[] colors = DyeColor.values();
         int index = ticks / RAINBOW_TICKS_PER_COLOR;
-        int from = colors[index % colors.length].getTextureDiffuseColor();
-        int to = colors[(index + 1) % colors.length].getTextureDiffuseColor();
+        int from = diffuse(colors[index % colors.length]);
+        int to = diffuse(colors[(index + 1) % colors.length]);
         float t = ((ticks % RAINBOW_TICKS_PER_COLOR) + partial) / RAINBOW_TICKS_PER_COLOR;
         int r = (int) (FastColor.ARGB32.red(from) + (FastColor.ARGB32.red(to) - FastColor.ARGB32.red(from)) * t);
         int g = (int) (FastColor.ARGB32.green(from) + (FastColor.ARGB32.green(to) - FastColor.ARGB32.green(from)) * t);
         int b = (int) (FastColor.ARGB32.blue(from) + (FastColor.ARGB32.blue(to) - FastColor.ARGB32.blue(from)) * t);
         return FastColor.ARGB32.color(255, r, g, b);
+    }
+
+    private static int diffuse(DyeColor color) {
+        float[] c = color.getTextureDiffuseColors();
+        return FastColor.ARGB32.color(255, (int) (c[0] * 255.0F), (int) (c[1] * 255.0F), (int) (c[2] * 255.0F));
     }
 
     // NativeImage stores pixels as ABGR on this version.
@@ -107,7 +112,7 @@ public final class TesterSkins {
                 return DamageTesterRenderer.TEXTURE;
             }
             Minecraft minecraft = Minecraft.getInstance();
-            ResourceLocation planksTexture = ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "textures/block/" + item.getPath() + ".png");
+            ResourceLocation planksTexture = new ResourceLocation(item.getNamespace(), "textures/block/" + item.getPath() + ".png");
             try (NativeImage planks = read(minecraft, planksTexture); NativeImage mask = read(minecraft, WOOD_MASK)) {
                 if (planks == null || mask == null) {
                     return DamageTesterRenderer.TEXTURE;

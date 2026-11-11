@@ -6,10 +6,10 @@
       "item": "damage_tester:damage_tester"
     },
     {
-      "item": "minecraft:lead"
+      "item": "minecraft:minecart"
     }
   ],
   "result": {
-    "id": "damage_tester:hanging_damage_tester"
+    "item": "damage_tester:minecart_damage_tester"
   }
 }

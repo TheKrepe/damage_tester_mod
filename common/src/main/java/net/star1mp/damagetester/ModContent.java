@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -42,7 +42,7 @@ public final class ModContent {
     public static final ResourceKey<CreativeModeTab> REDSTONE_TAB = vanillaTab("redstone_blocks");
 
     private static ResourceKey<CreativeModeTab> vanillaTab(String name) {
-        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.withDefaultNamespace(name));
+        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(name));
     }
 
     public static final Map<TesterVariant, Supplier<EntityType<DamageTesterEntity>>> TESTER_TYPES = new EnumMap<>(TesterVariant.class);
@@ -55,7 +55,6 @@ public final class ModContent {
             TESTER_TYPES.put(variant, Services.PLATFORM.register(BuiltInRegistries.ENTITY_TYPE, variant.id(), () -> {
                 EntityType.Builder<DamageTesterEntity> builder = EntityType.Builder.<DamageTesterEntity>of(DamageTesterEntity::new, MobCategory.MISC)
                         .sized(variant.width(), variant.height())
-                        .eyeHeight(variant.eyeHeight())
                         .clientTrackingRange(10);
                 return builder.build(variant.id());
             }));
@@ -143,9 +142,9 @@ public final class ModContent {
             DispenserBlock.registerBehavior(TESTER_ITEMS.get(variant).get(), new DefaultDispenseItemBehavior() {
                 @Override
                 protected ItemStack execute(BlockSource source, ItemStack stack) {
-                    Direction facing = source.state().getValue(DispenserBlock.FACING);
-                    ServerLevel level = source.level();
-                    BlockPos target = source.pos().relative(facing);
+                    Direction facing = source.getBlockState().getValue(DispenserBlock.FACING);
+                    ServerLevel level = source.getLevel();
+                    BlockPos target = source.getPos().relative(facing);
                     if (variant.ridesMinecart()) {
                         // Like a minecart: only onto rails in front of the dispenser.
                         if (DamageTesterEntity.spawnInMinecart(level, target, stack, null, facing.toYRot()) == null) {

@@ -3,7 +3,6 @@ package net.star1mp.damagetester.block;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -56,8 +55,8 @@ public class DamageCounterBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
-        super.saveAdditional(output, registries);
+    protected void saveAdditional(CompoundTag output) {
+        super.saveAdditional(output);
         output.putBoolean("HasTester", this.hasTester);
         output.putBoolean("HasData", this.stats.hasData());
         output.putBoolean("Active", this.stats.active());
@@ -69,8 +68,8 @@ public class DamageCounterBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
-        super.loadAdditional(input, registries);
+    public void load(CompoundTag input) {
+        super.load(input);
         this.hasTester = input.getBoolean("HasTester");
         this.stats = new DamageTesterEntity.Stats(
                 input.getBoolean("HasData"),
@@ -88,7 +87,7 @@ public class DamageCounterBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return this.saveCustomOnly(registries);
+    public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
     }
 }

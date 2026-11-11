@@ -1,11 +1,7 @@
 package net.star1mp.damagetester.network;
 
-import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.star1mp.damagetester.DamageTester;
 
 /**
@@ -14,23 +10,20 @@ import net.star1mp.damagetester.DamageTester;
  *
  * @param entityId   network id of the damage tester
  * @param amount     final damage after armor / enchantments / effects
- * @param damageType damage type holder, used for the number's color
+ * @param damageType id of the damage type, used for the number's color
  * @param critical   whether the hit was a melee critical hit
  */
-public record DamageNumberPayload(int entityId, float amount, Holder<DamageType> damageType, boolean critical)
-        implements CustomPacketPayload {
+public record DamageNumberPayload(int entityId, float amount, ResourceLocation damageType, boolean critical) {
+    public static final ResourceLocation ID = DamageTester.id("damage_number");
 
-    public static final Type<DamageNumberPayload> TYPE = new Type<>(DamageTester.id("damage_number"));
+    public void write(FriendlyByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeFloat(this.amount);
+        buf.writeResourceLocation(this.damageType);
+        buf.writeBoolean(this.critical);
+    }
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, DamageNumberPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, DamageNumberPayload::entityId,
-            ByteBufCodecs.FLOAT, DamageNumberPayload::amount,
-            DamageType.STREAM_CODEC, DamageNumberPayload::damageType,
-            ByteBufCodecs.BOOL, DamageNumberPayload::critical,
-            DamageNumberPayload::new);
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public static DamageNumberPayload read(FriendlyByteBuf buf) {
+        return new DamageNumberPayload(buf.readVarInt(), buf.readFloat(), buf.readResourceLocation(), buf.readBoolean());
     }
 }

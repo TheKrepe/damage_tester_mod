@@ -3,7 +3,6 @@ package net.star1mp.damagetester.platform;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -30,5 +29,5 @@ public interface IPlatformHelper {
             Supplier<net.minecraft.world.item.ItemStack> icon, Supplier<net.minecraft.world.item.Item[]> items);
 
     /** Sends a clientbound payload to every player that currently tracks {@code entity}. */
-    void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload);
+    void sendToTrackingPlayers(Entity entity, net.star1mp.damagetester.network.DamageNumberPayload payload);
 }

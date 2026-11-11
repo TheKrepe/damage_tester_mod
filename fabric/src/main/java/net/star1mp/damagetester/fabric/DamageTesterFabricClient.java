@@ -15,7 +15,9 @@ public class DamageTesterFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ModContent.TESTER_TYPES.values().forEach(type -> net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry.register(type.get(), DamageTesterRenderer::new));
         BlockEntityRenderers.register(ModContent.DAMAGE_COUNTER_BLOCK_ENTITY.get(), DamageCounterRenderer::new);
-        ClientPlayNetworking.registerGlobalReceiver(DamageNumberPayload.TYPE,
-                (payload, context) -> DamageTesterClient.handleDamageNumber(payload));
+        ClientPlayNetworking.registerGlobalReceiver(DamageNumberPayload.ID, (client, handler, buf, sender) -> {
+            DamageNumberPayload payload = DamageNumberPayload.read(buf);
+            client.execute(() -> DamageTesterClient.handleDamageNumber(payload));
+        });
     }
 }

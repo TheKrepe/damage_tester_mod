@@ -1,20 +1,18 @@
-package net.star1mp.damagetester.neoforge;
+package net.star1mp.damagetester.forge;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.star1mp.damagetester.DamageTester;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.star1mp.damagetester.ModContent;
 import net.star1mp.damagetester.client.DamageCounterRenderer;
-import net.star1mp.damagetester.client.DamageTesterClient;
 import net.star1mp.damagetester.client.DamageTesterRenderer;
-import net.star1mp.damagetester.network.DamageNumberPayload;
 
-@Mod(value = DamageTester.MOD_ID, dist = Dist.CLIENT)
-public class DamageTesterNeoForgeClient {
-    public DamageTesterNeoForgeClient(IEventBus modBus) {
-        modBus.addListener(DamageTesterNeoForgeClient::onRegisterRenderers);
+/** Client-only registration. */
+public final class DamageTesterForgeClient {
+    private DamageTesterForgeClient() {
+    }
+
+    static void init(IEventBus modBus) {
+        modBus.addListener(DamageTesterForgeClient::onRegisterRenderers);
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {

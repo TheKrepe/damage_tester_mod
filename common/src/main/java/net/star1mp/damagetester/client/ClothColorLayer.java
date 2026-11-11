@@ -26,6 +26,7 @@ public class ClothColorLayer extends RenderLayer<DamageTesterEntity, DamageTeste
         if (color == 0 || entity.isInvisible()) {
             return;
         }
-        renderColoredCutoutModel(this.getParentModel(), CLOTH_TEXTURE, poseStack, buffers, light, entity, color);
+        renderColoredCutoutModel(this.getParentModel(), CLOTH_TEXTURE, poseStack, buffers, light, entity,
+                ((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
     }
 }

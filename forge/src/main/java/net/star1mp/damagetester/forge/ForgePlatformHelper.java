@@ -1,26 +1,24 @@
-package net.star1mp.damagetester.neoforge;
+package net.star1mp.damagetester.forge;
 
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.DeferredRegister;
 import net.star1mp.damagetester.DamageTester;
 import net.star1mp.damagetester.platform.IPlatformHelper;
 
-public class NeoForgePlatformHelper implements IPlatformHelper {
+public class ForgePlatformHelper implements IPlatformHelper {
     private static final Map<ResourceKey<?>, DeferredRegister<?>> REGISTERS = new LinkedHashMap<>();
 
     @Override
     public String getPlatformName() {
-        return "neoforge";
+        return "forge";
     }
 
     @Override
@@ -51,8 +49,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload) {
-        PacketDistributor.sendToPlayersTrackingEntity(entity, payload);
+    public void sendToTrackingPlayers(Entity entity, net.star1mp.damagetester.network.DamageNumberPayload payload) {
+        ForgeNetwork.sendToTracking(entity, payload);
     }
 
     static void registerAll(IEventBus modBus) {

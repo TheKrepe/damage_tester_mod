@@ -18,7 +18,9 @@ public final class DamageTesterClient {
         }
         Entity entity = minecraft.level.getEntity(payload.entityId());
         if (entity instanceof DamageTesterEntity tester) {
-            int color = DamageColors.get(payload.damageType());
+            int color = minecraft.level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
+                    .getHolder(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, payload.damageType()))
+                    .map(DamageColors::get).orElse(0xFFFFFF);
             tester.onClientHit(payload.amount(), color, payload.critical());
         }
     }

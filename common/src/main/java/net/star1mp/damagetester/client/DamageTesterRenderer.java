@@ -72,8 +72,8 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     }
 
     @Override
-    protected void setupRotations(DamageTesterEntity entity, PoseStack poseStack, float bob, float bodyRot, float partialTick, float scale) {
-        super.setupRotations(entity, poseStack, bob, bodyRot, partialTick, scale);
+    protected void setupRotations(DamageTesterEntity entity, PoseStack poseStack, float bob, float bodyRot, float partialTick) {
+        super.setupRotations(entity, poseStack, bob, bodyRot, partialTick);
         TesterVariant variant = entity.getVariant();
         float pivot = PIVOT_Y;
         if (variant == TesterVariant.HANGING) {

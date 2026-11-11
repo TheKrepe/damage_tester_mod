@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "damage_tester:minecart_damage_tester"
+        "recipe": "damage_tester:small_damage_tester"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "items": "damage_tester:damage_tester"
+            "items": [
+              "minecraft:hay_block"
+            ]
           }
         ]
       },
@@ -26,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "damage_tester:minecart_damage_tester"
+      "damage_tester:small_damage_tester"
     ]
   }
 }

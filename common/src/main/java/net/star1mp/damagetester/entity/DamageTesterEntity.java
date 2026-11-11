@@ -12,7 +12,6 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -150,7 +149,7 @@ public class DamageTesterEntity extends LivingEntity {
         tester.moveTo(pos.x(), pos.y(), pos.z(), yaw, 0.0F);
         tester.setYHeadRot(yaw);
         tester.setYBodyRot(yaw);
-        if (stack.has(DataComponents.CUSTOM_NAME)) {
+        if (stack.hasCustomHoverName()) {
             tester.setCustomName(stack.getHoverName());
         }
         level.addFreshEntity(tester);
@@ -178,9 +177,9 @@ public class DamageTesterEntity extends LivingEntity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(DATA_SKIN, "");
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_SKIN, "");
     }
 
     /** Returns the skin an item would apply, or null if the item does not change the skin. */
@@ -304,7 +303,8 @@ public class DamageTesterEntity extends LivingEntity {
             this.maxHit = Math.max(this.maxHit, hit.amount());
             // Only the first hit of a tick can be the melee crit.
             Services.PLATFORM.sendToTrackingPlayers(this,
-                    new DamageNumberPayload(this.getId(), hit.amount(), hit.type(), critical && i == 0));
+                    new DamageNumberPayload(this.getId(), hit.amount(),
+                            hit.type().unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(new net.minecraft.resources.ResourceLocation("generic")), critical && i == 0));
         }
         this.pendingHits.clear();
         this.criticalThisTick = false;
@@ -419,7 +419,7 @@ public class DamageTesterEntity extends LivingEntity {
         }
         double slope = rail.getBlock() instanceof BaseRailBlock railBlock && rail.getValue(railBlock.getShapeProperty()).isAscending() ? 0.5 : 0.0;
         AbstractMinecart cart = AbstractMinecart.createMinecart(level, railPos.getX() + 0.5, railPos.getY() + 0.0625 + slope,
-                railPos.getZ() + 0.5, AbstractMinecart.Type.RIDEABLE, ItemStack.EMPTY, player);
+                railPos.getZ() + 0.5, AbstractMinecart.Type.RIDEABLE);
         if (cart == null) {
             return null;
         }
@@ -548,8 +548,8 @@ public class DamageTesterEntity extends LivingEntity {
             return InteractionResult.SUCCESS;
         }
 
-        EquipmentSlot slot = this.getEquipmentSlotForItem(held);
-        if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR) {
+        EquipmentSlot slot = net.minecraft.world.entity.Mob.getEquipmentSlotForItem(held);
+        if (slot.getType() != EquipmentSlot.Type.ARMOR) {
             return InteractionResult.PASS;
         }
         if (!this.level().isClientSide()) {
@@ -596,7 +596,7 @@ public class DamageTesterEntity extends LivingEntity {
     public ItemStack getPickResult() {
         ItemStack stack = new ItemStack(ModContent.TESTER_ITEMS.get(this.getVariant()).get());
         if (this.hasCustomName()) {
-            stack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+            stack.setHoverName(this.getCustomName());
         }
         return stack;
     }
@@ -640,20 +640,24 @@ public class DamageTesterEntity extends LivingEntity {
     public ItemStack getItemBySlot(EquipmentSlot slot) {
         return switch (slot.getType()) {
             case HAND -> this.handItems.get(slot.getIndex());
-            case HUMANOID_ARMOR -> this.armorItems.get(slot.getIndex());
+            case ARMOR -> this.armorItems.get(slot.getIndex());
             default -> ItemStack.EMPTY;
         };
     }
 
     @Override
     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
-        this.verifyEquippedItem(stack);
         switch (slot.getType()) {
             case HAND -> this.onEquipItem(slot, this.handItems.set(slot.getIndex(), stack), stack);
-            case HUMANOID_ARMOR -> this.onEquipItem(slot, this.armorItems.set(slot.getIndex(), stack), stack);
+            case ARMOR -> this.onEquipItem(slot, this.armorItems.set(slot.getIndex(), stack), stack);
             default -> {
             }
         }
+    }
+
+    @Override
+    protected float getStandingEyeHeight(net.minecraft.world.entity.Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
+        return this.getVariant().eyeHeight();
     }
 
     @Override
@@ -677,7 +681,7 @@ public class DamageTesterEntity extends LivingEntity {
         output.putString("Skin", this.getSkin());
         ListTag armor = new ListTag();
         for (ItemStack stack : this.armorItems) {
-            armor.add(stack.saveOptional(this.registryAccess()));
+            armor.add(stack.save(new CompoundTag()));
         }
         output.put("ArmorItems", armor);
     }
@@ -689,7 +693,7 @@ public class DamageTesterEntity extends LivingEntity {
         if (input.contains("ArmorItems", Tag.TAG_LIST)) {
             ListTag armor = input.getList("ArmorItems", Tag.TAG_COMPOUND);
             for (int i = 0; i < this.armorItems.size() && i < armor.size(); i++) {
-                this.armorItems.set(i, ItemStack.parseOptional(this.registryAccess(), armor.getCompound(i)));
+                this.armorItems.set(i, ItemStack.of(armor.getCompound(i)));
             }
         }
         if (this.getVariant().hangs()) {

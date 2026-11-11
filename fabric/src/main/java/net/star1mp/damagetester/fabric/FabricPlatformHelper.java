@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.star1mp.damagetester.DamageTester;
@@ -45,9 +44,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendToTrackingPlayers(Entity entity, CustomPacketPayload payload) {
+    public void sendToTrackingPlayers(Entity entity, net.star1mp.damagetester.network.DamageNumberPayload payload) {
         for (ServerPlayer player : PlayerLookup.tracking(entity)) {
-            ServerPlayNetworking.send(player, payload);
+            net.minecraft.network.FriendlyByteBuf buf = net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create();
+            payload.write(buf);
+            ServerPlayNetworking.send(player, net.star1mp.damagetester.network.DamageNumberPayload.ID, buf);
         }
     }
 }
