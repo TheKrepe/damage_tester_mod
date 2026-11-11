@@ -1,20 +1,34 @@
 name: Check loader versions
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      mc:
+        description: 'Minecraft versions (space separated, empty = gradle.properties)'
+        required: false
+        default: ''
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Latest versions for this Minecraft version
+      - name: Latest versions
         run: |
-          MC=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
-          meta() { curl -fsSL "$1" | grep -oP '(?<=<version>)[^<]+' ; }
-          echo "minecraft=$MC"
-          echo "current:"; grep -E '^(neoforge_version|neo_form_version|fabric_loader_version|fabric_version)=' gradle.properties
-          echo "latest:"
-          echo "neoforge=$(meta https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep "^$MC\." | sort -V | tail -1)"
-          echo "neoform=$(meta https://maven.neoforged.net/releases/net/neoforged/neoform/maven-metadata.xml | grep "^$MC-" | sort -V | tail -1)"
+          meta() { curl -fsSL "$1" 2>/dev/null | grep -oP '(?<=<version>)[^<]+' ; }
+          NF=$(meta https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml)
+          NFORM=$(meta https://maven.neoforged.net/releases/net/neoforged/neoform/maven-metadata.xml)
+          FAPI=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml)
+          FORGE=$(meta https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml)
           echo "fabric_loader=$(curl -fsSL https://meta.fabricmc.net/v2/versions/loader | jq -r '[.[]|select(.stable)][0].version')"
-          echo "fabric_api=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | grep "+$MC$" | sort -V | tail -1)"
           echo "loom=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-loom/maven-metadata.xml | grep -v SNAPSHOT | sort -V | tail -1)"
           echo "moddevgradle=$(meta https://maven.neoforged.net/releases/net/neoforged/moddev-gradle/maven-metadata.xml | grep -vE 'beta|alpha' | sort -V | tail -1)"
+          LIST="${{ inputs.mc }}"
+          [ -z "$LIST" ] && LIST=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          for MC in $LIST; do
+            case "$MC" in 1.*) P="${MC#1.}." ;; *) P="$MC." ;; esac
+            echo "== $MC"
+            echo "  neoforge=$(echo "$NF" | grep "^$P" | sort -V | tail -1)"
+            echo "  neoform=$(echo "$NFORM" | grep "^$MC-" | grep -v snapshot | sort -V | tail -1)"
+            echo "  fabric_api=$(echo "$FAPI" | grep "+$MC$" | sort -V | tail -1)"
+            echo "  forge=$(echo "$FORGE" | grep "^$MC-" | sort -V | tail -1)"
+            echo "  parchment=$(meta https://maven.parchmentmc.org/org/parchmentmc/data/parchment-$MC/maven-metadata.xml | sort -V | tail -1)"
+          done
