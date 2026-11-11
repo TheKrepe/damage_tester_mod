@@ -17,6 +17,9 @@ jobs:
       - uses: actions/setup-java@v4
         if: steps.jv.outputs.on == '1'
         with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.v == '17'
+        with: { distribution: temurin, java-version: '17\n21' }
       - uses: gradle/actions/setup-gradle@v4
         if: steps.jv.outputs.on == '1'
       - name: Dump the named Minecraft API (javap)
@@ -69,6 +72,9 @@ jobs:
       - uses: actions/setup-java@v4
         if: steps.jv.outputs.on == '1'
         with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.v == '17'
+        with: { distribution: temurin, java-version: '17\n21' }
       - uses: gradle/actions/setup-gradle@v4
         if: steps.jv.outputs.on == '1'
       - name: Boot ${{ matrix.loader }} dedicated server

@@ -20,6 +20,9 @@ jobs:
         with:
           distribution: temurin
           java-version: ${{ steps.jv.outputs.v }}
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.v == '17'
+        with: { distribution: temurin, java-version: '17\n21' }
       - uses: gradle/actions/setup-gradle@v4
       - name: Build Fabric and NeoForge jars
         run: ./gradlew build --stacktrace
