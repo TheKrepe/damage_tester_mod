@@ -26,9 +26,9 @@ jobs:
           for MC in $LIST; do
             case "$MC" in 1.*) P="${MC#1.}." ;; *) P="$MC." ;; esac
             echo "== $MC"
-            echo "  neoforge=$(echo "$NF" | grep "^$P" | sort -V | tail -1)"
-            echo "  neoform=$(echo "$NFORM" | grep "^$MC-" | grep -v snapshot | sort -V | tail -1)"
+            echo "  neoforge=$(echo "$NF" | grep -F "$P" | grep "^$P" | sort -V | tail -1)"
+            echo "  neoform=$(echo "$NFORM" | grep -F "$MC-" | grep -vE "snapshot|rc|pre" | sort -V | tail -1)"
             echo "  fabric_api=$(echo "$FAPI" | grep "+$MC$" | sort -V | tail -1)"
             echo "  forge=$(echo "$FORGE" | grep "^$MC-" | sort -V | tail -1)"
-            echo "  parchment=$(meta https://maven.parchmentmc.org/org/parchmentmc/data/parchment-$MC/maven-metadata.xml | sort -V | tail -1)"
+            echo "  parchment=$(meta https://maven.parchmentmc.org/org/parchmentmc/data/parchment-$MC/maven-metadata.xml | grep -v SNAPSHOT | sort -V | tail -1)"
           done

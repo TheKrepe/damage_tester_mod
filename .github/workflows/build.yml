@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'mc/**' ]
   pull_request:
   workflow_dispatch:
 
@@ -14,17 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - id: jv
+        run: echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: ${{ steps.jv.outputs.v }}
       - uses: gradle/actions/setup-gradle@v4
       - name: Build Fabric and NeoForge jars
         run: ./gradlew build --stacktrace
       - name: Collect release jars
         run: |
           mkdir -p dist
-          find fabric/build/libs neoforge/build/libs -maxdepth 1 -name '*.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
+          find fabric/build/libs neoforge/build/libs forge/build/libs -maxdepth 1 2>/dev/null -name '*.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
           ls -la dist
           test "$(ls dist/*.jar | wc -l)" -eq 2
       - name: Upload jars
@@ -40,4 +42,5 @@ jobs:
           git init -q -b ci-jars
           git config user.email ci@example.com; git config user.name ci
           git add -A; git commit -qm "jars ${{ github.sha }}"
-          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" ci-jars
+          B=ci-jars; case "$GITHUB_REF_NAME" in mc/*) B="ci-jars-${GITHUB_REF_NAME#mc/}";; esac
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:$B
