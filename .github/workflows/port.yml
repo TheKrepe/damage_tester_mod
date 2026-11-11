@@ -7,16 +7,20 @@ permissions:
   contents: write
 jobs:
   probe:
-    if: hashFiles('.github/PROBE') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - id: jv
-        run: echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+        run: |
+          echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+          if [ -f .github/PROBE ]; then echo "on=1" >> $GITHUB_OUTPUT; fi
       - uses: actions/setup-java@v4
+        if: steps.jv.outputs.on == '1'
         with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
       - uses: gradle/actions/setup-gradle@v4
+        if: steps.jv.outputs.on == '1'
       - name: Dump the named Minecraft API (javap)
+        if: steps.jv.outputs.on == '1'
         run: |
           mkdir -p out
           MC=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
@@ -38,6 +42,7 @@ jobs:
           gzip -9 out/javap_all.txt
           ls -la out
       - name: Publish
+        if: steps.jv.outputs.on == '1'
         run: |
           cd out; git init -q -b x; git config user.email ci@example.com; git config user.name ci
           git add -A; git commit -qm probe
