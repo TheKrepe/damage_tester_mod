@@ -8,6 +8,7 @@ version = "${version}"
 displayName = "${mod_name}"
 iconFile = "assets/damage_tester/icon.png"
 bannerFile = "assets/damage_tester/banner.png"
+logoFile = "assets/damage_tester/banner.png"
 authors = "${mod_author}"
 description = '''${description}'''
 
@@ -17,7 +18,7 @@ config = "${mod_id}.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[26.1.0,)"
+versionRange = "[21.11.0,)"
 ordering = "NONE"
 side = "BOTH"
 
