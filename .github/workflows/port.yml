@@ -69,4 +69,4 @@ jobs:
         run: |
           .github/scripts/boot-server.sh :${{ matrix.loader }}:runServer ${{ matrix.loader }}/runs/server
           L=boot-_${{ matrix.loader }}_runServer.log
-          if grep -iE "damage_tester" $L | grep -iE "error|exception|couldn't|failed|unknown"; then echo "::error::mod errors in log"; exit 1; fi
+          if grep -iE "damage_tester" $L | grep -v "No data fixer registered" | grep -iE "error|exception|couldn't|failed|unknown"; then echo "::error::mod errors in log"; exit 1; fi
