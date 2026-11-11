@@ -18,12 +18,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Dump the named Minecraft API (javap)
         run: |
-          ./gradlew $(cat .github/PROBE) --continue > setup.log 2>&1 || true
-          tail -30 setup.log
           mkdir -p out
-          find ~/.gradle /home/runner/work -name '*.jar' \( -path '*moddev*' -o -path '*minecraft*' -o -path '*loom*' \) 2>/dev/null | grep -viE 'sources|lwjgl|natives|/libraries/' | xargs -r ls -la | sort -k5 -n | tail -40 > out/jars.txt
+          MC=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          case "$MC" in 26.*)
+            URL=$(curl -s https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | python3 -c "import json,sys;d=json.load(sys.stdin);print([v['url'] for v in d['versions'] if v['id']=='$MC'][0])")
+            CJ=$(curl -s "$URL" | python3 -c "import json,sys;print(json.load(sys.stdin)['downloads']['client']['url'])")
+            mkdir -p mcjar; curl -s -o mcjar/client-named.jar "$CJ" ;;
+          *) ./gradlew $(cat .github/PROBE) --continue > setup.log 2>&1 || true; tail -30 setup.log ;;
+          esac
+          find mcjar ~/.gradle /home/runner/work -name '*.jar' \( -path '*moddev*' -o -path '*minecraft*' -o -path '*mcjar*' -o -path '*loom*' \) 2>/dev/null | grep -viE 'sources|lwjgl|natives|/libraries/' | xargs -r ls -la | sort -k5 -n | tail -40 > out/jars.txt
           cat out/jars.txt
-          J=$(awk '{print $NF}' out/jars.txt | grep -iE 'neoforge|forge' | grep -v -- '-sources' | tail -1)
+          J=$(ls mcjar/*.jar 2>/dev/null | head -1)
+          [ -z "$J" ] && J=$(awk '{print $NF}' out/jars.txt | grep -iE 'neoforge|forge' | grep -v -- '-sources' | tail -1)
           [ -z "$J" ] && J=$(awk '{print $NF}' out/jars.txt | tail -1)
           echo "using $J" | tee out/used.txt
           unzip -l "$J" | awk '{print $4}' | grep '\.class$' | grep -E '^(net/minecraft|com/mojang|net/neoforged|net/minecraftforge)/' | sed 's/\.class$//' | tr / . > all.txt
