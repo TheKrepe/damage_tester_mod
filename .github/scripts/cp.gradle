@@ -1,0 +1,13 @@
+// Init script: writes each project's main compile classpath to build/cp.txt
+allprojects {
+    afterEvaluate { p ->
+        p.tasks.register('dumpCp') {
+            doLast {
+                def ss = p.extensions.findByName('sourceSets')
+                if (ss != null) {
+                    p.file("${p.rootDir}/cp-${p.name}.txt").text = ss.main.compileClasspath.files.join('\n')
+                }
+            }
+        }
+    }
+}
