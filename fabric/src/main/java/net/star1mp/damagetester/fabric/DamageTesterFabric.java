@@ -13,6 +13,9 @@ import net.star1mp.damagetester.network.DamageNumberPayload;
 public class DamageTesterFabric implements ModInitializer {
     @Override
     public void onInitialize() {
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(net.star1mp.damagetester.SelfTestHook::serverTick);
+        }
         DamageTester.init();
         PayloadTypeRegistry.clientboundPlay().register(DamageNumberPayload.TYPE, DamageNumberPayload.STREAM_CODEC);
         ModContent.TESTER_TYPES.values().forEach(type -> FabricDefaultAttributeRegistry.register(type.get(), DamageTesterEntity.createAttributes()));
