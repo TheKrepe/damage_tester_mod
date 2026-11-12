@@ -104,15 +104,28 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
     @Override
     public void render(DamageTesterEntity entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light) {
         super.render(entity, yaw, partialTick, poseStack, buffers, light);
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            int armor = 0;
+            for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
+                    net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                    net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {
+                if (!entity.getItemBySlot(slot).isEmpty()) {
+                    armor++;
+                }
+            }
+            net.star1mp.damagetester.SelfTestHook.clientState("render id=" + entity.getId(), "variant=" + entity.getVariant().id()
+                    + " skin=" + entity.getSkin() + " texture=" + this.getTextureLocation(entity) + " armor=" + armor
+                    + " name=" + (entity.hasCustomName() ? entity.getName().getString() : "-"));
+        }
         try {
             this.renderBase(entity, partialTick, poseStack, buffers, light);
         } catch (RuntimeException e) {
-            DamageTester.LOG.debug("Failed to draw damage tester base", e);
+            DamageTester.logRenderError("damage tester base", e);
         }
         try {
             this.renderNumbers(entity, partialTick, poseStack, buffers);
         } catch (RuntimeException e) {
-            DamageTester.LOG.debug("Failed to draw damage numbers", e);
+            DamageTester.logRenderError("damage numbers", e);
         }
     }
 
@@ -151,6 +164,9 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             String label = FORMAT.format(value) + (hearts ? "❤" : "");
             if (number.critical()) {
                 label = "✦" + label;
+            }
+            if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+                net.star1mp.damagetester.SelfTestHook.clientState("number id=" + entity.getId() + " tick=" + number.spawnTick() + " slot=" + number.slot(), "text=" + label);
             }
             float progress = Mth.clamp(age / lifetime, 0.0F, 1.0F);
             float rise = easeOutCubic(Math.min(1.0F, age / 18.0F));
