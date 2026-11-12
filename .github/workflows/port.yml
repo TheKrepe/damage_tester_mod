@@ -30,6 +30,13 @@ jobs:
             mkdir -p mcjar; curl -s -o mcjar/client-named.jar "$CJ" ;;
           *) ./gradlew $(cat .github/PROBE) --continue > setup.log 2>&1 || true; tail -30 setup.log ;;
           esac
+          ./gradlew -I .github/scripts/cp.gradle dumpCp --continue > cp.log 2>&1 || tail -40 cp.log
+          mkdir -p cpjars
+          for f in cp-*.txt; do
+            n=${f#cp-}; n=${n%.txt}; : > out/$f
+            while read -r j; do [ -f "$j" ] || continue; b=$(basename "$j"); h=$(echo "$j" | md5sum | cut -c1-6); cp "$j" cpjars/$h-$b; echo "$h-$b" >> out/$f; done < $f
+          done
+          tar -C cpjars -cf - . | gzip -1 | split -b 90m - out/cpjars.tgz.part_
           find mcjar ~/.gradle /home/runner/work -name '*.jar' \( -path '*moddev*' -o -path '*minecraft*' -o -path '*mcjar*' -o -path '*loom*' \) 2>/dev/null | grep -viE 'sources|lwjgl|natives|/libraries/' | xargs -r ls -la | sort -k5 -n | tail -40 > out/jars.txt
           cat out/jars.txt
           J=$(ls mcjar/*.jar 2>/dev/null | head -1)
