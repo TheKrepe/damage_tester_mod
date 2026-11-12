@@ -87,6 +87,19 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         state.sway = entity.getSway(partialTick);
         state.variant = entity.getVariant();
         TesterSkins.apply(entity, state);
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            int armor = 0;
+            for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
+                    net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                    net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {
+                if (!entity.getItemBySlot(slot).isEmpty()) {
+                    armor++;
+                }
+            }
+            net.star1mp.damagetester.SelfTestHook.clientState("render id=" + entity.getId(), "variant=" + entity.getVariant().id()
+                    + " skin=" + entity.getSkin() + " texture=" + state.texture + " armor=" + armor
+                    + " name=" + (entity.hasCustomName() ? entity.getName().getString() : "-"));
+        }
 
         state.numbers.clear();
         boolean hearts = DamageTesterConfig.get().damageInHearts;
@@ -101,6 +114,9 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
                 text = "✦" + text;
             }
             state.numbers.add(new DamageTesterRenderState.NumberRenderData(text, number.color(), age, number.slot(), number.critical()));
+            if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+                net.star1mp.damagetester.SelfTestHook.clientState("number id=" + entity.getId() + " tick=" + number.spawnTick() + " slot=" + number.slot(), "text=" + text);
+            }
         }
     }
 
@@ -139,12 +155,12 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         try {
             this.submitBase(state, poseStack, collector);
         } catch (RuntimeException e) {
-            DamageTester.LOG.debug("Failed to draw damage tester base", e);
+            DamageTester.logRenderError("damage tester base", e);
         }
         try {
             this.submitNumbers(state, poseStack, collector, camera);
         } catch (RuntimeException e) {
-            DamageTester.LOG.debug("Failed to draw damage numbers", e);
+            DamageTester.logRenderError("damage numbers", e);
         }
     }
 

@@ -18,6 +18,10 @@ import net.star1mp.damagetester.network.DamageNumberPayload;
 @Mod(DamageTester.MOD_ID)
 public class DamageTesterNeoForge {
     public DamageTesterNeoForge(IEventBus modBus) {
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
+                    (net.neoforged.neoforge.event.tick.ServerTickEvent.Post event) -> net.star1mp.damagetester.SelfTestHook.serverTick(event.getServer()));
+        }
         DamageTester.init();
         NeoForgePlatformHelper.registerAll(modBus);
         modBus.addListener(DamageTesterNeoForge::onAttributes);
