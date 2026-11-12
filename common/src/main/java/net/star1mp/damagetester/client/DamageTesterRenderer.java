@@ -180,10 +180,11 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             // Start just above the head and float upwards.
             poseStack.translate(0.0F, entity.getBbHeight() + 0.15F + rise * 0.7F, 0.0F);
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-            // On this version the camera orientation faces away from the viewer (like vanilla name tags),
-            // so X is mirrored: without it the text is back-face culled and invisible.
+            // On this version the camera orientation faces away from the viewer, so turn the text
+            // around (without it the text is back-face culled and invisible).
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             poseStack.translate(-sideways * (0.5F + rise * 0.7F) * distanceScale, 0.0F, 0.0F);
-            poseStack.scale(-scale, -scale, scale);
+            poseStack.scale(scale, -scale, scale);
 
             FormattedCharSequence text = Component.literal(label).getVisualOrderText();
             float x = -this.font.width(text) / 2.0F;

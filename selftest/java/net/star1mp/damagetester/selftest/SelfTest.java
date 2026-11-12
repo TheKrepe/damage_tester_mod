@@ -86,8 +86,8 @@ public final class SelfTest {
         try {
             Class.forName("net.minecraft.client.main.Main", false, SelfTest.class.getClassLoader());
             SelfTestHook.setClientCheck(() -> SelfTestClient.run());
-        } catch (ClassNotFoundException e) {
-            // dedicated server
+        } catch (ClassNotFoundException | RuntimeException | LinkageError e) {
+            // dedicated server (Forge refuses to load client classes there)
         }
     }
 
@@ -110,7 +110,14 @@ public final class SelfTest {
             LOG.info("[DT-SELFTEST] START phase={} steps={}", phase2 ? 2 : 1, STEPS.size());
             nextTick = now + 20;
         }
-        if (now < nextTick) {
+        SHOTS.removeIf(s -> {
+            if ((long) s[0] <= now) {
+                LOG.info("[DT-SELFTEST] SHOT {} {}", s[1], System.currentTimeMillis());
+                return true;
+            }
+            return false;
+        });
+        if (now < nextTick || !SHOTS.isEmpty()) {
             return;
         }
         if (waitCondition != null) {
@@ -188,8 +195,11 @@ public final class SelfTest {
         LOG.info("[DT-SELFTEST] EXPECT-CLIENT {}", text);
     }
 
+    private static final List<Object[]> SHOTS = new ArrayList<>();
+
+    /** Screenshot a few ticks later, once the camera teleport and the hit effects reached the client. */
     private static void shot(String name) {
-        LOG.info("[DT-SELFTEST] SHOT {} {}", name, System.currentTimeMillis());
+        SHOTS.add(new Object[]{level.getGameTime() + 8, name});
     }
 
     private static void command(String cmd) {
@@ -728,8 +738,17 @@ public final class SelfTest {
             }
             player.getInventory().setItem(slot, new ItemStack(ModContent.DAMAGE_COUNTER_ITEM.get()));
             view(0, 0, -3, 0, 15);
-            shot("hotbar");
         });
+        step("hotbar visible", 20, () -> shot("hotbar"));
+        step("night: glowing jack o'lantern face", 30, () -> {
+            command("time set midnight");
+            hold(new ItemStack(Items.JACK_O_LANTERN));
+            interact(standard, new Vec3(0, 1.0, 0));
+            check("dispensed tester takes a skin", DamageTesterEntity.SKIN_JACK.equals(standard.getSkin()), standard.getSkin());
+            view(9, 0.3, 1, 0, 10);
+        });
+        step("night shot", 20, () -> shot("night_glow"));
+        step("back to day", 5, () -> command("time set noon"));
     }
 
     private static void skin(String label, Item item, String expected) {
