@@ -35,7 +35,7 @@ CLI=$E/client
 python3 $L1 server --dir "$SRV" --mc "$MC" --loader "$L" --loader-version "$LV" --java "$JAVA" > "$E/srvcmd.txt" || exit 1
 mkdir -p "$SRV/mods"; cp "${MODS[@]}" "$SRV/mods/"
 echo "eula=true" > "$SRV/eula.txt"
-printf 'online-mode=false\nenforce-secure-profile=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\nview-distance=5\nsimulation-distance=5\nspawn-monsters=false\nspawn-npcs=false\nspawn-animals=false\ngenerate-structures=false\nallow-flight=true\nmax-tick-time=-1\n' > "$SRV/server.properties"
+printf 'online-mode=false\nwhite-list=false\nenforce-whitelist=false\nenforce-secure-profile=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\nview-distance=5\nsimulation-distance=5\nspawn-monsters=false\nspawn-npcs=false\nspawn-animals=false\ngenerate-structures=false\nallow-flight=true\nmax-tick-time=-1\n' > "$SRV/server.properties"
 echo "-Xmx2G -Ddamagetester.selftest=true" > "$SRV/jvm_args.txt"
 start_server() { (cd "$SRV" && exec $(cat "$E/srvcmd.txt")) > "$E/server$1.log" 2>&1 & }
 start_server 1
