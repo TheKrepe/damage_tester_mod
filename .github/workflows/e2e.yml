@@ -1,0 +1,53 @@
+name: End-to-end test
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, 'mc/**' ]
+    paths-ignore: [ 'docs/**', '**.md' ]
+permissions:
+  contents: write
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        loader: [ fabric, neoforge, forge ]
+    steps:
+      - uses: actions/checkout@v4
+      - id: jv
+        run: |
+          echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2 | tr -d '\r')" >> $GITHUB_OUTPUT
+          echo "mc=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2 | tr -d '\r')" >> $GITHUB_OUTPUT
+          if grep -q "include('${{ matrix.loader }}')" settings.gradle; then echo "on=1" >> $GITHUB_OUTPUT; fi
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.on == '1'
+        with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - name: Remember the game Java
+        if: steps.jv.outputs.on == '1'
+        run: echo "GAME_JAVA=$JAVA_HOME" >> $GITHUB_ENV
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.on == '1' && steps.jv.outputs.v == '17'
+        with: { distribution: temurin, java-version: "17\n21" }
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.jv.outputs.on == '1'
+      - name: Install Xvfb, Mesa, ImageMagick
+        if: steps.jv.outputs.on == '1'
+        run: sudo apt-get update -q && sudo apt-get install -y -q xvfb mesa-utils libgl1-mesa-dri imagemagick > /dev/null
+      - name: Run the end-to-end test
+        if: steps.jv.outputs.on == '1'
+        run: xvfb-run -a -s "-screen 0 1280x720x24" .github/scripts/e2e.sh ${{ matrix.loader }}
+      - name: Publish logs and screenshots
+        if: always() && steps.jv.outputs.on == '1'
+        run: |
+          mkdir -p pub && cd pub
+          cp ../e2e/summary.md . 2>/dev/null || echo "no summary" > summary.md
+          for f in server1 server2 client build; do [ -f ../e2e/$f.log ] && gzip -c ../e2e/$f.log > $f.log.gz; done
+          mkdir -p shots; for p in ../e2e/shots/*.png; do [ -f "$p" ] && convert "$p" -resize 1280x720 -quality 85 "shots/$(basename "${p%.png}").jpg"; done
+          git init -q -b x; git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "e2e ${{ steps.jv.outputs.mc }} ${{ matrix.loader }} ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:ci-e2e-${{ steps.jv.outputs.mc }}-${{ matrix.loader }}

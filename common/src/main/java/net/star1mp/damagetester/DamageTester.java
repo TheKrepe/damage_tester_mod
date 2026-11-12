@@ -21,8 +21,18 @@ public final class DamageTester {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
+    private static final java.util.Set<String> RENDER_ERRORS = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    /** Rendering problems are logged once per kind instead of crashing or flooding the log. */
+    public static void logRenderError(String what, Throwable error) {
+        if (RENDER_ERRORS.add(what)) {
+            LOG.warn("Failed to draw {} (further errors of this kind are not logged)", what, error);
+        }
+    }
+
     public static void init() {
         DamageTesterConfig.load();
         ModContent.init();
+        SelfTestHook.init();
     }
 }
