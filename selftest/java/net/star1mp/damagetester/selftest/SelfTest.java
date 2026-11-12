@@ -84,7 +84,7 @@ public final class SelfTest {
     public static void install() {
         SelfTestHook.setServerTicker(SelfTest::tick);
         try {
-            Class.forName("net.minecraft.client.Minecraft", false, SelfTest.class.getClassLoader());
+            Class.forName("net.minecraft.client.main.Main", false, SelfTest.class.getClassLoader());
             SelfTestHook.setClientCheck(() -> SelfTestClient.run());
         } catch (ClassNotFoundException e) {
             // dedicated server
