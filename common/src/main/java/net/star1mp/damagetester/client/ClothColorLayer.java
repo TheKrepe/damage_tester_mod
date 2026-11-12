@@ -26,6 +26,6 @@ public class ClothColorLayer extends RenderLayer<DamageTesterRenderState, Damage
             return;
         }
         collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.entityCutout(CLOTH_TEXTURE),
-                light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.clothColor, null, state.outlineColor);
+                light, LivingEntityRenderer.getOverlayCoords(state, 0.0F), state.clothColor, null, state.outlineColor, null);
     }
 }

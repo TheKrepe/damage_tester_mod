@@ -24,6 +24,6 @@ public class GlowLayer extends RenderLayer<DamageTesterRenderState, DamageTester
             return;
         }
         collector.submitModel(this.getParentModel(), state, poseStack, RenderTypes.eyes(state.glowTexture),
-                LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
+                LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
     }
 }

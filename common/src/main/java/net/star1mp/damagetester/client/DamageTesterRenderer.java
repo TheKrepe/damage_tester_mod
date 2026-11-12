@@ -118,8 +118,8 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         // Lean around the pivot. Model space here is still "Y up".
         if (state.wobble != 0.0F || state.sway != 0.0F) {
             poseStack.translate(0.0F, pivot, 0.0F);
-            poseStack.rotate(Axis.XP.rotation(state.wobble));
-            poseStack.rotate(Axis.ZP.rotation(state.sway));
+            poseStack.mulPose(Axis.XP.rotation(state.wobble));
+            poseStack.mulPose(Axis.ZP.rotation(state.sway));
             poseStack.translate(0.0F, -pivot, 0.0F);
         }
     }
@@ -154,12 +154,12 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             return; // hangs on a rope / stands in the cart
         }
         poseStack.pushPose();
-        poseStack.rotate(Axis.YP.rotationDegrees(180.0F - state.bodyRot));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.bodyRot));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         this.scale(state, poseStack);
         poseStack.translate(0.0F, -1.501F, 0.0F);
         collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(state.texture),
-                state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor);
+                state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
         poseStack.popPose();
     }
 
@@ -183,7 +183,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             poseStack.pushPose();
             // Start just above the head and float upwards.
             poseStack.translate(0.0F, state.boundingBoxHeight + 0.15F + rise * 0.7F, 0.0F);
-            poseStack.rotate(camera.orientation);
+            poseStack.mulPose(camera.orientation);
             poseStack.translate(sideways * (0.5F + rise * 0.7F) * distanceScale, 0.0F, 0.0F);
             poseStack.scale(scale, -scale, scale);
 
