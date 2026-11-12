@@ -22,6 +22,11 @@ dependencies {
     commonResources(project(path: ':common', configuration: 'commonResources'))
 }
 
+// CI end-to-end tests: -Pselftest compiles the test driver (selftest/java) into the jar.
+if (project.hasProperty('selftest')) {
+    sourceSets.main.java.srcDir(rootProject.file('selftest/java'))
+}
+
 tasks.named('compileJava', JavaCompile) {
     dependsOn(configurations.commonJava)
     source(configurations.commonJava)
