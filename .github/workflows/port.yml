@@ -37,6 +37,7 @@ jobs:
             while read -r j; do [ -f "$j" ] || continue; b=$(basename "$j"); h=$(echo "$j" | md5sum | cut -c1-6); cp "$j" cpjars/$h-$b; echo "$h-$b" >> out/$f; done < $f
           done
           tar -C cpjars -cf - . | gzip -1 | split -b 90m - out/cpjars.tgz.part_
+          if [ -f .github/PROBE_JDK ]; then tar -C "$JAVA_HOME" -cf - . | gzip -1 | split -b 90m - out/jdk.tgz.part_; fi
           find mcjar ~/.gradle /home/runner/work -name '*.jar' \( -path '*moddev*' -o -path '*minecraft*' -o -path '*mcjar*' -o -path '*loom*' \) 2>/dev/null | grep -viE 'sources|lwjgl|natives|/libraries/' | xargs -r ls -la | sort -k5 -n | tail -40 > out/jars.txt
           cat out/jars.txt
           J=$(ls mcjar/*.jar 2>/dev/null | head -1)
