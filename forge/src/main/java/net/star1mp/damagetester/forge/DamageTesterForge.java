@@ -20,6 +20,13 @@ import net.star1mp.damagetester.entity.DamageTesterEntity;
 public class DamageTesterForge {
     public DamageTesterForge() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.event.TickEvent.ServerTickEvent event) -> {
+                if (event.phase == net.minecraftforge.event.TickEvent.Phase.END) {
+                    net.star1mp.damagetester.SelfTestHook.serverTick(event.getServer());
+                }
+            });
+        }
         DamageTester.init();
         ForgePlatformHelper.registerAll(modBus);
         ForgeNetwork.init();

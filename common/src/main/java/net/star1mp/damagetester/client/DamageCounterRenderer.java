@@ -41,6 +41,9 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
         lines.add(new Line(Component.translatable("block.damage_tester.damage_counter").getVisualOrderText(), TITLE_COLOR));
         DamageTesterEntity.Stats stats = blockEntity.getStats();
         if (!blockEntity.hasTester()) {
+            if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+                net.star1mp.damagetester.SelfTestHook.clientState("counter pos=" + blockEntity.getBlockPos().toShortString(), "empty");
+            }
             lines.add(new Line(Component.translatable("counter.damage_tester.no_tester").getVisualOrderText(), DIM_COLOR));
             return lines;
         }
@@ -54,6 +57,10 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
         lines.add(line("counter.damage_tester.total", FORMAT.format(stats.total()), valueColor));
         lines.add(line("counter.damage_tester.hits", String.valueOf(stats.hits()), valueColor));
         lines.add(line("counter.damage_tester.max", FORMAT.format(stats.maxHit()), valueColor));
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            net.star1mp.damagetester.SelfTestHook.clientState("counter pos=" + blockEntity.getBlockPos().toShortString(),
+                    "hits=" + stats.hits() + " total=" + FORMAT.format(stats.total()) + " active=" + stats.active());
+        }
         return lines;
     }
 
@@ -85,7 +92,7 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
             }
             poseStack.popPose();
         } catch (RuntimeException e) {
-            DamageTester.LOG.debug("Failed to draw damage counter", e);
+            DamageTester.logRenderError("damage counter", e);
         }
     }
 }
