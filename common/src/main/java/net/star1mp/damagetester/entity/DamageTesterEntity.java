@@ -637,6 +637,12 @@ public class DamageTesterEntity extends LivingEntity {
     }
 
     @Override
+    public boolean canUseSlot(EquipmentSlot slot) {
+        // LivingEntity allows no slot by default on this version; armor goes on like on an armor stand.
+        return slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR || slot.getType() == EquipmentSlot.Type.HAND;
+    }
+
+    @Override
     public ItemStack getItemBySlot(EquipmentSlot slot) {
         return switch (slot.getType()) {
             case HAND -> this.handItems.get(slot.getIndex());
