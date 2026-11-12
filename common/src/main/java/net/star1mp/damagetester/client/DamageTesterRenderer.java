@@ -183,7 +183,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
             // On this version the camera orientation faces away from the viewer, so turn the text
             // around (without it the text is back-face culled and invisible).
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            poseStack.translate(-sideways * (0.5F + rise * 0.7F) * distanceScale, 0.0F, 0.0F);
+            poseStack.translate(sideways * (0.5F + rise * 0.7F) * distanceScale, 0.0F, 0.0F);
             poseStack.scale(scale, -scale, scale);
 
             FormattedCharSequence text = Component.literal(label).getVisualOrderText();
