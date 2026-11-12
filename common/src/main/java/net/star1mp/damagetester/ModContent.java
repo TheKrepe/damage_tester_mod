@@ -87,7 +87,7 @@ public final class ModContent {
 
     public static final Supplier<BlockEntityType<DamageCounterBlockEntity>> DAMAGE_COUNTER_BLOCK_ENTITY = Services.PLATFORM.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE, DAMAGE_COUNTER_NAME,
-            () -> new BlockEntityType<>(DamageCounterBlockEntity::new, Set.of(DAMAGE_COUNTER.get())));
+            () -> BlockEntityTypes.create(DamageCounterBlockEntity::new, DAMAGE_COUNTER.get()));
 
     /** The mod's own creative tab with everything in it. */
     public static final Supplier<CreativeModeTab> CREATIVE_TAB = Services.PLATFORM.register(

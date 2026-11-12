@@ -86,7 +86,7 @@ public class DamageCounterRenderer implements BlockEntityRenderer<DamageCounterB
         try {
             poseStack.pushPose();
             poseStack.translate(0.5F, 0.5F, 0.5F);
-            poseStack.rotate(Axis.YP.rotationDegrees(-state.facing.toYRot()));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-state.facing.toYRot()));
             // Just in front of the screen face (the block's south side after rotation).
             poseStack.translate(0.0F, 0.0F, 0.5F + 0.002F);
             float scale = 1.0F / 100.0F;
