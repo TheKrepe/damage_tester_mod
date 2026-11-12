@@ -3,9 +3,7 @@ package net.star1mp.damagetester.selftest;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.locale.Language;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -42,8 +40,10 @@ final class SelfTestClient {
                 "textures/entity/damage_tester_wood_mask.png", "textures/block/damage_counter_front.png", "textures/block/damage_counter_side.png",
                 "textures/block/damage_counter_top.png", "textures/item/damage_tester.png", "textures/item/small_damage_tester.png",
                 "textures/item/hanging_damage_tester.png", "textures/item/minecart_damage_tester.png", "blockstates/damage_counter.json",
-                "models/item/damage_tester.json", "items/damage_tester.json", "items/damage_counter.json"};
-        for (String path : paths) {
+                "models/item/damage_tester.json"};
+        List<String> all = new ArrayList<>(List.of(paths));
+        all.addAll(List.of(Compat.resources()));
+        for (String path : all) {
             if (mc.getResourceManager().getResource(DamageTester.id(path)).isEmpty()) {
                 textures.add(path);
             }
@@ -69,16 +69,11 @@ final class SelfTestClient {
     }
 
     private static void expect(List<String> problems, ResourceKey<CreativeModeTab> key, Item... items) {
-        CreativeModeTab tab = BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(key);
+        CreativeModeTab tab = Compat.tab(key);
         for (Item item : items) {
             if (!tab.contains(new ItemStack(item))) {
-                problems.add(key.identifier().getPath() + " lacks " + item);
+                problems.add(Compat.path(key) + " lacks " + item);
             }
         }
-    }
-
-    @SuppressWarnings("unused")
-    private static Identifier unused() {
-        return null;
     }
 }

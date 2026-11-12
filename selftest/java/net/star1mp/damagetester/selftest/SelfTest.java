@@ -17,7 +17,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -227,17 +226,17 @@ public final class SelfTest {
 
     /** Right-click on an entity at a point relative to its feet. */
     private static void interact(Entity entity, Vec3 location) {
-        player.interactOn(entity, InteractionHand.MAIN_HAND, location);
+        Compat.interact(player, entity, location);
     }
 
     private static void attack(Entity entity, boolean critical) {
         if (critical) {
-            player.fallDistance = 1.0;
+            Compat.fall(player, 1.0F);
             player.setOnGround(false);
         }
         player.setSprinting(false);
         player.attack(entity);
-        player.fallDistance = 0.0;
+        Compat.fall(player, 0.0F);
         player.setOnGround(true);
     }
 
@@ -381,7 +380,7 @@ public final class SelfTest {
             minecart = testerAt(at(3, 0, 3), TesterVariant.MINECART);
             check("minecart tester placed", minecart != null, "");
             if (minecart != null) {
-                check("minecart tester rides a minecart", minecart.getVehicle() instanceof AbstractMinecart, String.valueOf(minecart.getVehicle()));
+                check("minecart tester rides a minecart", Compat.isMinecart(minecart.getVehicle()), String.valueOf(minecart.getVehicle()));
             }
         });
         step("tester on a target block", 10, () -> {
@@ -693,7 +692,7 @@ public final class SelfTest {
         });
         step("dispensed cart", 5, () -> {
             DamageTesterEntity t = testerAt(at(11, 0, 4), TesterVariant.MINECART);
-            check("dispenser placed a minecart tester", t != null && t.getVehicle() instanceof AbstractMinecart, String.valueOf(t));
+            check("dispenser placed a minecart tester", t != null && Compat.isMinecart(t.getVehicle()), String.valueOf(t));
             view(10, 0.5, 0, 0, 15);
             shot("dispensers");
         });

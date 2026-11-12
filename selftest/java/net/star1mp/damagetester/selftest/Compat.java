@@ -10,9 +10,21 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
 
-/** The few calls that differ between Minecraft versions (this copy: 26.x). */
+/** The few calls that differ between Minecraft versions (this copy: 26.3). */
 final class Compat {
     private Compat() {
+    }
+
+    static boolean isMinecart(Entity entity) {
+        return entity instanceof net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+    }
+
+    static void interact(net.minecraft.server.level.ServerPlayer player, Entity entity, net.minecraft.world.phys.Vec3 location) {
+        player.interactOn(entity, net.minecraft.world.InteractionHand.MAIN_HAND, location);
+    }
+
+    static void fall(net.minecraft.server.level.ServerPlayer player, float distance) {
+        player.fallDistance = distance;
     }
 
     static boolean hasRecipe(MinecraftServer server, Identifier id) {
@@ -43,5 +55,18 @@ final class Compat {
 
     static void kill(Entity entity, ServerLevel level) {
         entity.kill(level);
+    }
+
+    /** For the client checks. */
+    static net.minecraft.world.item.CreativeModeTab tab(ResourceKey<net.minecraft.world.item.CreativeModeTab> key) {
+        return net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(key);
+    }
+
+    static String path(ResourceKey<?> key) {
+        return key.identifier().getPath();
+    }
+
+    static String[] resources() {
+        return new String[]{"items/damage_tester.json", "items/damage_counter.json"};
     }
 }

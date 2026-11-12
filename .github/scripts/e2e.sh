@@ -72,7 +72,10 @@ STATUS=0
 for i in $(seq 1 360); do
   grep -q "PHASE1 DONE" "$E/server1.log" && break
   if grep -qE "Minecraft has crashed|---- Minecraft Crash Report" "$E/client.log"; then echo "::error::client crashed"; STATUS=1; break; fi
-  if ! pgrep -f "server" >/dev/null && ! grep -q "PHASE1 DONE" "$E/server1.log"; then :; fi
+  if [ $((i % 12)) -eq 0 ]; then
+    echo "[$((i * 5))s] server: $(grep -E 'DT-SELFTEST\] (STEP|START)|joined the game|lost connection' "$E/server1.log" | tail -1 | cut -c1-150)"
+    echo "        client: $(tail -1 "$E/client.log" | cut -c1-150)"
+  fi
   sleep 5
 done
 grep -q "PHASE1 DONE" "$E/server1.log" || { echo "::error::phase 1 did not finish"; STATUS=1; }
