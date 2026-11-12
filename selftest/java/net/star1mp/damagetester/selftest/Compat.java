@@ -52,7 +52,13 @@ final class Compat {
     }
 
     static net.minecraft.world.item.Item dye(net.minecraft.world.item.DyeColor color) {
-        return net.minecraft.world.item.DyeItem.byColor(color);
+        return switch (color) {
+            case RED -> net.minecraft.world.item.Items.RED_DYE;
+            case BLUE -> net.minecraft.world.item.Items.BLUE_DYE;
+            case LIME -> net.minecraft.world.item.Items.LIME_DYE;
+            case PURPLE -> net.minecraft.world.item.Items.PURPLE_DYE;
+            default -> net.minecraft.world.item.Items.WHITE_DYE;
+        };
     }
 
     static void kill(Entity entity, ServerLevel level) {
