@@ -102,6 +102,8 @@ public class DamageTesterEntity extends LivingEntity {
 
 
     // ---------------------------------------------------------------- client state
+    /** Which way a positive sway tilts the model; checked against screenshots. */
+    private static final float SWAY_SIGN = 1.0F;
     private float wobbleAngle;
     private float wobbleVelocity;
     private float prevWobbleAngle;
@@ -229,7 +231,7 @@ public class DamageTesterEntity extends LivingEntity {
             this.measuring = false;
         }
         if (this.measuredDamage > 0.0F) {
-            this.queueHit(this.measuredDamage, source.typeHolder());
+            this.queueHit(this.measuredDamage, source.typeHolder(), source);
         }
     }
 
@@ -247,7 +249,7 @@ public class DamageTesterEntity extends LivingEntity {
         }
         if (lost > 0.0F) {
             // Something drained health directly without going through actuallyHurt.
-            this.queueHit(lost, this.damageSources().generic().typeHolder());
+            this.queueHit(lost, this.damageSources().generic().typeHolder(), null);
             return;
         }
         super.setHealth(health);
@@ -263,10 +265,36 @@ public class DamageTesterEntity extends LivingEntity {
         this.criticalThisTick = true;
     }
 
-    private void queueHit(float amount, Holder<DamageType> type) {
+    private void queueHit(float amount, Holder<DamageType> type, DamageSource source) {
         if (this.pendingHits != null) {
-            this.pendingHits.add(new PendingHit(amount, type));
+            net.minecraft.world.phys.Vec3 direction = source == null ? null : this.hitDirection(source);
+            this.pendingHits.add(new PendingHit(amount, type,
+                    direction == null ? 0.0F : (float) direction.x, direction == null ? 0.0F : (float) direction.z));
         }
+    }
+
+    /**
+     * The horizontal direction the hit travels in (from the attacker towards the tester), so the
+     * tester can lean away from it. Null when the damage has no position (fire, poison, ...).
+     */
+    private net.minecraft.world.phys.Vec3 hitDirection(DamageSource source) {
+        net.minecraft.world.phys.Vec3 direction = null;
+        Entity direct = source.getDirectEntity();
+        if (direct != null && direct != this) {
+            net.minecraft.world.phys.Vec3 motion = direct.getDeltaMovement();
+            if (direct instanceof net.minecraft.world.entity.projectile.Projectile && motion.horizontalDistanceSqr() > 1.0E-4) {
+                direction = motion;
+            } else {
+                direction = this.position().subtract(direct.position());
+            }
+        } else if (source.getSourcePosition() != null) {
+            direction = this.position().subtract(source.getSourcePosition());
+        }
+        if (direction == null) {
+            return null;
+        }
+        direction = new net.minecraft.world.phys.Vec3(direction.x, 0.0, direction.z);
+        return direction.lengthSqr() < 1.0E-6 ? null : direction.normalize();
     }
 
     /**
@@ -299,7 +327,7 @@ public class DamageTesterEntity extends LivingEntity {
             this.maxHit = Math.max(this.maxHit, hit.amount());
             // Only the first hit of a tick can be the melee crit.
             Services.PLATFORM.sendToTrackingPlayers(this,
-                    new DamageNumberPayload(this.getId(), hit.amount(), hit.type(), critical && i == 0));
+                    new DamageNumberPayload(this.getId(), hit.amount(), hit.type(), critical && i == 0, hit.dirX(), hit.dirZ()));
         }
         this.pendingHits.clear();
         this.criticalThisTick = false;
@@ -649,7 +677,7 @@ public class DamageTesterEntity extends LivingEntity {
     // =================================================================== client side animation
 
     /** Called on the client when the server reports a hit. */
-    public void onClientHit(float amount, int color, boolean critical) {
+    public void onClientHit(float amount, int color, boolean critical, float dirX, float dirZ) {
         float intensity = DamageTesterConfig.get().wobbleIntensity;
         if (intensity > 0.0F) {
             // Bigger hits push harder, but a one-shot of 1000 damage should not spin it around.
@@ -657,9 +685,20 @@ public class DamageTesterEntity extends LivingEntity {
             if (this.getVariant().hangs()) {
                 push *= 1.4F; // a punching bag swings further
             }
-            this.wobbleVelocity -= push;
-            float side = (this.random.nextBoolean() ? 1.0F : -1.0F);
-            this.swayVelocity += side * push * 0.35F;
+            // Lean the way the hit travels: away from the attacker. Hits without a direction
+            // (fire, poison, ...) push it back as if they came from the front.
+            float back = 1.0F;
+            float left = 0.0F;
+            if (dirX * dirX + dirZ * dirZ > 1.0E-4F) {
+                float yaw = this.yBodyRot * Mth.DEG_TO_RAD;
+                float forwardX = -Mth.sin(yaw);
+                float forwardZ = Mth.cos(yaw);
+                back = -(dirX * forwardX + dirZ * forwardZ);
+                left = dirX * forwardZ - dirZ * forwardX;
+            }
+            this.wobbleVelocity += push * back;
+            float jitter = (this.random.nextFloat() - 0.5F) * 0.3F;
+            this.swayVelocity += push * (left * SWAY_SIGN * 0.8F + jitter);
         }
         if (DamageTesterConfig.get().showDamageNumbers) {
             int slot = this.numberCounter++;
@@ -710,7 +749,7 @@ public class DamageTesterEntity extends LivingEntity {
         return distance < 64.0 * 64.0;
     }
 
-    private record PendingHit(float amount, Holder<DamageType> type) {
+    private record PendingHit(float amount, Holder<DamageType> type, float dirX, float dirZ) {
     }
 
     /** A number popping off the tester on the client. */

@@ -488,6 +488,10 @@ public final class SelfTest {
         });
         step("combat resets after a few seconds", 20 * 6, () -> { });
         step("stats inactive", 2, () -> check("combat ended", !standard.getStats().active(), standard.getStats().toString()));
+        lean("front", 0, -3, "back");
+        lean("behind", 0, 3, "forward");
+        lean("east", 3, 0, "sway=");
+        lean("west", -3, 0, "sway=");
         step("hits on every variant", 3, () -> {
             for (DamageTesterEntity t : new DamageTesterEntity[]{small, hanging, minecart}) {
                 if (t != null) {
@@ -749,6 +753,17 @@ public final class SelfTest {
         });
         step("night shot", 20, () -> shot("night_glow"));
         step("back to day", 5, () -> command("time set noon"));
+    }
+
+    /** Damage from a point next to the standard tester; it must lean away from that point. */
+    private static void lean(String side, int dx, int dz, String expected) {
+        step("hit from the " + side, 1, () -> {
+            view(-6, 0.3, -1.5, 0, 10);
+            BlockPos from = at(-6 + dx, 0, 3 + dz);
+            command(String.format(Locale.ROOT, "damage %s 9 minecraft:generic at %d %d %d", standard.getStringUUID(), from.getX(), from.getY(), from.getZ()));
+            expectClient("lean id=" + standard.getId() + " " + expected);
+        });
+        step("lean after a hit from the " + side, 40, () -> SHOTS.add(new Object[]{level.getGameTime() + 1, "lean_" + side}));
     }
 
     private static void skin(String label, Item item, String expected) {
