@@ -696,6 +696,10 @@ public class DamageTesterEntity extends LivingEntity {
                 back = -(dirX * forwardX + dirZ * forwardZ);
                 left = dirX * forwardZ - dirZ * forwardX;
             }
+            if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+                net.star1mp.damagetester.SelfTestHook.clientEvent(String.format(java.util.Locale.ROOT, "push id=%d back=%.2f left=%.2f",
+                        this.getId(), back, left));
+            }
             this.wobbleVelocity += push * back;
             float jitter = (this.random.nextFloat() - 0.5F) * 0.3F;
             this.swayVelocity += push * (left * SWAY_SIGN * 0.8F + jitter);
