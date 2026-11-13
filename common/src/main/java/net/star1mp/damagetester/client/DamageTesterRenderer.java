@@ -117,6 +117,14 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
                     + " skin=" + entity.getSkin() + " texture=" + this.getTextureLocation(entity) + " armor=" + armor
                     + " name=" + (entity.hasCustomName() ? entity.getName().getString() : "-"));
         }
+        if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
+            float lean = entity.getWobble(partialTick);
+            float tilt = entity.getSway(partialTick);
+            if (Math.abs(lean) > 0.1F || Math.abs(tilt) > 0.06F) {
+                net.star1mp.damagetester.SelfTestHook.clientState("lean id=" + entity.getId(),
+                        (lean > 0.1F ? "back" : lean < -0.1F ? "forward" : "upright") + " sway=" + (tilt > 0.06F ? "+" : tilt < -0.06F ? "-" : "0"));
+            }
+        }
         try {
             this.renderBase(entity, partialTick, poseStack, buffers, light);
         } catch (RuntimeException e) {
