@@ -16,8 +16,10 @@ import net.star1mp.damagetester.DamageTester;
  * @param amount     final damage after armor / enchantments / effects
  * @param damageType damage type holder, used for the number's color
  * @param critical   whether the hit was a melee critical hit
+ * @param dirX       horizontal direction the hit travels in (x), 0 when it has none
+ * @param dirZ       horizontal direction the hit travels in (z), 0 when it has none
  */
-public record DamageNumberPayload(int entityId, float amount, Holder<DamageType> damageType, boolean critical)
+public record DamageNumberPayload(int entityId, float amount, Holder<DamageType> damageType, boolean critical, float dirX, float dirZ)
         implements CustomPacketPayload {
 
     public static final Type<DamageNumberPayload> TYPE = new Type<>(DamageTester.id("damage_number"));
@@ -27,6 +29,8 @@ public record DamageNumberPayload(int entityId, float amount, Holder<DamageType>
             ByteBufCodecs.FLOAT, DamageNumberPayload::amount,
             DamageType.STREAM_CODEC, DamageNumberPayload::damageType,
             ByteBufCodecs.BOOL, DamageNumberPayload::critical,
+            ByteBufCodecs.FLOAT, DamageNumberPayload::dirX,
+            ByteBufCodecs.FLOAT, DamageNumberPayload::dirZ,
             DamageNumberPayload::new);
 
     @Override
