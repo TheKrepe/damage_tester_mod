@@ -21,7 +21,7 @@ public final class DamageTesterClient {
             int color = minecraft.level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
                     .getHolder(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, payload.damageType()))
                     .map(DamageColors::get).orElse(0xFFFFFF);
-            tester.onClientHit(payload.amount(), color, payload.critical());
+            tester.onClientHit(payload.amount(), color, payload.critical(), payload.dirX(), payload.dirZ());
             if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
                 net.star1mp.damagetester.SelfTestHook.clientEvent(String.format(java.util.Locale.ROOT, "hit id=%d amount=%.2f crit=%b color=%06x",
                         payload.entityId(), payload.amount(), payload.critical(), color & 0xFFFFFF));

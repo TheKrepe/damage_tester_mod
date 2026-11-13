@@ -12,8 +12,10 @@ import net.star1mp.damagetester.DamageTester;
  * @param amount     final damage after armor / enchantments / effects
  * @param damageType id of the damage type, used for the number's color
  * @param critical   whether the hit was a melee critical hit
+ * @param dirX       horizontal direction the hit travels in (x), 0 when it has none
+ * @param dirZ       horizontal direction the hit travels in (z), 0 when it has none
  */
-public record DamageNumberPayload(int entityId, float amount, ResourceLocation damageType, boolean critical) {
+public record DamageNumberPayload(int entityId, float amount, ResourceLocation damageType, boolean critical, float dirX, float dirZ) {
     public static final ResourceLocation ID = DamageTester.id("damage_number");
 
     public void write(FriendlyByteBuf buf) {
@@ -21,9 +23,11 @@ public record DamageNumberPayload(int entityId, float amount, ResourceLocation d
         buf.writeFloat(this.amount);
         buf.writeResourceLocation(this.damageType);
         buf.writeBoolean(this.critical);
+        buf.writeFloat(this.dirX);
+        buf.writeFloat(this.dirZ);
     }
 
     public static DamageNumberPayload read(FriendlyByteBuf buf) {
-        return new DamageNumberPayload(buf.readVarInt(), buf.readFloat(), buf.readResourceLocation(), buf.readBoolean());
+        return new DamageNumberPayload(buf.readVarInt(), buf.readFloat(), buf.readResourceLocation(), buf.readBoolean(), buf.readFloat(), buf.readFloat());
     }
 }
