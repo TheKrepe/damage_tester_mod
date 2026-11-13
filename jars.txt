@@ -1,0 +1,15 @@
+-rw-r--r-- 1 runner runner    69393 Nov  2 13:13 /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/srgutils/0.4.15/ca408b131759478f164e010fae0d73997e125fb5/srgutils-0.4.15.jar
+-rw-r--r-- 1 runner runner   467912 Nov  2 13:13 /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/mergetool/1.1.7/3d41564f78f123d64573cae7948014baf3aaba3f/mergetool-1.1.7-fatjar.jar
+-rw-r--r-- 1 runner runner  1550640 Nov  2 13:11 /home/runner/.gradle/caches/modules-2/files-2.1/net.neoforged/moddev-gradle/2.0.148/143f83a22af5a2aa0eca650b08dbae26800ebeba/moddev-gradle-2.0.148.jar
+-rw-r--r-- 1 runner runner  1572639 Nov  2 13:11 /home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/fabric-loom/1.19.3/50f8fcdb920e768c1304d7775d4d437fc12d17f2/fabric-loom-1.19.3.jar
+-rw-r--r-- 1 runner runner  3534222 Nov  2 13:11 /home/runner/.gradle/caches/9.8.2/transforms/aea7f03167dd11a190662e6a499524ef/transformed/instrumented/instrumented-moddev-gradle-2.0.148.jar
+-rw-r--r-- 1 runner runner  3792807 Nov  2 13:11 /home/runner/.gradle/caches/9.8.2/transforms/fecf1a6f7ee7edcfc57cdace4000050f/transformed/instrumented/instrumented-fabric-loom-1.19.3.jar
+-rw-r--r-- 1 runner runner 26652008 Nov 13 05:13 /home/runner/.gradle/caches/fabric-loom/26.3/minecraft-extracted_server.jar
+-rw-r--r-- 1 runner runner 37945266 Nov  2 13:13 /home/runner/.gradle/caches/fabric-loom/26.3/minecraft-merged.jar
+-rw-r--r-- 1 runner runner 37945266 Nov  2 13:13 /home/runner/.gradle/caches/fabric-loom/minecraftMaven/net/minecraft/minecraft-merged-deobf/26.3/minecraft-merged-deobf-26.3.jar
+-rw-r--r-- 1 runner runner 38113927 Nov 13 05:36 /home/runner/work/damage_tester_mod/damage_tester_mod/mcjar/client-named.jar
+-rw-r--r-- 1 runner runner 38113927 Nov 13 05:36 mcjar/client-named.jar
+-rw-r--r-- 1 runner runner 41483720 Nov  2 13:13 /home/runner/.gradle/caches/fabric-loom/26.3/minecraft-client.jar
+-rw-r--r-- 1 runner runner 41483720 Nov  2 13:13 /home/runner/.gradle/caches/neoformruntime/artifacts/minecraft_26.3_client.jar
+-rw-r--r-- 1 runner runner 62294556 Nov  2 13:13 /home/runner/.gradle/caches/fabric-loom/26.3/minecraft-server.jar
+-rw-r--r-- 1 runner runner 62294556 Nov  2 13:13 /home/runner/.gradle/caches/neoformruntime/artifacts/minecraft_26.3_server.jar
