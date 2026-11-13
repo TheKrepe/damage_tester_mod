@@ -19,7 +19,7 @@ public final class DamageTesterClient {
         Entity entity = minecraft.level.getEntity(payload.entityId());
         if (entity instanceof DamageTesterEntity tester) {
             int color = DamageColors.get(payload.damageType());
-            tester.onClientHit(payload.amount(), color, payload.critical());
+            tester.onClientHit(payload.amount(), color, payload.critical(), payload.dirX(), payload.dirZ());
             if (net.star1mp.damagetester.SelfTestHook.ENABLED) {
                 net.star1mp.damagetester.SelfTestHook.clientEvent(String.format(java.util.Locale.ROOT, "hit id=%d amount=%.2f crit=%b color=%06x",
                         payload.entityId(), payload.amount(), payload.critical(), color & 0xFFFFFF));
