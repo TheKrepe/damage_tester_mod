@@ -10,3 +10,4 @@
   and tell the author what was updated (old -> new).
 - Give the author the jar(s) from the `ci-jars` branch and the GitHub artifact link.
 - The author is Star_1mp; replies in Russian.
+- Never change `version` in gradle.properties on your own: the author says when to bump it.
