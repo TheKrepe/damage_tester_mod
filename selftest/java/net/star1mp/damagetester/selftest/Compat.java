@@ -53,6 +53,10 @@ final class Compat {
         return net.minecraft.world.item.Items.DYE.pick(color);
     }
 
+    static void swing(net.minecraft.server.level.ServerPlayer player) {
+        player.swing(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+    }
+
     static void kill(Entity entity, ServerLevel level) {
         entity.kill(level);
     }
