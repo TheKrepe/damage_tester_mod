@@ -154,6 +154,8 @@ public final class Promo {
             command("gamemode survival " + player.getScoreboardName());
             command("effect give " + player.getScoreboardName() + " minecraft:resistance 99999 4 true");
             command("effect give " + player.getScoreboardName() + " minecraft:saturation 99999 4 true");
+            command("gamerule announceAdvancements false");
+            command("gamerule show_advancement_messages false");
             command("recipe give " + player.getScoreboardName() + " *");
             command(fill(-12, 0, -6, 12, 8, 16, "minecraft:air"));
             command(fill(-12, -1, -6, 12, -1, 16, "minecraft:grass_block"));
@@ -171,6 +173,13 @@ public final class Promo {
                 command(set(spots[i][0], 0, spots[i][1], flowers[i % flowers.length]));
             }
             player.getInventory().clearContent();
+            // every item of the choreography once in the backpack now, so the advancement toasts
+            // ("Suit Up" etc.) pop and fade before recording starts
+            Item[] props = {Items.DIAMOND_SWORD, Items.NETHERITE_SWORD, Items.HAY_BLOCK, Items.JACK_O_LANTERN,
+                    Items.IRON_HELMET, Items.DIAMOND_CHESTPLATE, Compat.dye(net.minecraft.world.item.DyeColor.RED)};
+            for (int i = 0; i < props.length; i++) {
+                player.getInventory().setItem(9 + i, new ItemStack(props[i]));
+            }
             camera();
         });
         // ---- testers
@@ -241,9 +250,12 @@ public final class Promo {
         step(30, () -> mark("end"));
     }
 
-    /** The player stands 3 blocks in front of the tester, a bit to the left, looking at its chest. */
+    /**
+     * The player stands 4.5 blocks in front of the tester, a bit to the left, looking almost level:
+     * the tester sits in the lower half of the vertical frame and the sky above is left for titles.
+     */
     private static void camera() {
         command(String.format(Locale.ROOT, "tp %s %.2f %.2f %.2f %.1f %.1f", player.getScoreboardName(),
-                origin.getX() + 0.5 - 0.6, (double) origin.getY(), origin.getZ() + 0.5, -10.0F, 14.0F));
+                origin.getX() + 0.5 - 0.7, (double) origin.getY(), origin.getZ() - 1.0, -8.0F, 3.0F));
     }
 }
