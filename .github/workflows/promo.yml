@@ -1,0 +1,36 @@
+name: Promo footage
+on:
+  workflow_dispatch:
+    inputs:
+      loader:
+        description: 'fabric, neoforge or forge'
+        required: true
+permissions:
+  contents: write
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - id: jv
+        run: |
+          echo "v=$(grep '^java_version=' gradle.properties | cut -d= -f2 | tr -d '\r')" >> $GITHUB_OUTPUT
+          echo "mc=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2 | tr -d '\r')" >> $GITHUB_OUTPUT
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '${{ steps.jv.outputs.v }}' }
+      - run: echo "GAME_JAVA=$JAVA_HOME" >> $GITHUB_ENV
+      - uses: actions/setup-java@v4
+        if: steps.jv.outputs.v == '17'
+        with: { distribution: temurin, java-version: "17\n21" }
+      - uses: gradle/actions/setup-gradle@v4
+      - run: sudo apt-get update -q && sudo apt-get install -y -q xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers ffmpeg > /dev/null
+      - name: Record
+        run: xvfb-run -a -s "-screen 0 540x960x24" .github/scripts/promo.sh ${{ inputs.loader }}
+      - name: Publish
+        if: always()
+        run: |
+          cd promo/out
+          git init -q -b x; git config user.email ci@example.com; git config user.name ci
+          git add -A; git commit -qm "promo ${{ steps.jv.outputs.mc }} ${{ inputs.loader }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:ci-promo-${{ steps.jv.outputs.mc }}-${{ inputs.loader }}
