@@ -61,6 +61,10 @@ final class Compat {
         };
     }
 
+    static void swing(net.minecraft.server.level.ServerPlayer player) {
+        player.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
+    }
+
     static void kill(Entity entity, ServerLevel level) {
         entity.kill();
     }

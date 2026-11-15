@@ -82,6 +82,10 @@ public final class SelfTest {
     }
 
     public static void install() {
+        if (Boolean.getBoolean("damagetester.promo")) {
+            SelfTestHook.setServerTicker(Promo::tick);
+            return;
+        }
         SelfTestHook.setServerTicker(SelfTest::tick);
         try {
             Class.forName("net.minecraft.client.main.Main", false, SelfTest.class.getClassLoader());
