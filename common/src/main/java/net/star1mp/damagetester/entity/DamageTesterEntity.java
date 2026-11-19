@@ -56,6 +56,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.star1mp.damagetester.ModContent;
+import net.star1mp.damagetester.TrainingAdvancements;
 import net.star1mp.damagetester.config.DamageTesterConfig;
 import net.star1mp.damagetester.network.DamageNumberPayload;
 import net.star1mp.damagetester.platform.Services;
@@ -80,6 +81,9 @@ public class DamageTesterEntity extends LivingEntity {
     /** "" = default burlap, "straw", "planks:&lt;item id&gt;" or "dye:&lt;color&gt;". */
     private static final EntityDataAccessor<String> DATA_SKIN = SynchedEntityData.defineId(DamageTesterEntity.class, EntityDataSerializers.STRING);
 
+    public static final String SKIN_SNOW = "snow";
+    public static final String SKIN_PLAYER_PREFIX = "player:";
+    private static final java.util.regex.Pattern PLAYER_NAME = java.util.regex.Pattern.compile("[A-Za-z0-9_]{1,16}");
     public static final String SKIN_STRAW = "straw";
     public static final String SKIN_JACK = "jack_o_lantern";
     public static final String SKIN_PLANKS_PREFIX = "planks:";
@@ -151,7 +155,10 @@ public class DamageTesterEntity extends LivingEntity {
         if (stack.has(DataComponents.CUSTOM_NAME)) {
             tester.setCustomName(stack.getHoverName());
         }
-        level.addFreshEntity(tester);
+        if (!level.addFreshEntity(tester)) {
+            return null;
+        }
+        TrainingAdvancements.placed(player, variant);
         SoundEvent sound = variant.hangs() ? SoundEvents.LEAD_TIED : SoundEvents.ARMOR_STAND_PLACE;
         level.playSound(null, tester.getX(), tester.getY(), tester.getZ(), sound, SoundSource.BLOCKS, 0.75F, 0.8F);
         tester.gameEvent(GameEvent.ENTITY_PLACE, player);
@@ -184,6 +191,15 @@ public class DamageTesterEntity extends LivingEntity {
     /** Returns the skin an item would apply, or null if the item does not change the skin. */
     @Nullable
     private static String skinFor(ItemStack stack) {
+        if (stack.is(Items.SNOW_BLOCK)) {
+            return SKIN_SNOW;
+        }
+        if (stack.is(Items.NAME_TAG) && stack.has(DataComponents.CUSTOM_NAME)) {
+            String name = stack.getHoverName().getString();
+            if (!"jeb_".equals(name) && PLAYER_NAME.matcher(name).matches()) {
+                return SKIN_PLAYER_PREFIX + name;
+            }
+        }
         if (stack.is(Items.HAY_BLOCK)) {
             return SKIN_STRAW;
         }
@@ -233,6 +249,7 @@ public class DamageTesterEntity extends LivingEntity {
             this.measuring = false;
         }
         if (this.measuredDamage > 0.0F) {
+            TrainingAdvancements.hit(this, source, this.measuredDamage);
             this.queueHit(this.measuredDamage, source.typeHolder(), source);
         }
     }
@@ -557,8 +574,14 @@ public class DamageTesterEntity extends LivingEntity {
             }
             if (!this.level().isClientSide()) {
                 this.setSkin(skin);
+                if (held.is(Items.NAME_TAG)) {
+                    this.setCustomName(held.getHoverName());
+                }
+                TrainingAdvancements.styled(player, skin);
                 SoundEvent sound = skin.startsWith(SKIN_DYE_PREFIX) ? SoundEvents.DYE_USE
                         : skin.equals(SKIN_STRAW) ? SoundEvents.GRASS_PLACE
+                        : skin.equals(SKIN_SNOW) ? SoundEvents.SNOW_PLACE
+                        : skin.startsWith(SKIN_PLAYER_PREFIX) ? SoundEvents.ARMOR_STAND_PLACE
                         : skin.equals(SKIN_JACK) ? SoundEvents.PUMPKIN_CARVE : SoundEvents.WOOD_PLACE;
                 this.playSound(sound, 1.0F, 1.0F);
                 if (!player.isCreative()) {
@@ -576,6 +599,7 @@ public class DamageTesterEntity extends LivingEntity {
             ItemStack previous = this.getItemBySlot(slot).copy();
             ItemStack toEquip = player.isCreative() ? held.copyWithCount(1) : held.split(1);
             this.setItemSlot(slot, toEquip);
+            TrainingAdvancements.equipped(player, this);
             if (!previous.isEmpty()) {
                 if (player.getItemInHand(hand).isEmpty()) {
                     player.setItemInHand(hand, previous);
