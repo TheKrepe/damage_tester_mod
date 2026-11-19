@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:leather_chestplate"
+    },
+    "title": {
+      "translate": "advancement.damage_tester.wardrobe.title"
+    },
+    "description": {
+      "translate": "advancement.damage_tester.wardrobe.description"
+    },
+    "frame": "challenge",
+    "announce_to_chat": true,
+    "show_toast": true
+  },
+  "criteria": {
+    "straw": {
+      "trigger": "minecraft:impossible"
+    },
+    "wood": {
+      "trigger": "minecraft:impossible"
+    },
+    "cloth": {
+      "trigger": "minecraft:impossible"
+    },
+    "pumpkin": {
+      "trigger": "minecraft:impossible"
+    },
+    "snow": {
+      "trigger": "minecraft:impossible"
+    },
+    "player": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "damage_tester:training/stylist"
+}

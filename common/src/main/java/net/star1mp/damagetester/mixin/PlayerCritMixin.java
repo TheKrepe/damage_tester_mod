@@ -18,6 +18,7 @@ public abstract class PlayerCritMixin {
     private void damageTester$onCrit(Entity target, CallbackInfo ci) {
         if (target instanceof DamageTesterEntity tester) {
             tester.markCriticalHit();
+            net.star1mp.damagetester.TrainingAdvancements.critical((net.minecraft.world.entity.player.Player) (Object) this);
         }
     }
 }

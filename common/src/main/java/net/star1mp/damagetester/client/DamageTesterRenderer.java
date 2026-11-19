@@ -149,7 +149,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         this.scale(entity, poseStack, partialTick);
         poseStack.translate(0.0F, -1.501F, 0.0F);
-        this.baseModel.render(poseStack, buffers.getBuffer(RenderType.entityCutout(this.getTextureLocation(entity))),
+        this.baseModel.render(poseStack, buffers.getBuffer(RenderType.entityCutout(entity.getSkin().startsWith(DamageTesterEntity.SKIN_PLAYER_PREFIX) ? TEXTURE : this.getTextureLocation(entity))),
                 light, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }

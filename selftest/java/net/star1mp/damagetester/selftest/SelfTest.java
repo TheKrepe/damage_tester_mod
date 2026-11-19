@@ -442,6 +442,10 @@ public final class SelfTest {
         });
         step("stats after a hit", 4, () -> {
             DamageTesterEntity.Stats s = standard.getStats();
+            check("first hit advancement", player.getAdvancements().getOrStartProgress(
+                    server.getAdvancements().getAdvancement(DamageTester.id("training/first_hit"))).isDone(), "");
+            check("100 damage still locked", !player.getAdvancements().getOrStartProgress(
+                    server.getAdvancements().getAdvancement(DamageTester.id("training/hundred"))).isDone(), "");
             check("hit counted", s.hits() == 1 && s.lastHit() > 0.0F, s.toString());
             check("tester survives the hit", standard.isAlive() && !standard.isRemoved(), "");
             check("health untouched", standard.getHealth() == standard.getMaxHealth(), "health=" + standard.getHealth());
@@ -508,6 +512,17 @@ public final class SelfTest {
         step("variants hit", 25, () -> shot("variants_hit"));
 
         // ---------------------------------------------------------------- skins
+        skin("snowman", Items.SNOW_BLOCK, DamageTesterEntity.SKIN_SNOW);
+        step("player skin from a name tag", 20, () -> {
+            String name = name();
+            hold(named(Items.NAME_TAG, name));
+            interact(standard, new Vec3(0, 1, 0));
+            check("player skin selected", (DamageTesterEntity.SKIN_PLAYER_PREFIX + name).equals(standard.getSkin()), standard.getSkin());
+            check("name tag consumed", player.getMainHandItem().isEmpty(), "");
+            check("player skin advancement", player.getAdvancements().getOrStartProgress(
+                    server.getAdvancements().getAdvancement(DamageTester.id("training/double"))).isDone(), "");
+            expectClient("render id=" + standard.getId() + " variant=damage_tester skin=player:" + name + " ");
+        });
         skin("straw", Items.HAY_BLOCK, DamageTesterEntity.SKIN_STRAW);
         skin("jack o'lantern", Items.JACK_O_LANTERN, DamageTesterEntity.SKIN_JACK);
         skin("oak planks", Items.OAK_PLANKS, DamageTesterEntity.SKIN_PLANKS_PREFIX + "minecraft:oak_planks");
@@ -606,7 +621,7 @@ public final class SelfTest {
                 interact(saved, new Vec3(0, 1, 0));
                 hold(new ItemStack(Items.GOLDEN_HELMET));
                 interact(saved, new Vec3(0, 1.7, 0));
-                hold(named(Items.NAME_TAG, "Saved"));
+                hold(named(Items.NAME_TAG, "Saved Tester"));
                 interact(saved, new Vec3(0, 1, 0));
                 savedUuid = saved.getUUID();
             }
@@ -804,7 +819,7 @@ public final class SelfTest {
             }
             check("skin saved", (DamageTesterEntity.SKIN_DYE_PREFIX + "purple").equals(t.getSkin()), t.getSkin());
             check("armor saved", t.getItemBySlot(EquipmentSlot.HEAD).is(Items.GOLDEN_HELMET), String.valueOf(t.getItemBySlot(EquipmentSlot.HEAD)));
-            check("name saved", "Saved".equals(t.getName().getString()), t.getName().getString());
+            check("name saved", "Saved Tester".equals(t.getName().getString()), t.getName().getString());
             check("variant saved", t.getVariant() == TesterVariant.STANDARD, String.valueOf(t.getVariant()));
         });
     }

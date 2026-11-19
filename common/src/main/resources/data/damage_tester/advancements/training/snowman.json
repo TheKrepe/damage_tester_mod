@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:snow_block"
+    },
+    "title": {
+      "translate": "advancement.damage_tester.snowman.title"
+    },
+    "description": {
+      "translate": "advancement.damage_tester.snowman.description"
+    },
+    "frame": "task",
+    "announce_to_chat": false,
+    "show_toast": true
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "damage_tester:training/stylist"
+}
