@@ -182,7 +182,7 @@ public class DamageTesterRenderer extends LivingEntityRenderer<DamageTesterEntit
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         this.scale(state, poseStack);
         poseStack.translate(0.0F, -1.501F, 0.0F);
-        collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(state.texture),
+        collector.submitModel(this.baseModel, state, poseStack, RenderTypes.entityCutout(state.playerSkin ? TEXTURE : state.texture),
                 state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, state.outlineColor, null);
         poseStack.popPose();
     }
