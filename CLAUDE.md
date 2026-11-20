@@ -11,3 +11,7 @@
 - Give the author the jar(s) from the `ci-jars` branch and the GitHub artifact link.
 - The author is Star_1mp; replies in Russian.
 - Never change `version` in gradle.properties on your own: the author says when to bump it.
+- On each author-requested build, check the stable Forge, NeoForge and Fabric releases
+  for the active Minecraft version. Update the loaders supported by that port and
+  report old and new versions, including when they already match. Include the direct
+  URL of the last successful GitHub Actions Build run for the delivered commit.
