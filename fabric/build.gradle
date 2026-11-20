@@ -2,6 +2,16 @@ plugins {
     id 'multiloader-loader'
     id 'net.fabricmc.fabric-loom'
 }
+// Minecraft's library mirror does not carry every Netty parent POM. Resolve this
+// group from the Google-hosted Maven Central mirror first, retaining Loom's fallbacks.
+def nettyMirror = repositories.maven {
+    name = 'MavenCentralNettyMirror'
+    url = uri('https://maven-central.storage-download.googleapis.com/maven2/')
+    content { includeGroup 'io.netty' }
+}
+repositories.remove(nettyMirror)
+repositories.addFirst(nettyMirror)
+
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
