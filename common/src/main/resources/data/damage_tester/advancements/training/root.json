@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "damage_tester:damage_tester"
+    },
+    "title": {
+      "translate": "advancement.damage_tester.root.title"
+    },
+    "description": {
+      "translate": "advancement.damage_tester.root.description"
+    },
+    "frame": "task",
+    "announce_to_chat": false,
+    "show_toast": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

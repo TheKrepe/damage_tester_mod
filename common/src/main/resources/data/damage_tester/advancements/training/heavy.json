@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:iron_axe"
+    },
+    "title": {
+      "translate": "advancement.damage_tester.heavy.title"
+    },
+    "description": {
+      "translate": "advancement.damage_tester.heavy.description"
+    },
+    "frame": "goal",
+    "announce_to_chat": false,
+    "show_toast": true
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "damage_tester:training/first_hit"
+}
