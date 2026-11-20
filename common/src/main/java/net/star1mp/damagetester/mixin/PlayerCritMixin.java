@@ -19,6 +19,7 @@ public abstract class PlayerCritMixin {
                                               boolean stab, float magicBoost, CallbackInfo ci) {
         if (critical && target instanceof DamageTesterEntity tester) {
             tester.markCriticalHit();
+            net.star1mp.damagetester.TrainingAdvancements.critical((net.minecraft.world.entity.player.Player) (Object) this);
         }
     }
 }
