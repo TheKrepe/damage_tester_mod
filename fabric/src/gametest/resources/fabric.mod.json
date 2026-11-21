@@ -2,16 +2,8 @@
   "schemaVersion": 1,
   "id": "damage_tester_gametest",
   "version": "1.0.0",
-  "name": "Damage Tester (client game test)",
-  "environment": "*",
-  "entrypoints": {
-    "fabric-client-gametest": [
-      "net.star1mp.damagetester.fabric.test.DamageTesterClientGameTest",
-      "net.star1mp.damagetester.fabric.test.DamageTesterShowcase",
-      "net.star1mp.damagetester.fabric.test.trailer.DamageTesterTrailer"
-    ]
-  },
-  "depends": {
-    "damage_tester": "*"
-  }
+  "name": "Damage Tester snowman camera",
+  "environment": "client",
+  "entrypoints": {"fabric-client-gametest": ["net.star1mp.damagetester.fabric.test.SnowmanSession"]},
+  "depends": {"damage_tester": "*"}
 }
