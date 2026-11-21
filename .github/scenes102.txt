@@ -1,0 +1,50 @@
+        // A full-body two-shot followed by a new camera setup for each reaction.
+        this.shot("uniform_a","K6",104).time(morning).fov(58).cam(Cine.dolly(
+            w.v(tx+1.0,1.50,tz+6.9),w.v(tx+0.6,1.42,tz+6.1),w.v(tx,1.12,tz),w.v(tx,1.10,tz))).setup(()->{
+            int d=this.tester(tx+0.55,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-0.85,tz+0.1,SOUTH,new ItemStack(Items.SNOW_BLOCK));
+            this.look(18,a,d);this.at(52,()->this.swing(a));
+            this.at(55,()->this.srv(level->((DamageTesterEntity)this.entity(level,d)).setSkin(DamageTesterEntity.SKIN_SNOW)));
+            this.testerTurn(73,d,65F,false);this.turn(88,a,SOUTH);
+        });
+        this.shot("uniform_b","K6",122).time(morning).fov(56).cam(Cine.dolly(
+            w.v(tx+1.4,1.45,tz+3.8),w.v(tx+0.6,1.64,tz+2.15),w.v(tx,1.14,tz),w.v(tx,1.49,tz))).setup(()->{
+            int d=this.tester(tx,tz,SOUTH,DamageTesterEntity.SKIN_SNOW);
+            this.testerTurn(22,d,28F,false);this.testerTurn(55,d,-28F,false);this.testerTurn(81,d,SOUTH,true);
+        });
+        this.shot("shift_a","K7",116).time(day).fov(58).cam(Cine.dolly(
+            w.v(tx-0.8,1.48,tz+7.1),w.v(tx-0.1,1.45,tz+6.0),w.v(tx,1.13,tz),w.v(tx,1.10,tz))).setup(()->{
+            int d=this.tester(tx+0.65,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-0.8,tz+0.05,SOUTH,new ItemStack(Items.NAME_TAG));
+            this.look(12,a,d);this.at(43,()->this.swing(a));
+            this.at(46,()->{
+                this.cmd("gamemode creative @a");
+                this.srv(level->{var player=this.player();var hand=InteractionHand.MAIN_HAND;
+                    var tag=new ItemStack(Items.NAME_TAG);tag.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,player.getName());
+                    player.setItemInHand(hand,tag);
+                    ((DamageTesterEntity)this.entity(level,d)).interact(player,hand,Vec3.ZERO);});
+                this.cmd("gamemode spectator @a");
+            });
+            this.turn(64,a,90);this.walk(72,110,a,w.v(tx-0.8,0,tz+0.05),w.v(tx-5.5,0,tz+0.05));
+        });
+        this.shot("shift_b","K7",114).time(day).fov(60).cam(Cine.dolly(
+            w.v(tx-0.4,1.35,tz+6.2),w.v(tx+0.15,1.5,tz+4.4),w.v(tx,1.08,tz),w.v(tx,1.18,tz))).setup(()->{
+            String name=this.srvGet(level->this.player().getName().getString());
+            int d=this.tester(tx+0.35,tz,SOUTH,DamageTesterEntity.SKIN_PLAYER_PREFIX+name);
+            int a=this.actor(null,"zuri",tx-4,tz+0.2,east,new ItemStack(Items.MACE));
+            this.walk(14,55,a,w.v(tx-4,0,tz+0.2),w.v(tx-0.9,0,tz+0.2));
+            this.look(59,a,d);this.testerTurn(61,d,80F,false);this.strike(86,a,d,24,true);
+        });
+        this.shot("hundred_a","K8",115).time(sunset).fov(58).cam(Cine.dolly(
+            w.v(tx-0.6,1.35,tz+6.4),w.v(tx+0.15,1.38,tz+5.7),w.v(tx,1.16,tz),w.v(tx,1.2,tz))).setup(()->{
+            int d=this.tester(tx+0.55,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-0.85,tz+0.1,east,new ItemStack(Items.DIAMOND_SWORD));
+            this.strike(32,a,d,99,false);this.testerTurn(77,d,75F,false);this.turn(94,a,SOUTH);
+        });
+        this.shot("hundred_b","K8",128).time(sunset).fov(62).cam(Cine.dolly(
+            w.v(tx-0.55,1.40,tz+6.6),w.v(tx+0.1,1.5,tz+5.4),w.v(tx,1.15,tz),w.v(tx,1.18,tz))).setup(()->{
+            int d=this.tester(tx+0.55,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-0.85,tz+0.1,east,new ItemStack(Items.DIAMOND_SWORD));
+            this.strike(28,a,d,1,false);this.testerTurn(47,d,72F,false);
+            this.pose(77,a,net.minecraft.world.entity.Pose.CROUCHING);this.turn(95,a,SOUTH);
+        });
