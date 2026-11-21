@@ -1,0 +1,41 @@
+name: Snowman camera session
+on:
+  push:
+    branches: ['capture/snowman-winter-26.3']
+permissions:
+  contents: read
+jobs:
+  shoot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare game display
+        run: |
+          if ! command -v Xvfb || ! command -v ffmpeg; then
+            sudo apt-get -o Acquire::Retries=2 update -qq
+            sudo apt-get -o Acquire::Retries=2 install -y xvfb mesa-vulkan-drivers ffmpeg
+          fi
+          mkdir -p footage
+      - name: Record in Minecraft 26.3
+        env:
+          CAPTURE_DIR: ${{ github.workspace }}/footage
+          LP_NUM_THREADS: '4'
+        run: |
+          xvfb-run -a -s '-screen 0 2000x1200x24' ./gradlew :fabric:runClientGameTest --console=plain
+          for shot in 01_Winter_clearing 02_Snow_and_wool 03_Three_quarters; do
+            original=$(find fabric -iname "*${shot}*.png" -print -quit)
+            test -s "$original"
+            cp "$original" "footage/$shot.png"
+          done
+          test -s footage/Snowman.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Damage-Tester-Snowman-Minecraft-26.3
+          path: footage/
+          if-no-files-found: error
