@@ -1,0 +1,48 @@
+name: Comedy shorts 1.0.2
+on:
+  push:
+    branches: ['capture/comedy-character-shorts']
+permissions:
+  contents: read
+jobs:
+  shoot:
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [KA, KB, KC]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare game display
+        run: |
+          if ! command -v Xvfb || ! command -v ffmpeg; then
+            sudo apt-get -o Acquire::Retries=2 update -qq
+            sudo apt-get -o Acquire::Retries=2 install -y xvfb mesa-vulkan-drivers ffmpeg
+          fi
+          mkdir -p footage
+      - name: Record in Minecraft 26.3
+        env:
+          DT_TRAILER: ${{ matrix.group }}
+          DT_TRAILER_OUT: ${{ github.workspace }}/footage
+          LP_NUM_THREADS: '4'
+        run: |
+          python3 - <<'PYSHOT'
+          from pathlib import Path
+          p=next(Path('fabric').rglob('DamageTesterTrailer.java'))
+          s=p.read_text().replace('        // ---- K1: expectation vs reality', Path('.github/scenes102.txt').read_text()+'\n        // ---- K1: expectation vs reality')
+          assert "snow_01" in s
+          s=s.replace("    private void archers(", Path(".github/shorthelpers.txt").read_text()+"    private void archers(")
+          p.write_text(s)
+          PYSHOT
+          xvfb-run -a -s '-screen 0 2000x2000x24' ./gradlew :fabric:runClientGameTest --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Comedy-${{ matrix.group }}
+          path: footage/clips/*.mp4
+          if-no-files-found: error

@@ -1,0 +1,120 @@
+        // Three independent stories. All props, actors and motion are rendered in the game.
+        this.shot("snow_01","KA",95).time(morning).fov(57).cam(Cine.dolly(
+            w.v(tx-1.9,1.45,tz+6.0),w.v(tx-0.6,1.48,tz+5.2),w.v(tx,1.21,tz),w.v(tx,1.19,tz))).setup(()->{
+            int d=this.tester(tx+0.55,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-1.0,tz+0.15,east,new ItemStack(Items.SNOW_BLOCK));
+            this.look(1,a,d);this.swingAt(3,a);
+            this.at(6,()->{this.costume(d,new ItemStack(Items.SNOW_BLOCK));this.snowBurst(d);});
+            this.testerTurn(9,d,60F,false);
+            this.hop(15,d,w.v(tx+.55,0,tz),.48,14);
+            this.turn(16,a,SOUTH);
+            this.hop(34,a,w.v(tx-1,0,tz+.15),.26,10);
+            this.look(51,a,d);
+            this.testerTurn(66,d,SOUTH,false);
+        });
+        this.shot("snow_02","KA",112).time(morning).fov(56).cam(Cine.dolly(
+            w.v(tx+1.1,1.5,tz+5.5),w.v(tx+0.2,1.46,tz+5.2),w.v(tx,1.16,tz),w.v(tx+.1,1.12,tz))).setup(()->{
+            int d=this.tester(tx+.55,tz,SOUTH,DamageTesterEntity.SKIN_SNOW);
+            int a=this.actor(null,"steve",tx-.95,tz+.25,east,new ItemStack(Items.CARROT));
+            this.look(2,a,d);this.swingAt(12,a);
+            this.testerTurn(22,d,SOUTH+65,false);
+            this.walk(23,44,d,w.v(tx+.55,0,tz),w.v(tx+1.37,0,tz+.35));
+            this.walk(47,75,a,w.v(tx-.95,0,tz+.25),w.v(tx+.04,0,tz+.15));
+            this.look(76,a,d);
+            this.hop(81,d,w.v(tx+1.37,0,tz+.35),.33,15);
+            this.testerTurn(92,d,SOUTH-57,false);
+        });
+        this.shot("snow_03","KA",115).time(morning).fov(62).cam(Cine.dolly(
+            w.v(tx-.5,1.35,tz+6.4),w.v(tx+.25,1.52,tz+5.7),w.v(tx+.1,1.16,tz),w.v(tx+.15,1.22,tz))).setup(()->{
+            int a=this.actor(null,"steve",tx-.65,tz+.2,SOUTH,new ItemStack(Items.CARROT));
+            int d=this.tester(tx+.75,tz,SOUTH,DamageTesterEntity.SKIN_SNOW);
+            int l=this.tester(tx-2.2,tz-.8,SOUTH,DamageTesterEntity.SKIN_SNOW);
+            int r=this.tester(tx+2.55,tz-.75,SOUTH,DamageTesterEntity.SKIN_SNOW);
+            this.testerTurn(1,d,70F,false);this.testerTurn(7,l,-43F,false);this.testerTurn(12,r,53F,false);
+            this.look(10,a,l);this.look(31,a,r);
+            this.walk(28,57,l,w.v(tx-2.2,0,tz-.8),w.v(tx-1.8,0,tz+.1));
+            this.walk(32,64,r,w.v(tx+2.55,0,tz-.75),w.v(tx+1.95,0,tz+.25));
+            this.hop(49,d,w.v(tx+.75,0,tz),.40,15);
+            this.hop(65,l,w.v(tx-1.8,0,tz+.1),.30,13);
+            this.hop(68,r,w.v(tx+1.95,0,tz+.25),.36,13);
+            this.turn(73,a,SOUTH);this.pose(83,a,net.minecraft.world.entity.Pose.CROUCHING);
+            this.hop(92,a,w.v(tx-.65,0,tz+.2),.28,12);
+        });
+
+        this.shot("tag_01","KB",101).time(day).fov(59).cam(Cine.dolly(
+            w.v(tx-.6,1.4,tz+5.8),w.v(tx+.1,1.47,tz+5),w.v(tx,1.17,tz),w.v(tx+.1,1.22,tz))).setup(()->{
+            int d=this.tester(tx+.8,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-.75,tz+.2,east,new ItemStack(Items.NAME_TAG));
+            this.swingAt(3,a);this.at(6,()->this.costume(d,this.starringTag()));
+            this.testerTurn(9,d,62F,false);
+            this.hop(16,d,w.v(tx+.8,0,tz),.34,14);
+            this.look(25,a,d);
+            this.hop(48,a,w.v(tx-.75,0,tz+.2),.24,14);
+            this.turn(66,a,SOUTH);this.testerTurn(78,d,SOUTH,false);
+        });
+        this.shot("tag_02","KB",120).time(day).fov(64).cam(Cine.dolly(
+            w.v(tx+1.15,1.42,tz+6.25),w.v(tx+.2,1.46,tz+5.4),w.v(tx,1.14,tz),w.v(tx,1.16,tz))).setup(()->{
+            int d=this.tester(tx+.7,tz,SOUTH,this.starringSkin());
+            int a=this.actor(null,"steve",tx-.8,tz+.3,east,ItemStack.EMPTY);
+            int b=this.actor(null,"zuri",tx-3.2,tz-.25,east,new ItemStack(Items.WRITABLE_BOOK));
+            this.walk(5,36,b,w.v(tx-3.2,0,tz-.25),w.v(tx-.1,0,tz-1.2));
+            this.look(37,a,b);this.look(38,b,d);this.testerTurn(40,d,145F,false);
+            this.pose(53,a,net.minecraft.world.entity.Pose.CROUCHING);
+            this.swingAt(72,b);this.look(77,b,a);
+            this.walk(80,112,a,w.v(tx-.8,0,tz+.3),w.v(tx-3.85,0,tz+.2));
+            this.testerTurn(98,d,SOUTH,false);
+        });
+        this.shot("tag_03","KB",116).time(day).fov(62).cam(Cine.dolly(
+            w.v(tx+.7,1.43,tz+5.9),w.v(tx+.15,1.51,tz+5.4),w.v(tx,1.13,tz),w.v(tx+.10,1.22,tz))).setup(()->{
+            int d=this.tester(tx+.7,tz,SOUTH,this.starringSkin());
+            int b=this.actor(null,"zuri",tx-1.1,tz+.18,east,new ItemStack(Items.EMERALD));
+            int a=this.actor(null,"steve",tx-3.6,tz-.85,east,ItemStack.EMPTY);
+            this.look(2,b,d);this.swingAt(20,b);
+            this.at(24,()->this.srv(level->level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                this.entity(level,d).getX(),this.entity(level,d).getY()+1.35,this.entity(level,d).getZ(),14,.32,.26,.32,.03)));
+            this.hop(27,d,w.v(tx+.7,0,tz),.36,14);
+            this.walk(32,63,a,w.v(tx-3.6,0,tz-.85),w.v(tx-.85,0,tz-.8));
+            this.look(63,a,b);this.look(69,b,a);this.testerTurn(74,d,80F,false);
+            this.hop(80,a,w.v(tx-.85,0,tz-.8),.37,15);
+            this.turn(99,a,SOUTH);
+        });
+
+        this.shot("trial_01","KC",102).time(day).fov(67).cam(Cine.dolly(
+            w.v(tx+.3,1.62,tz+6.5),w.v(tx-.15,1.52,tz+5.8),w.v(tx,1.15,tz),w.v(tx,1.2,tz))).setup(()->{
+            int d=this.tester(tx+.75,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-1.05,tz+.26,east,new ItemStack(Items.MACE));
+            this.strike(4,a,d,99,true);
+            this.testerTurn(35,d,58F,false);this.look(39,a,d);
+            this.hop(55,a,w.v(tx-1.05,0,tz+.26),.31,12);
+            this.testerTurn(72,d,SOUTH,false);
+            this.walk(76,100,a,w.v(tx-1.05,0,tz+.26),w.v(tx-2.95,0,tz+.2));
+        });
+        this.shot("trial_02","KC",104).time(day).fov(64).cam(Cine.dolly(
+            w.v(tx-.75,1.46,tz+6.45),w.v(tx+.15,1.55,tz+5.67),w.v(tx,1.17,tz),w.v(tx,.97,tz))).setup(()->{
+            int d=this.tester(tx+.75,tz,SOUTH,"");
+            int a=this.actor(null,"steve",tx-1.43,tz+.3,east,new ItemStack(Items.MACE));
+            this.testerTurn(8,d,78F,false);
+            this.walk(8,32,d,w.v(tx+.75,0,tz),w.v(tx+1.87,0,tz));
+            this.look(13,a,d);
+            this.hop(35,a,w.v(tx-1.43,0,tz+.3),.87,24);this.swingAt(52,a);
+            this.testerTurn(44,d,65F,false);
+            this.hop(58,d,w.v(tx+1.87,0,tz),.40,14);
+            this.pose(75,a,net.minecraft.world.entity.Pose.CROUCHING);
+            this.testerTurn(78,d,SOUTH,false);
+        });
+        this.shot("trial_03","KC",133).time(day).fov(66).cam(Cine.dolly(
+            w.v(tx-.45,1.6,tz+7.15),w.v(tx+.1,1.56,tz+6.6),w.v(tx,1.22,tz),w.v(tx+.1,1.15,tz))).setup(()->{
+            int spare=this.tester(tx+1.72,tz,SOUTH,"");
+            int d=this.tester(tx+.3,tz-.15,SOUTH,"");
+            int a=this.actor(null,"steve",tx-1.25,tz+.3,east,new ItemStack(Items.MACE));
+            this.look(2,a,d);this.testerTurn(7,d,74F,false);this.testerTurn(10,spare,78F,false);
+            this.hop(19,d,w.v(tx+.3,0,tz-.15),.48,15);
+            this.hop(28,spare,w.v(tx+1.72,0,tz),.36,14);
+            this.hop(42,a,w.v(tx-1.25,0,tz+.3),.94,19);this.swingAt(58,a);
+            this.at(61,()->this.srv(level->this.damage(level,spare,level.damageSources().playerAttack(this.player()),100F,false)));
+            this.at(70,()->this.srv(level->level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                this.entity(level,d).getX(),this.entity(level,d).getY()+1.2,this.entity(level,d).getZ(),20,.42,.34,.42,.04)));
+            this.testerTurn(74,d,95F,false);this.testerTurn(87,spare,SOUTH,false);
+            this.walk(83,120,d,w.v(tx+.3,0,tz-.15),w.v(tx-2.85,0,tz-.05));
+            this.look(89,a,d);this.turn(114,a,SOUTH);
+        });
