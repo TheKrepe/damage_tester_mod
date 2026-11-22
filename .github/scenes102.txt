@@ -1,0 +1,13 @@
+        this.shot("winter_offer","K9",94).time(morning).fov(62).cam(Cine.dolly(w.v(tx-1.8,1.45,tz+3.8),w.v(tx-1.5,1.55,tz+2.9),w.v(tx-.8,1.3,tz),w.v(tx-.8,1.42,tz))).setup(()->{
+            int a=this.actor(null,"steve",tx-.85,tz+.1,SOUTH,new ItemStack(Items.SNOW_BLOCK));this.turn(56,a,-55);
+        });
+        this.shot("winter_reply","K9",86).time(morning).fov(60).cam(Cine.dolly(w.v(tx-1.8,1.5,tz+3.6),w.v(tx-1.35,1.52,tz+3.4),w.v(tx-.85,1.38,tz),w.v(tx-.85,1.38,tz))).setup(()->{
+            int a=this.actor(null,"steve",tx-.85,tz+.1,SOUTH,new ItemStack(Items.SPRUCE_PLANKS));this.turn(38,a,-25);this.at(55,()->this.swing(a));});
+        this.shot("shift_interview","K9",94).time(day).fov(60).cam(Cine.dolly(w.v(tx-1.7,1.5,tz+3.9),w.v(tx-1.2,1.45,tz+3.3),w.v(tx-.8,1.32,tz),w.v(tx-.8,1.36,tz))).setup(()->{
+            int a=this.actor(null,"steve",tx-.8,tz+.05,SOUTH,new ItemStack(Items.NAME_TAG));this.turn(50,a,-45);});
+        this.shot("shift_resign","K9",94).time(day).fov(57).cam(Cine.dolly(w.v(tx+.9,1.45,tz+3.2),w.v(tx+.55,1.55,tz+2.3),w.v(tx+.35,1.28,tz),w.v(tx+.35,1.42,tz))).setup(()->{
+            String name=this.srvGet(level->this.player().getName().getString());int d=this.tester(tx+.35,tz,SOUTH,DamageTesterEntity.SKIN_PLAYER_PREFIX+name);this.testerTurn(18,d,35F,false);this.testerTurn(45,d,SOUTH,true);});
+        this.shot("score_plan","K9",98).time(sunset).fov(60).cam(Cine.dolly(w.v(tx-1.6,1.5,tz+3.7),w.v(tx-1.3,1.6,tz+3.0),w.v(tx-.85,1.32,tz),w.v(tx-.85,1.40,tz))).setup(()->{
+            int a=this.actor(null,"steve",tx-.85,tz+.1,SOUTH,new ItemStack(Items.DIAMOND_SWORD));this.turn(33,a,-35);this.turn(65,a,SOUTH);});
+        this.shot("score_ref","K9",98).time(sunset).fov(55).cam(Cine.dolly(w.v(tx+1,1.42,tz+3.4),w.v(tx+.6,1.55,tz+2.6),w.v(tx+.55,1.28,tz),w.v(tx+.55,1.42,tz))).setup(()->{
+            int d=this.tester(tx+.55,tz,SOUTH,"");this.testerTurn(30,d,40F,false);this.testerTurn(55,d,SOUTH,true);});
