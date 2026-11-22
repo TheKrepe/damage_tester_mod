@@ -1,0 +1,32 @@
+    private void swingAt(int tick, int actor) {
+        this.at(tick, () -> this.swing(actor));
+    }
+
+    private ItemStack starringTag() {
+        var tag = new ItemStack(Items.NAME_TAG);
+        tag.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, this.player().getName());
+        return tag;
+    }
+
+    private String starringSkin() {
+        return DamageTesterEntity.SKIN_PLAYER_PREFIX + this.player().getName().getString();
+    }
+
+    private void costume(int tester, ItemStack prop) {
+        this.cmd("gamemode creative @a");
+        this.srv(level -> {
+            var player = this.player();
+            player.setItemInHand(InteractionHand.MAIN_HAND, prop);
+            ((DamageTesterEntity) this.entity(level, tester)).interact(player, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        });
+        this.cmd("gamemode spectator @a");
+    }
+
+    private void snowBurst(int tester) {
+        this.srv(level -> {
+            var subject = this.entity(level, tester);
+            level.sendParticles(ParticleTypes.SNOWFLAKE, subject.getX(), subject.getY() + 1.1,
+                subject.getZ(), 35, .52, .46, .42, .05);
+        });
+    }
+
