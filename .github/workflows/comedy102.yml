@@ -36,7 +36,7 @@ jobs:
           from pathlib import Path
           p=next(Path('fabric').rglob('DamageTesterTrailer.java'))
           s=p.read_text().replace('        // ---- K1: expectation vs reality', Path('.github/scenes102.txt').read_text()+'\n        // ---- K1: expectation vs reality')
-          assert 'uniform_a' in s
+          assert "winter_offer" in s
           p.write_text(s)
           PYSHOT
           xvfb-run -a -s '-screen 0 2000x2000x24' ./gradlew :fabric:runClientGameTest --console=plain
