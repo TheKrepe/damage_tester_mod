@@ -1,30 +1,30 @@
 this.shot("magic1","KM",70).time(12500).fov(57).cam(Cine.dolly(w.v(0.8,1.32,30),w.v(0,1.5,29.7),w.v(0.05,1.13,26),w.v(0.1,1.2,26))).setup(()->{this.srv(level->{for(int x=-6;x<=6;x++)for(int z=22;z<=29;z++){
 level.setBlock(w.p(x,-1,z),Blocks.SPRUCE_PLANKS.defaultBlockState(),2);
-level.setBlock(w.p(x,0,z),Blocks.RED_CARPET.defaultBlockState(),2);
-if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.RED_WOOL:Blocks.BLACK_WOOL).defaultBlockState(),2);
+level.setBlock(w.p(x,0,z),Blocks.AIR.defaultBlockState(),2);
+if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.NETHER_WART_BLOCK:Blocks.POLISHED_BLACKSTONE).defaultBlockState(),2);
 if(z==28 && Math.abs(x)==3)level.setBlock(w.p(x,0,z),Blocks.LANTERN.defaultBlockState(),2);}});int d=this.tester(.65,26,0,"snow");int a=this.actor(null,"zuri",-.85,26.2,0,new ItemStack(Items.STICK));this.swingAt(3,a);this.hop(6,d,w.v(.65,0,26),.6,17);this.testerTurn(28,d,60F,false);this.look(32,a,d);this.swingAt(44,a);this.snowBurst(d);});
 this.shot("magic2","KM",58).time(12500).fov(57).cam(Cine.dolly(w.v(1.3,1.5,28.65),w.v(0.91,1.47,28.21),w.v(0.65,1.41,26),w.v(0.65,1.46,26))).setup(()->{this.srv(level->{for(int x=-6;x<=6;x++)for(int z=22;z<=29;z++){
 level.setBlock(w.p(x,-1,z),Blocks.SPRUCE_PLANKS.defaultBlockState(),2);
-level.setBlock(w.p(x,0,z),Blocks.RED_CARPET.defaultBlockState(),2);
-if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.RED_WOOL:Blocks.BLACK_WOOL).defaultBlockState(),2);
+level.setBlock(w.p(x,0,z),Blocks.AIR.defaultBlockState(),2);
+if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.NETHER_WART_BLOCK:Blocks.POLISHED_BLACKSTONE).defaultBlockState(),2);
 if(z==28 && Math.abs(x)==3)level.setBlock(w.p(x,0,z),Blocks.LANTERN.defaultBlockState(),2);}});int d=this.tester(.65,26,0,"snow");this.testerTurn(3,d,33F,false);this.testerTurn(18,d,-34F,false);this.testerTurn(32,d,0,true);this.at(49,()->this.snowBurst(d));});
 this.shot("magic3","KM",82).time(12500).fov(57).cam(Cine.dolly(w.v(0,0.82,30.8),w.v(0.55,0.9,30.2),w.v(0.22,0.68,26.5),w.v(0.22,0.7,26.5))).setup(()->{this.srv(level->{for(int x=-6;x<=6;x++)for(int z=22;z<=29;z++){
 level.setBlock(w.p(x,-1,z),Blocks.SPRUCE_PLANKS.defaultBlockState(),2);
-level.setBlock(w.p(x,0,z),Blocks.RED_CARPET.defaultBlockState(),2);
-if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.RED_WOOL:Blocks.BLACK_WOOL).defaultBlockState(),2);
+level.setBlock(w.p(x,0,z),Blocks.AIR.defaultBlockState(),2);
+if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.NETHER_WART_BLOCK:Blocks.POLISHED_BLACKSTONE).defaultBlockState(),2);
 if(z==28 && Math.abs(x)==3)level.setBlock(w.p(x,0,z),Blocks.LANTERN.defaultBlockState(),2);}});int l=this.tester(TesterVariant.SMALL,-.48,0,26.5,0,"snow");int h=this.tester(TesterVariant.SMALL,.96,0,26.5,0,"snow");this.snowBurst(l);this.snowBurst(h);this.hop(5,l,w.v(-.48,0,26.5),.52,17);this.hop(18,h,w.v(.96,0,26.5),.52,17);this.testerTurn(34,l,-58F,false);this.testerTurn(39,h,58F,false);this.hop(58,l,w.v(-.48,0,26.5),.24,11);});
 this.shot("magic4","KM",74).time(12500).fov(57).cam(Cine.dolly(w.v(-1.5,1.48,29),w.v(-1.2,1.58,28.55),w.v(-0.83,1.29,26.2),w.v(-0.85,1.42,26.2))).setup(()->{this.srv(level->{for(int x=-6;x<=6;x++)for(int z=22;z<=29;z++){
 level.setBlock(w.p(x,-1,z),Blocks.SPRUCE_PLANKS.defaultBlockState(),2);
-level.setBlock(w.p(x,0,z),Blocks.RED_CARPET.defaultBlockState(),2);
-if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.RED_WOOL:Blocks.BLACK_WOOL).defaultBlockState(),2);
+level.setBlock(w.p(x,0,z),Blocks.AIR.defaultBlockState(),2);
+if(z==22)for(int y=0;y<5;y++)level.setBlock(w.p(x,y,z), (Math.abs(x)>2?Blocks.NETHER_WART_BLOCK:Blocks.POLISHED_BLACKSTONE).defaultBlockState(),2);
 if(z==28 && Math.abs(x)==3)level.setBlock(w.p(x,0,z),Blocks.LANTERN.defaultBlockState(),2);}});int a=this.actor(null,"zuri",-.85,26.2,0,new ItemStack(Items.STICK));this.pose(3,a,net.minecraft.world.entity.Pose.CROUCHING);this.turn(22,a,0);this.pose(30,a,net.minecraft.world.entity.Pose.STANDING);this.equip(a,EquipmentSlot.MAINHAND,new ItemStack(Items.SHEARS));this.swingAt(54,a);});
-this.shot("photo1","KP",74).time(2600).fov(57).cam(Cine.dolly(w.v(13.1,1.38,41.25),w.v(12.5,1.46,40.9),w.v(12.5,1.25,38.2),w.v(12.5,1.36,38.2))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState(),2);
+this.shot("photo1","KP",74).time(2600).fov(57).cam(Cine.dolly(w.v(13.1,1.38,41.25),w.v(12.5,1.46,40.9),w.v(12.5,1.25,38.2),w.v(12.5,1.36,38.2))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.PACKED_ICE.defaultBlockState(),2);
 for(int x=9;x<17;x++)for(int z=37;z<=41;z++)level.setBlock(w.p(x,-1,z),Blocks.SMOOTH_QUARTZ.defaultBlockState(),2);});int d=this.tester(12.5,38.2,0,"");this.testerTurn(2,d,32F,false);this.at(17,()->{this.costume(d,this.starringTag());});this.testerTurn(28,d,-30F,false);this.testerTurn(43,d,0,true);this.hop(50,d,w.v(12.5,0,38.2),.19,12);});
-this.shot("photo2","KP",75).time(2600).fov(57).cam(Cine.dolly(w.v(11.3,1.45,42),w.v(11.6,1.5,41.35),w.v(11.5,1.2,38),w.v(11.5,1.32,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState(),2);
+this.shot("photo2","KP",75).time(2600).fov(57).cam(Cine.dolly(w.v(11.3,1.45,42),w.v(11.6,1.5,41.35),w.v(11.5,1.2,38),w.v(11.5,1.32,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.PACKED_ICE.defaultBlockState(),2);
 for(int x=9;x<17;x++)for(int z=37;z<=41;z++)level.setBlock(w.p(x,-1,z),Blocks.SMOOTH_QUARTZ.defaultBlockState(),2);});int a=this.actor(null,"ari",11.5,38,0,new ItemStack(Items.SPYGLASS));this.turn(4,a,45F);this.turn(16,a,0);this.swingAt(29,a);this.pose(49,a,net.minecraft.world.entity.Pose.CROUCHING);});
-this.shot("photo3","KP",83).time(2600).fov(64).cam(Cine.dolly(w.v(12.5,1.5,44.8),w.v(12.5,1.5,43.9),w.v(12.5,1.1,38),w.v(12.5,1.1,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState(),2);
+this.shot("photo3","KP",83).time(2600).fov(64).cam(Cine.dolly(w.v(12.5,1.5,44.8),w.v(12.5,1.5,43.9),w.v(12.5,1.1,38),w.v(12.5,1.1,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.PACKED_ICE.defaultBlockState(),2);
 for(int x=9;x<17;x++)for(int z=37;z<=41;z++)level.setBlock(w.p(x,-1,z),Blocks.SMOOTH_QUARTZ.defaultBlockState(),2);});int m=this.tester(12.5,38,0,this.starringSkin());int l=this.tester(9.2,38,0,this.starringSkin());int h=this.tester(15.8,38,0,this.starringSkin());this.walk(3,34,l,w.v(9.2,0,38),w.v(11.05,0,38));this.walk(16,47,h,w.v(15.8,0,38),w.v(13.95,0,38));this.testerTurn(32,l,0,true);this.testerTurn(45,h,0,true);this.hop(52,m,w.v(12.5,0,38),.24,12);this.testerTurn(65,m,0,true);});
-this.shot("photo4","KP",64).time(2600).fov(57).cam(Cine.dolly(w.v(11.5,1.15,40.9),w.v(11.6,1.38,40.35),w.v(11.5,1.22,38),w.v(11.5,1.4,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState(),2);
+this.shot("photo4","KP",64).time(2600).fov(57).cam(Cine.dolly(w.v(11.5,1.15,40.9),w.v(11.6,1.38,40.35),w.v(11.5,1.22,38),w.v(11.5,1.4,38))).setup(()->{this.srv(level->{for(int x=9;x<17;x++)for(int y=0;y<=4;y++)level.setBlock(w.p(x,y,36),Blocks.PACKED_ICE.defaultBlockState(),2);
 for(int x=9;x<17;x++)for(int z=37;z<=41;z++)level.setBlock(w.p(x,-1,z),Blocks.SMOOTH_QUARTZ.defaultBlockState(),2);});int a=this.actor(null,"ari",11.5,38,0,new ItemStack(Items.PAPER));this.turn(2,a,40);this.turn(13,a,-40);this.turn(29,a,0);this.swingAt(50,a);});
 this.shot("rail1","KR",70).time(7600).fov(57).cam(Cine.dolly(w.v(5.7,0.75,54.8),w.v(5.9,0.78,54.2),w.v(6,1.01,50.5),w.v(6,0.98,50.5))).setup(()->{track.run();int c=this.cartTester(0,railZ,0,"dye:orange",0,0);this.driveCart(1,58,c,w.v(1,0,rz5),w.v(12,0,rz5));});
 this.shot("rail2","KR",69).time(7600).fov(57).cam(Cine.dolly(w.v(5.2,1.42,55.1),w.v(5.6,1.48,54.45),w.v(5.65,1.26,52),w.v(5.65,1.35,52))).setup(()->{track.run();int a=this.actor(null,"steve",5.65,52,0,new ItemStack(Items.PAPER));this.turn(2,a,-50);this.turn(17,a,0);this.at(34,()->this.equip(a,EquipmentSlot.MAINHAND,new ItemStack(Items.BOW)));this.swingAt(46,a);});
