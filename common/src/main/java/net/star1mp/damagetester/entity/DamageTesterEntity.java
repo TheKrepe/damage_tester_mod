@@ -556,10 +556,14 @@ public class DamageTesterEntity extends LivingEntity {
             return InteractionResult.SUCCESS;
         }
 
-        // Shears take any skin off again.
-        if (held.is(Items.SHEARS) && !this.getSkin().isEmpty()) {
+        // Remove the skin first, then clear a saved name on the next click.
+        if (held.is(Items.SHEARS) && (!this.getSkin().isEmpty() || this.hasCustomName())) {
             if (!this.level().isClientSide()) {
-                this.setSkin("");
+                if (!this.getSkin().isEmpty()) {
+                    this.setSkin("");
+                } else {
+                    this.setCustomName(null);
+                }
                 this.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
