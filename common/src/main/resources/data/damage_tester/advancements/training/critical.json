@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:golden_sword"
+    },
+    "title": {
+      "translate": "advancement.damage_tester.critical.title"
+    },
+    "description": {
+      "translate": "advancement.damage_tester.critical.description"
+    },
+    "frame": "goal",
+    "announce_to_chat": false,
+    "show_toast": true
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "damage_tester:training/first_hit"
+}

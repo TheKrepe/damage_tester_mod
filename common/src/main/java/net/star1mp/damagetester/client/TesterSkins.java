@@ -18,13 +18,33 @@ public final class TesterSkins {
     /** Grayscale "carving" mask: 200 = plain wood, darker = carved, brighter = highlight, alpha 0 = empty. */
     private static final ResourceLocation WOOD_MASK = DamageTester.id("textures/entity/damage_tester_wood_mask.png");
     private static final Map<String, ResourceLocation> PLANK_TEXTURES = new HashMap<>();
+    private static final ResourceLocation SNOW = DamageTester.id("textures/entity/damage_tester_snow.png");
     private static final int RAINBOW_TICKS_PER_COLOR = 25;
+
+    private static final com.google.common.cache.Cache<net.minecraft.world.item.ItemStack, java.util.function.Supplier<ResourceLocation>> PLAYER_SKINS =
+            com.google.common.cache.CacheBuilder.newBuilder().weakKeys().build();
+
+    private static ResourceLocation playerTexture(DamageTesterEntity entity, String name) {
+        var minecraft = Minecraft.getInstance();
+        var connection = minecraft.getConnection();
+        var online = connection == null ? null : connection.getPlayerInfo(name);
+        if (online != null) return online.getSkinLocation();
+        var head = entity.getPlayerHead();
+        if (head.isEmpty()) return DamageTesterRenderer.TEXTURE;
+        return PLAYER_SKINS.asMap().computeIfAbsent(head, stack -> {
+            var tag = stack.getTagElement("SkullOwner");
+            var profile = tag == null ? null : net.minecraft.nbt.NbtUtils.readGameProfile(tag);
+            if (profile == null || profile.getId() == null) return () -> DamageTesterRenderer.TEXTURE;
+            var texture = minecraft.getSkinManager().getInsecureSkinLocation(profile);
+            return () -> texture;
+        }).get();
+    }
 
     private TesterSkins() {
     }
 
     private static boolean isJeb(DamageTesterEntity entity) {
-        return entity.hasCustomName() && "jeb_".equals(entity.getName().getString());
+        return entity.hasCustomName() && "jeb_".equals(entity.getName().getString()) && !DamageTesterEntity.SKIN_SNOW.equals(entity.getSkin());
     }
 
     public static ResourceLocation texture(DamageTesterEntity entity) {
@@ -32,6 +52,10 @@ public final class TesterSkins {
             return DamageTesterRenderer.TEXTURE_NO_CLOTH;
         }
         String skin = entity.getSkin();
+        if (skin.startsWith(DamageTesterEntity.SKIN_PLAYER_PREFIX)) {
+            return playerTexture(entity, skin.substring(DamageTesterEntity.SKIN_PLAYER_PREFIX.length()));
+        }
+        if (skin.equals(DamageTesterEntity.SKIN_SNOW)) return SNOW;
         if (skin.equals(DamageTesterEntity.SKIN_STRAW)) {
             return DamageTesterRenderer.TEXTURE_STRAW;
         } else if (skin.equals(DamageTesterEntity.SKIN_JACK)) {
