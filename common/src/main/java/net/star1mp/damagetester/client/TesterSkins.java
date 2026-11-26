@@ -17,7 +17,21 @@ public final class TesterSkins {
     /** Grayscale "carving" mask: 200 = plain wood, darker = carved, brighter = highlight, alpha 0 = empty. */
     private static final Identifier WOOD_MASK = DamageTester.id("textures/entity/damage_tester_wood_mask.png");
     private static final Map<String, Identifier> PLANK_TEXTURES = new HashMap<>();
+    private static final Identifier SNOW = DamageTester.id("textures/entity/damage_tester_snow.png");
     private static final int RAINBOW_TICKS_PER_COLOR = 25;
+
+    private static final com.google.common.cache.Cache<String, java.util.function.Supplier<net.minecraft.client.renderer.PlayerSkinRenderCache.RenderInfo>> PLAYER_SKINS =
+            com.google.common.cache.CacheBuilder.newBuilder().maximumSize(256).expireAfterWrite(java.time.Duration.ofMinutes(10)).build();
+
+    private static Identifier playerTexture(String name) {
+        var minecraft = Minecraft.getInstance();
+        var connection = minecraft.getConnection();
+        var online = connection == null ? null : connection.getPlayerInfo(name);
+        if (online != null) return online.getSkin().body().texturePath();
+        var lookup = PLAYER_SKINS.asMap().computeIfAbsent(name, key -> minecraft.playerSkinRenderCache()
+                .createLookup(net.minecraft.world.item.component.ResolvableProfile.createUnresolved(key)));
+        return lookup.get().playerSkin().body().texturePath();
+    }
 
     private TesterSkins() {
     }
@@ -25,16 +39,22 @@ public final class TesterSkins {
     public static void apply(DamageTesterEntity entity, DamageTesterRenderState state) {
         state.texture = DamageTesterRenderer.TEXTURE;
         state.clothColor = 0;
+        state.playerSkin = false;
         state.glowTexture = null;
         String skin = entity.getSkin();
 
         // Name tag easter egg, works like jeb_ sheep.
-        if (entity.hasCustomName() && "jeb_".equals(entity.getName().getString())) {
+        if (entity.hasCustomName() && "jeb_".equals(entity.getName().getString()) && !DamageTesterEntity.SKIN_SNOW.equals(entity.getSkin())) {
             state.texture = DamageTesterRenderer.TEXTURE_NO_CLOTH;
             state.clothColor = rainbow(entity.tickCount + entity.getId(), state.ageInTicks - (int) state.ageInTicks);
             return;
         }
-        if (skin.equals(DamageTesterEntity.SKIN_STRAW)) {
+        if (skin.startsWith(DamageTesterEntity.SKIN_PLAYER_PREFIX)) {
+            state.playerSkin = true;
+            state.texture = playerTexture(skin.substring(DamageTesterEntity.SKIN_PLAYER_PREFIX.length()));
+        } else if (skin.equals(DamageTesterEntity.SKIN_SNOW)) {
+            state.texture = SNOW;
+        } else if (skin.equals(DamageTesterEntity.SKIN_STRAW)) {
             state.texture = DamageTesterRenderer.TEXTURE_STRAW;
         } else if (skin.equals(DamageTesterEntity.SKIN_JACK)) {
             state.texture = DamageTesterRenderer.TEXTURE_JACK;
