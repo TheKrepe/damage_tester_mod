@@ -1,0 +1,78 @@
+name: Exact Minecraft patch compatibility
+on:
+  push:
+    branches: [qa/1.0.2-exact-minecraft]
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    name: Minecraft ${{ matrix.game }} / ${{ matrix.loader }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { base: '1.20.1', game: '1.20', loader: fabric, java: '17' }
+          - { base: '1.20.1', game: '1.20', loader: forge, java: '17', loaderVersion: '46.0.14' }
+          - { base: '1.21.1', game: '1.21', loader: fabric, java: '21' }
+          - { base: '1.21.1', game: '1.21', loader: neoforge, java: '21', loaderVersion: '21.0.167' }
+          - { base: '26.1', game: '26.1', loader: fabric, java: '25' }
+          - { base: '26.1', game: '26.1', loader: neoforge, java: '25', loaderVersion: '26.1.0.19-beta' }
+          - { base: '26.1', game: '26.1.1', loader: fabric, java: '25' }
+          - { base: '26.1', game: '26.1.1', loader: neoforge, java: '25', loaderVersion: '26.1.1.15-beta' }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: mc/test-1.0.2-${{ matrix.base }}
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '${{ matrix.java }}' }
+      - run: echo "GAME_JAVA=$JAVA_HOME" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@v4
+        if: matrix.java == '17'
+        with: { distribution: temurin, java-version: "17\n21" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Use the exact game version at runtime
+        env:
+          TARGET_GAME: ${{ matrix.game }}
+          TARGET_LOADER: ${{ matrix.loaderVersion }}
+          LOADER: ${{ matrix.loader }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          import urllib.request
+          from xml.etree import ElementTree
+          import re
+          game = os.environ["TARGET_GAME"]
+          loader = os.environ["LOADER"]
+          script = Path(".github/scripts/e2e.sh")
+          source = script.read_text()
+          source, count = re.subn(r'^MC=.*$', 'MC=' + game, source, count=1, flags=re.M)
+          assert count == 1
+          if loader == "fabric":
+              meta = "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml"
+              with urllib.request.urlopen(meta, timeout=45) as response:
+                  versions = [n.text for n in ElementTree.parse(response).findall("./versioning/versions/version")]
+              choices = [v for v in versions if re.fullmatch(r'\d+\.\d+\.\d+\+' + re.escape(game), v)]
+              latest = max(choices, key=lambda v: tuple(map(int, v.split("+")[0].split("."))))
+              source, count = re.subn(r'^  FAPI=.*$', '  FAPI=' + latest, source, count=1, flags=re.M)
+          else:
+              source, count = re.subn(r'(^  ' + loader + r'\) LV=).*? ;;', r'\g<1>' + os.environ["TARGET_LOADER"] + ' ;;', source, count=1, flags=re.M)
+          assert count == 1
+          script.write_text(source)
+          PY
+      - name: Install OpenGL and a virtual display
+        run: |
+          sudo apt-get -o Acquire::Retries=2 update -qq
+          sudo apt-get -o Acquire::Retries=2 install -y -qq xvfb mesa-utils libgl1-mesa-dri mesa-vulkan-drivers imagemagick
+      - name: Test the branch build in the exact Minecraft client and dedicated server
+        run: xvfb-run -a -s "-screen 0 1280x720x24" .github/scripts/e2e.sh ${{ matrix.loader }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: minecraft-${{ matrix.game }}-${{ matrix.loader }}
+          path: |
+            e2e/summary.md
+            e2e/*.log
+          if-no-files-found: ignore
