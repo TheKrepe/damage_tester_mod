@@ -523,6 +523,17 @@ public final class SelfTest {
                     server.getAdvancements().getAdvancement(DamageTester.id("training/double"))).isDone(), "");
             expectClient("render id=" + standard.getId() + " variant=damage_tester skin=player:" + name + " ");
         });
+        step("shears remove a tagged skin before its name", 20, () -> {
+            hold(new ItemStack(Items.SHEARS));
+            interact(standard, new Vec3(0, 1, 0));
+            check("first shears click removes player skin", standard.getSkin().isEmpty(), standard.getSkin());
+            check("first shears click keeps tag name", standard.hasCustomName()
+                    && name().equals(standard.getName().getString()), String.valueOf(standard.getCustomName()));
+            interact(standard, new Vec3(0, 1, 0));
+            check("second shears click removes tag name", !standard.hasCustomName(),
+                    String.valueOf(standard.getCustomName()));
+            check("both clicks keep the shears", player.getMainHandItem().is(Items.SHEARS), "");
+        });
         skin("straw", Items.HAY_BLOCK, DamageTesterEntity.SKIN_STRAW);
         skin("jack o'lantern", Items.JACK_O_LANTERN, DamageTesterEntity.SKIN_JACK);
         skin("oak planks", Items.OAK_PLANKS, DamageTesterEntity.SKIN_PLANKS_PREFIX + "minecraft:oak_planks");
