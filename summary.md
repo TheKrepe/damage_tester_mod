@@ -1,0 +1,152 @@
+# E2E 1.20.1 forge: OK
+
+phase1 done: True, phase2 done: True
+
+passed: 115, failed: 0, client expectations: 37/37
+
+## Errors in logs (review)
+
+- server1:4: [17:43:27] [main/WARN] [ne.mi.fm.lo.FMLConfig/CORE]: Configuration file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/config/fml.toml is not correct. Correcting
+- server1:11: [17:43:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/fmlcore/1.20.1-47.4.29/fmlcore-1.20.1-47.4.29.jar is missing mods.toml file
+- server1:12: [17:43:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/javafmllanguage/1.20.1-47.4.29/javafmllanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server1:13: [17:43:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/lowcodelanguage/1.20.1-47.4.29/lowcodelanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server1:14: [17:43:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/mclanguage/1.20.1-47.4.29/mclanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server1:20: [17:43:35] [modloading-worker-0/ERROR] [ne.mi.fm.lo.RuntimeDistCleaner/DISTXFORM]: Attempted to load class net/minecraft/client/main/Main for invalid dist DEDICATED_SERVER
+- server1:25: [17:43:37] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/assets/.mcassetsroot' uses unexpected schema
+- server1:26: [17:43:37] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/data/.mcassetsroot' uses unexpected schema
+- server1:27: [17:43:38] [main/ERROR] [minecraft/DedicatedServerProperties]: No key layers in MapLike[{}]
+- server2:6: [17:45:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/fmlcore/1.20.1-47.4.29/fmlcore-1.20.1-47.4.29.jar is missing mods.toml file
+- server2:7: [17:45:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/javafmllanguage/1.20.1-47.4.29/javafmllanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server2:8: [17:45:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/lowcodelanguage/1.20.1-47.4.29/lowcodelanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server2:9: [17:45:27] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraftforge/mclanguage/1.20.1-47.4.29/mclanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- server2:15: [17:45:33] [modloading-worker-0/ERROR] [ne.mi.fm.lo.RuntimeDistCleaner/DISTXFORM]: Attempted to load class net/minecraft/client/main/Main for invalid dist DEDICATED_SERVER
+- server2:20: [17:45:34] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/assets/.mcassetsroot' uses unexpected schema
+- server2:21: [17:45:34] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/server/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/data/.mcassetsroot' uses unexpected schema
+- client:5: [17:43:52] [main/WARN] [ne.mi.fm.lo.FMLConfig/CORE]: Configuration file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/config/fml.toml is not correct. Correcting
+- client:25: [17:43:53] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraftforge/fmlcore/1.20.1-47.4.29/fmlcore-1.20.1-47.4.29.jar is missing mods.toml file
+- client:26: [17:43:53] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraftforge/javafmllanguage/1.20.1-47.4.29/javafmllanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- client:27: [17:43:53] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraftforge/lowcodelanguage/1.20.1-47.4.29/lowcodelanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- client:28: [17:43:53] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraftforge/mclanguage/1.20.1-47.4.29/mclanguage-1.20.1-47.4.29.jar is missing mods.toml file
+- client:33: [17:44:00] [Render thread/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraft/client/1.20.1-20230612.114412/client-1.20.1-20230612.114412-srg.jar%23148!/assets/.mcassetsroot' uses unexpected schema
+- client:34: [17:44:00] [Render thread/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/libraries/net/minecraft/client/1.20.1-20230612.114412/client-1.20.1-20230612.114412-srg.jar%23148!/data/.mcassetsroot' uses unexpected schema
+- client:41: [17:44:01] [Render thread/ERROR] [minecraft/FilePackResources]: Failed to open pack /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/assets/objects/2c/2c0afdc1edf41581e99b15bf212fb998589a6d7d
+- client:42: java.nio.file.NoSuchFileException: /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/assets/objects/2c/2c0afdc1edf41581e99b15bf212fb998589a6d7d
+- client:244: [17:44:02] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/damage_tester_mod/damage_tester_mod/e2e/client/config/forge-client.toml is not correct. Correcting
+
+## Passed
+
+- player joined (after 442 ticks)
+- item damage_tester (damage_tester)
+- entity type damage_tester (damage_tester)
+- item small_damage_tester (small_damage_tester)
+- entity type small_damage_tester (small_damage_tester)
+- item hanging_damage_tester (hanging_damage_tester)
+- entity type hanging_damage_tester (hanging_damage_tester)
+- item minecart_damage_tester (minecart_damage_tester)
+- entity type minecart_damage_tester (minecart_damage_tester)
+- damage counter block (block)
+- damage counter item (item)
+- recipe damage_tester (damage_tester)
+- recipe small_damage_tester (small_damage_tester)
+- recipe hanging_damage_tester (hanging_damage_tester)
+- recipe minecart_damage_tester (minecart_damage_tester)
+- recipe damage_counter (damage_counter)
+- advancement recipes/combat/damage_tester (recipes/combat/damage_tester)
+- advancement recipes/combat/small_damage_tester (recipes/combat/small_damage_tester)
+- advancement recipes/combat/hanging_damage_tester (recipes/combat/hanging_damage_tester)
+- advancement recipes/combat/minecart_damage_tester (recipes/combat/minecart_damage_tester)
+- advancement recipes/combat/damage_counter (recipes/combat/damage_counter)
+- config file (config/damage_tester.json)
+- counter loot table (blocks/damage_counter)
+- standard tester placed (at -8, -60, -6)
+- item used up in survival (count=1)
+- tester faces the player (yaw=-180.0)
+- small tester placed ()
+- hanging tester refuses the top face ()
+- hanging tester placed under the block ()
+- hanging tester has no gravity ()
+- minecart tester only goes on rails (count=2)
+- minecart tester placed ()
+- minecart tester rides a minecart (Minecart['Minecart'/5, l='ServerLevel[world]', x=1.50, y=-59.94, z=-5.50])
+- tester placed on the target block ()
+- damage counter placed (Block{damage_tester:damage_counter}[facing=north])
+- damage counter has its block entity ()
+- first hit advancement ()
+- 100 damage still locked ()
+- hit counted (Stats[hasData=true, active=true, lastHit=1.0, dps=1.0, total=1.0, hits=1, maxHit=1.0])
+- tester survives the hit ()
+- health untouched (health=20.0)
+- tester survives 5000 damage ()
+- hits counted (Stats[hasData=true, active=true, lastHit=5000.0, dps=744.6667, total=5026.5, hits=7, maxHit=5000.0])
+- max hit (Stats[hasData=true, active=true, lastHit=5000.0, dps=744.6667, total=5026.5, hits=7, maxHit=5000.0])
+- dps computed (Stats[hasData=true, active=true, lastHit=5000.0, dps=744.6667, total=5026.5, hits=7, maxHit=5000.0])
+- counter found the tester ()
+- counter has the stats (Stats[hasData=true, active=true, lastHit=5000.0, dps=744.6667, total=5026.5, hits=7, maxHit=5000.0])
+- target block powered by the hit (power=6)
+- target block resets (power=0)
+- combat ended (Stats[hasData=true, active=false, lastHit=5000.0, dps=744.6667, total=5026.5, hits=7, maxHit=5000.0])
+- skin snowman (skin=snow)
+- skin item used up: snowman (count=3)
+- player skin selected (player:Dev)
+- name tag consumed ()
+- player skin advancement ()
+- first shears click removes player skin ()
+- first shears click keeps tag name (literal{Dev}[style={}])
+- second shears click removes tag name (null)
+- both clicks keep the shears ()
+- skin straw (skin=straw)
+- skin item used up: straw (count=3)
+- skin jack o'lantern (skin=jack_o_lantern)
+- skin item used up: jack o'lantern (count=3)
+- skin oak planks (skin=planks:minecraft:oak_planks)
+- skin item used up: oak planks (count=3)
+- skin crimson planks (skin=planks:minecraft:crimson_planks)
+- skin item used up: crimson planks (count=3)
+- skin red dye (skin=dye:red)
+- skin item used up: red dye (count=3)
+- skin blue dye (skin=dye:blue)
+- skin item used up: blue dye (count=3)
+- shears remove the skin (skin=)
+- shears are kept ()
+- small tester skin (jack_o_lantern)
+- hanging tester skin (dye:lime)
+- minecart tester skin (planks:minecraft:birch_planks)
+- name tag names the tester (literal{jeb_}[style={}])
+- armor equipped: iron_helmet (hand=0 air)
+- armor equipped: diamond_chestplate (hand=0 air)
+- armor equipped: golden_leggings (hand=0 air)
+- armor equipped: leather_boots (hand=0 air)
+- helmet slot ()
+- chest slot ()
+- legs slot ()
+- feet slot ()
+- helmet swapped (hand=1 iron_helmet)
+- helmet taken off (hand=1 netherite_helmet)
+- boots taken off (hand=1 leather_boots)
+- carved pumpkin worn ()
+- mob head worn ()
+- save test tester placed ()
+- tester removed ()
+- drops the tester item ([1 damage_tester, 1 golden_leggings, 1 diamond_chestplate, 1 carved_pumpkin])
+- drops its armor ([1 damage_tester, 1 golden_leggings, 1 diamond_chestplate, 1 carved_pumpkin])
+- named item dropped ([1 damage_tester])
+- name kept when placed again (jeb_)
+- hanging tester removed ()
+- hanging tester dropped as an item ([1 hanging_damage_tester])
+- minecart tester removed with its cart ()
+- drops a standard tester ([1 damage_tester])
+- small tester removed by /kill ()
+- no drop from /kill ([1 creeper_head])
+- removed in creative ()
+- no drop in creative ([])
+- dispenser placed a tester ()
+- dispenser placed a minecart tester (DamageTesterEntity['Minecart Damage Tester'/20, l='ServerLevel[world]', x=9.50, y=-59.94, z=-4.50])
+- lonely counter has no tester ()
+- counter block removed ()
+- counter drops itself ([1 damage_counter])
+- dispensed tester takes a skin (jack_o_lantern)
+- saved tester loaded (after 0 ticks)
+- skin saved (dye:purple)
+- armor saved (1 golden_helmet)
+- name saved (Saved Tester)
+- variant saved (STANDARD)
