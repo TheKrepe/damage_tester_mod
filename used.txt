@@ -1,0 +1,1 @@
+using /home/runner/work/damage_tester_mod/damage_tester_mod/neoforge/build/moddev/artifacts/neoforge-21.11.48-merged.jar
